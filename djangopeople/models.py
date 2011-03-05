@@ -80,8 +80,9 @@ class Region(models.Model):
     # De-normalised
     num_people = models.IntegerField(default=0)
     
+    @models.permalink
     def get_absolute_url(self):
-        return '/%s/%s/' % (self.country.iso_code.lower(), self.code.lower())
+        return ('country_region', [self.country.iso_code.lower(), self.code.lower()])
     
     def __unicode__(self):
         return self.name
@@ -164,8 +165,9 @@ class DjangoPerson(models.Model):
     def __unicode__(self):
         return unicode(self.user.get_full_name())
     
+    @models.permalink
     def get_absolute_url(self):
-        return '/%s/' % self.user.username
+        return ('user_profile', [self.user.username])
     
     def save(self, force_insert=False, force_update=False, **kwargs): # TODO: Put in transaction
         # Update country and region counters

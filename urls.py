@@ -1,6 +1,6 @@
 import os
 
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls.defaults import patterns, url, include
 from django.conf import settings
 from django.contrib import admin
 from django.shortcuts import redirect
@@ -17,15 +17,15 @@ def perm_redirect(url):
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^$', views.index),
-    (r'^login/$', views.login),
-    (r'^logout/$', views.logout),
-    (r'^about/$', views.about),
-    (r'^recent/$', views.recent),
-    (r'^recover/$', views.lost_password),
-    (r'^recover/([a-z0-9]{3,})/([a-f0-9]+)/([a-f0-9]{32})/$',
-        views.lost_password_recover),
-    (r'^signup/$', views.signup),
+    url(r'^$', views.index, name='index'),
+    url(r'^login/$', views.login, name='login'),
+    url(r'^logout/$', views.logout, name='logout'),
+    url(r'^about/$', views.about, name='about'),
+    url(r'^recent/$', views.recent, name='recent'),
+    url(r'^recover/$', views.lost_password, name='recover'),
+    url(r'^recover/([a-z0-9]{3,})/([a-f0-9]+)/([a-f0-9]{32})/$',
+        views.lost_password_recover, name='do_recover'),
+    url(r'^signup/$', views.signup, name='signup'),
 
     (r'^openid/$', 'django_openidconsumer.views.begin', {
         'sreg': 'email,nickname,fullname',
@@ -45,7 +45,7 @@ urlpatterns = patterns('',
     (r'^static/(?P<path>.*)$', 'django.views.static.serve', {
         'document_root': os.path.join(settings.OUR_ROOT, 'static')
     }),
-    (r'^admin/(.*)', admin.site.root),
+    (r'^admin/', include(admin.site.urls)),
     (r'^api/irc_lookup/(.*?)/$', api.irc_lookup),
     (r'^api/irc_spotted/(.*?)/$', api.irc_spotted),
     (r'^irc/active/$', views.irc_active),

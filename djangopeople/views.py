@@ -1,25 +1,35 @@
-from django.http import Http404, HttpResponse, HttpResponseRedirect, \
-    HttpResponseForbidden
+import datetime
+import md5
+import os
+
+from cStringIO import StringIO
+from PIL import Image
+
+from django.conf import settings
 from django.contrib import auth
+from django.http import (Http404, HttpResponse, HttpResponseRedirect,
+                         HttpResponseForbidden)
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.template.loader import render_to_string
-from djangopeople.models import DjangoPerson, Country, User, Region, PortfolioSite
+
 from djangopeople import utils
+from djangopeople.constants import (MACHINETAGS_FROM_FIELDS,
+                                    IMPROVIDERS_DICT, SERVICES_DICT)
+from djangopeople.forms import (SkillsForm, SignupForm, PhotoUploadForm,
+                                PortfolioForm, BioForm, LocationForm,
+                                FindingForm, AccountForm)
+from djangopeople.models import (DjangoPerson, Country, User, Region,
+                                 PortfolioSite)
+
 from django_openidauth.models import associate_openid, UserOpenID
+
 from tagging.models import Tag
 #from tagging.views import tagged_object_list
 from tagging.utils import calculate_cloud, edit_string_for_tags
+
 from machinetags.utils import tagdict
 from machinetags.models import MachineTaggedItem
-from djangopeople.forms import SkillsForm
-from djangopeople.forms import SignupForm, PhotoUploadForm, PortfolioForm, \
-    BioForm, LocationForm, FindingForm, AccountForm
-from djangopeople.constants import MACHINETAGS_FROM_FIELDS, IMPROVIDERS_DICT, SERVICES_DICT
-from django.conf import settings
-import os, md5, datetime
-from PIL import Image
-from cStringIO import StringIO
 
 def render(request, template, context_dict=None):
     return render_to_response(

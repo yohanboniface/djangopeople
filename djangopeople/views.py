@@ -12,9 +12,10 @@ from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth import views as auth_views
 from django.core.mail import send_mail
+from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.http import Http404, HttpResponseRedirect, HttpResponseForbidden
-from django.shortcuts import get_object_or_404, render_to_response
+from django.http import Http404, HttpResponseForbidden
+from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
@@ -111,7 +112,8 @@ def login(request):
 def logout(request):
     auth.logout(request)
     request.session['openids'] = []
-    return HttpResponseRedirect('/')
+    return redirect(reverse('index'))
+
 
 def lost_password(request):
     username = request.POST.get('username', '')
@@ -149,7 +151,7 @@ def lost_password_recover(request, username, days, hash):
     if utils.hash_is_valid(username, days, hash):
         user.backend='django.contrib.auth.backends.ModelBackend' 
         auth.login(request, user)
-        return HttpResponseRedirect('/%s/password/' % username)
+        return redirect('/%s/password/' % username)
     else:
         return render(request, 'lost_password.html', {
             'message': 'That was not a valid account recovery link'
@@ -161,25 +163,25 @@ def openid_whatnext(request):
     Otherwise, send them to the signup page
     """
     if not request.openid:
-        return HttpResponseRedirect('/')
+        return redirect('/')
     if request.user.is_anonymous():
         # Have they logged in with an OpenID that matches an account?
         try:
             user_openid = UserOpenID.objects.get(openid = str(request.openid))
         except UserOpenID.DoesNotExist:
-            return HttpResponseRedirect('/signup/')
+            return redirect('/signup/')
         # Log the user in
         user = user_openid.user
         user.backend='django.contrib.auth.backends.ModelBackend' 
         auth.login(request, user)
-        return HttpResponseRedirect('/%s/' % user.username)
+        return redirect('/%s/' % user.username)
     
     else:
-        return HttpResponseRedirect('/openid/associations/')
+        return redirect('/openid/associations/')
 
 def signup(request):
     if not request.user.is_anonymous():
-        return HttpResponseRedirect('/')
+        return redirect('/')
     if request.method == 'POST':
         if request.openid:
             form = SignupForm(
@@ -251,7 +253,7 @@ def signup(request):
             #    browse_thread/thread/39488db1864c595f
             user.backend='django.contrib.auth.backends.ModelBackend' 
             auth.login(request, user)
-            return HttpResponseRedirect(person.get_absolute_url())
+            return redirect(person.get_absolute_url())
     else:
         if request.openid and request.openid.sreg:
             sreg = request.openid.sreg
@@ -314,7 +316,7 @@ def upload_profile_photo(request, username):
             open(path, 'w').write(image_content)
             person.photo = 'profiles/%s' % filename
             person.save()
-            return HttpResponseRedirect('/%s/upload/done/' % username)
+            return redirect('/%s/upload/done/' % username)
     else:
         form = PhotoUploadForm()
     return render(request, 'upload_profile_photo.html', {
@@ -325,7 +327,7 @@ def upload_profile_photo(request, username):
 @must_be_owner
 def upload_done(request, username):
     "Using a double redirect to try and stop back button from re-uploading"
-    return HttpResponseRedirect('/%s/' % username)
+    return redirect('/%s/' % username)
 
 def country(request, country_code):
     country = get_object_or_404(Country, iso_code = country_code.upper())
@@ -449,7 +451,7 @@ def edit_finding(request, username):
                     value = form.cleaned_data[fieldname].strip()
                     person.add_machinetag(namespace, predicate, value)
             
-            return HttpResponseRedirect('/%s/' % username)
+            return redirect('/%s/' % username)
     else:
         mtags = tagdict(person.machinetags.all())
         initial = {
@@ -481,7 +483,7 @@ def edit_portfolio(request, username):
                 url = request.POST[key.replace('title_', 'url_')]
                 if title.strip() and url.strip():
                     person.portfoliosite_set.create(title = title, url = url)
-            return HttpResponseRedirect('/%s/' % username)
+            return redirect('/%s/' % username)
     else:
         form = PortfolioForm(person = person)
     return render(request, 'edit_portfolio.html', {
@@ -497,7 +499,7 @@ def edit_account(request, username):
             person.openid_server = form.cleaned_data['openid_server']
             person.openid_delegate = form.cleaned_data['openid_delegate']
             person.save()
-            return HttpResponseRedirect('/%s/' % username)
+            return redirect('/%s/' % username)
     else:
         form = AccountForm(initial = {
             'openid_server': person.openid_server,
@@ -519,7 +521,7 @@ def edit_skills(request, username):
             }),
         })
     person.skilltags = request.POST.get('skills', '')
-    return HttpResponseRedirect('/%s/' % username)
+    return redirect('/%s/' % username)
 
 @must_be_owner
 def edit_password(request, username):
@@ -529,7 +531,7 @@ def edit_password(request, username):
     if p1 and p2 and p1 == p2:
         user.set_password(p1)
         user.save()
-        return HttpResponseRedirect('/%s/' % username)
+        return redirect('/%s/' % username)
     else:
         return render(request, 'edit_password.html')
 
@@ -541,7 +543,7 @@ def edit_bio(request, username):
         if form.is_valid():
             person.bio = form.cleaned_data['bio']
             person.save()
-            return HttpResponseRedirect('/%s/' % username)
+            return redirect('/%s/' % username)
     else:
         form = BioForm(initial = {'bio': person.bio})
     return render(request, 'edit_bio.html', {
@@ -569,7 +571,7 @@ def edit_location(request, username):
             person.location_description = \
                 form.cleaned_data['location_description']
             person.save()
-            return HttpResponseRedirect('/%s/' % username)
+            return redirect('/%s/' % username)
     else:
         form = LocationForm()
     return render(request, 'edit_location.html', {

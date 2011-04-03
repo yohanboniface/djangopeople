@@ -28,6 +28,11 @@ class DjangoPeopleTest(TestCase):
         self.assertEqual(response.status_code, 404)  # Missing DjangoPerson
         self.assertEqual(len(response.redirect_chain), 1)
 
+        response = self.client.get(reverse('logout'), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.redirect_chain), 1)
+        self.assertTrue('log in' in response.content)
+
         self.client.logout()
         data['next'] = reverse('about')
         response = self.client.post(url, data, follow=True)

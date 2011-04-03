@@ -56,14 +56,23 @@ def must_be_owner(view):
         return view(request, *args, **kwargs)
     return inner
 
-def index(request):
-    recent_people_limited = DjangoPerson.objects.all().select_related().order_by('-id')[:4]
-    return render(request, 'index.html', {
-        'recent_people_limited': recent_people_limited,
-        'total_people': DjangoPerson.objects.count(),
-        'api_key': settings.GOOGLE_MAPS_API_KEY,
-        'countries': Country.objects.top_countries(),
-    })
+
+class IndexView(generic.TemplateView):
+    template_name = 'index.html'
+
+    def get_context_data(self, **kwargs):
+        people = DjangoPerson.objects.all().select_related()
+        people = people.order_by('-id')[:4]
+        ctx = super(IndexView, self).get_context_data(**kwargs)
+        ctx.update({
+            'recent_people_limited': people,
+            'total_people': DjangoPerson.objects.count(),
+            'api_key': settings.GOOGLE_MAPS_API_KEY,
+            'countries': Country.objects.top_countries(),
+        })
+        return ctx
+index = IndexView.as_view()
+
 
 def about(request):
     return render(request, 'about.html', {

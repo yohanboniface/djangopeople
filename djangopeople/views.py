@@ -10,6 +10,7 @@ from PIL import Image
 
 from django.conf import settings
 from django.contrib import auth
+from django.contrib.auth import views as auth_views
 from django.core.mail import send_mail
 from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect, HttpResponseForbidden
@@ -74,38 +75,38 @@ class IndexView(generic.TemplateView):
 index = IndexView.as_view()
 
 
-def about(request):
-    return render(request, 'about.html', {
-        'total_people': DjangoPerson.objects.count(),
-        'openid_users': User.objects.filter(useropenid__openid__startswith = 'http').distinct().count(),
-        'countries': Country.objects.top_countries(),
-    })
+class AboutView(generic.TemplateView):
+    template_name = 'about.html'
 
-def recent(request):
-    return render(request, 'recent.html', {
-        'people': DjangoPerson.objects.all().select_related().order_by('-auth_user.date_joined')[:50],
-        'api_key': settings.GOOGLE_MAPS_API_KEY,
-    })
+    def get_context_data(self, **kwargs):
+        ctx = super(AboutView, self).get_context_data(**kwargs)
+        users = User.objects.filter(useropenid__openid__startswith='http')
+        ctx.update({
+            'total_people': DjangoPerson.objects.count(),
+            'openid_users': users.distinct().count(),
+            'countries': Country.objects.top_countries(),
+        })
+        return ctx
+about = AboutView.as_view()
+
+
+class RecentView(generic.TemplateView):
+    template_name = 'recent.html'
+
+    def get_context_data(self, **kwargs):
+        ctx = super(RecentView, self).get_context_data(**kwargs)
+        people = DjangoPerson.objects.all().select_related()
+        ctx.update({
+            'people': people.order_by('-auth_user.date_joined')[:50],
+            'api_key': settings.GOOGLE_MAPS_API_KEY,
+        })
+        return ctx
+recent = RecentView.as_view()
+
 
 def login(request):
-    if request.method != 'POST':
-        return render(request, 'login.html', {
-            'next': request.REQUEST.get('next', ''),
-        })
-    username = request.POST.get('username')
-    password = request.POST.get('password')
-    user = auth.authenticate(username=username, password=password)
-    if user is not None and user.is_active:
-        auth.login(request, user)
-        return HttpResponseRedirect(
-            request.POST.get('next', '/%s/' % user.username)
-        )
-    else:
-        return render(request, 'login.html', {
-            'is_invalid': True,
-            'username': username, # Populate form
-            'next': request.REQUEST.get('next', ''),
-        })
+    return auth_views.login(request, template_name='login.html')
+
 
 def logout(request):
     auth.logout(request)

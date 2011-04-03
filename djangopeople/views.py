@@ -1,17 +1,23 @@
 import datetime
 import md5
+import operator
 import os
+import re
+import smtplib
 
 from cStringIO import StringIO
 from PIL import Image
 
 from django.conf import settings
 from django.contrib import auth
-from django.http import (Http404, HttpResponse, HttpResponseRedirect,
-                         HttpResponseForbidden)
+from django.core.mail import send_mail
+from django.db.models import Q
+from django.http import Http404, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.template.loader import render_to_string
+from django.utils.translation import ugettext_lazy as _
+from django.views import generic
 
 from djangopeople import utils
 from djangopeople.constants import (MACHINETAGS_FROM_FIELDS,
@@ -24,12 +30,17 @@ from djangopeople.models import (DjangoPerson, Country, User, Region,
 
 from django_openidauth.models import associate_openid, UserOpenID
 
-from tagging.models import Tag
+from tagging.models import Tag, TaggedItem
 #from tagging.views import tagged_object_list
-from tagging.utils import calculate_cloud, edit_string_for_tags
+from tagging.utils import calculate_cloud, edit_string_for_tags, get_tag
 
 from machinetags.utils import tagdict
 from machinetags.models import MachineTaggedItem
+
+from django.views.generic.list_detail import object_list
+
+
+NOTALPHA_RE = re.compile('[^a-zA-Z0-9]')
 
 def render(request, template, context_dict=None):
     return render_to_response(
@@ -102,8 +113,6 @@ def lost_password(request):
                 'message': 'That was not a valid username.'
             })
         path = utils.lost_url_for_user(username)
-        from django.core.mail import send_mail
-        import smtplib
         body = render_to_string('recovery_email.txt', {
             'path': path,
             'person': person,
@@ -264,10 +273,8 @@ def signup(request):
         'openid': request.openid,
     })
 
-import re
-notalpha_re = re.compile('[^a-zA-Z0-9]')
 def derive_username(nickname):
-    nickname = notalpha_re.sub('', nickname)
+    nickname = NOTALPHA_RE.sub('', nickname)
     if not nickname:
         return ''
     base_nickname = nickname
@@ -617,9 +624,6 @@ def country_looking_for(request, country_code, looking_for):
         'looking_for': looking_for,
     })
 
-from django.db.models import Q
-import operator
-
 def search_people(q):
     words = [w.strip() for w in q.split() if len(w.strip()) > 2]
     if not words:
@@ -666,11 +670,6 @@ def irc_active(request):
     })
 
 # Custom variant of the generic view from django-tagging
-from django.http import Http404
-from django.utils.translation import ugettext as _
-from django.views.generic.list_detail import object_list
-from tagging.models import Tag, TaggedItem
-from tagging.utils import get_tag
 def tagged_object_list(request, model=None, tag=None, related_tags=False,
         related_tag_counts=True, extra_filter_args=None, **kwargs):
     """

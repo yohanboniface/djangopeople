@@ -81,10 +81,9 @@ MIDDLEWARE_CLASSES = (
     'djangopeople.middleware.NoDoubleSlashes',
 )
 
-ROOT_URLCONF = 'djangopeoplenet.urls'
+ROOT_URLCONF = 'urls'
 
-TEMPLATE_DIRS = (
-)
+TEMPLATE_DIRS = ()
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -98,4 +97,5 @@ INSTALLED_APPS = (
     'djangopeople',
     'machinetags',
     'sorl.thumbnail',
+    'tagging',
 )

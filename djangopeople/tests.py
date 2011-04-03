@@ -63,3 +63,11 @@ class DjangoPeopleTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue('An e-mail has been sent' in response.content)
         self.assertEqual(len(mail.outbox), 1)
+
+        content = mail.outbox[0].body
+        url = content.split('\n\n')[2]
+        url = url.replace('http://djangopeople.net', '')
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.redirect_chain), 1)
+        self.assertTrue('<h1>Change your password</h1>' in response.content)

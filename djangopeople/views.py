@@ -50,9 +50,14 @@ def render(request, template, context_dict=None):
 @utils.simple_decorator
 def must_be_owner(view):
     def inner(request, *args, **kwargs):
-        if not request.user or request.user.is_anonymous() \
-            or request.user.username != args[0]:
-            return HttpResponseForbidden('Not allowed')
+        if 'username' in kwargs:
+            if not request.user or request.user.is_anonymous() \
+               or request.user.username != kwargs['username']:
+                return HttpResponseForbidden('Not allowed')
+        else:
+            if not request.user or request.user.is_anonymous() \
+                or request.user.username != args[0]:
+                return HttpResponseForbidden('Not allowed')
         return view(request, *args, **kwargs)
     return inner
 
@@ -134,16 +139,26 @@ class LostPasswordView(generic.FormView):
 lost_password = LostPasswordView.as_view()
 
 
-def lost_password_recover(request, username, days, hash):
-    user = get_object_or_404(User, username=username)
-    if utils.hash_is_valid(username, days, hash):
-        user.backend='django.contrib.auth.backends.ModelBackend' 
-        auth.login(request, user)
-        return redirect('/%s/password/' % username)
-    else:
-        return render(request, 'lost_password.html', {
-            'message': 'That was not a valid account recovery link'
-        })
+class LostPasswordRecoverView(generic.TemplateView):
+    template_name = 'lost_password.html'
+
+    def get(self, request, *args, **kwargs):
+        username = kwargs['username']
+        user = get_object_or_404(User, username=username)
+        if utils.hash_is_valid(username, kwargs['days'], kwargs['hash']):
+            user.backend='django.contrib.auth.backends.ModelBackend'
+            auth.login(request, user)
+            url = reverse('edit_password', kwargs={'username': username})
+            return redirect(url)
+        return super(LostPasswordRecoverView, self).get(request, *args,
+                                                        **kwargs)
+
+    def get_context_data(self, **kwargs):
+        ctx = super(LostPasswordRecoverView, self).get_context_data(**kwargs)
+        ctx['message'] = _('That was not a valid account recovery link')
+        return ctx
+lost_password_recover = LostPasswordRecoverView.as_view()
+
 
 def openid_whatnext(request):
     """
@@ -160,12 +175,13 @@ def openid_whatnext(request):
             return redirect('/signup/')
         # Log the user in
         user = user_openid.user
-        user.backend='django.contrib.auth.backends.ModelBackend' 
+        user.backend='django.contrib.auth.backends.ModelBackend'
         auth.login(request, user)
         return redirect('/%s/' % user.username)
-    
+
     else:
         return redirect('/openid/associations/')
+
 
 def signup(request):
     if not request.user.is_anonymous():
@@ -185,22 +201,22 @@ def signup(request):
             }
             if form.cleaned_data.get('password1'):
                 creation_args['password'] = form.cleaned_data['password1']
-                
+
             user = User.objects.create_user(**creation_args)
             user.first_name = form.cleaned_data['first_name']
             user.last_name = form.cleaned_data['last_name']
             user.save()
-            
+
             if request.openid:
                 associate_openid(user, str(request.openid))
-            
+
             region = None
             if form.cleaned_data['region']:
                 region = Region.objects.get(
                     country__iso_code = form.cleaned_data['country'],
                     code = form.cleaned_data['region']
                 )
-            
+
             # Now create the DjangoPerson
             person = DjangoPerson.objects.create(
                 user = user,
@@ -213,7 +229,7 @@ def signup(request):
                 longitude = form.cleaned_data['longitude'],
                 location_description = form.cleaned_data['location_description']
             )
-            
+
             # Set up the various machine tags
             for fieldname, (namespace, predicate) in \
                     MACHINETAGS_FROM_FIELDS.items():
@@ -221,7 +237,7 @@ def signup(request):
                     form.cleaned_data[fieldname].strip():
                     value = form.cleaned_data[fieldname].strip()
                     person.add_machinetag(namespace, predicate, value)
-            
+
             # Stash their blog and looking_for_work
             if form.cleaned_data['blog']:
                 person.add_machinetag(
@@ -232,14 +248,14 @@ def signup(request):
                     'profile', 'looking_for_work',
                     form.cleaned_data['looking_for_work']
                 )
-            
+
             # Finally, set their skill tags
             person.skilltags = form.cleaned_data['skilltags']
-            
+
             # Log them in and redirect to their profile page
             # HACK! http://groups.google.com/group/django-users/
             #    browse_thread/thread/39488db1864c595f
-            user.backend='django.contrib.auth.backends.ModelBackend' 
+            user.backend='django.contrib.auth.backends.ModelBackend'
             auth.login(request, user)
             return redirect(person.get_absolute_url())
     else:

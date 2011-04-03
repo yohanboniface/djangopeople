@@ -11,13 +11,11 @@ from PIL import Image
 from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth import views as auth_views
-from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.template import RequestContext
-from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django.views import generic
 
@@ -26,7 +24,7 @@ from djangopeople.constants import (MACHINETAGS_FROM_FIELDS,
                                     IMPROVIDERS_DICT, SERVICES_DICT)
 from djangopeople.forms import (SkillsForm, SignupForm, PhotoUploadForm,
                                 PortfolioForm, BioForm, LocationForm,
-                                FindingForm, AccountForm)
+                                FindingForm, AccountForm, LostPasswordForm)
 from djangopeople.models import (DjangoPerson, Country, User, Region,
                                  PortfolioSite)
 
@@ -115,36 +113,26 @@ def logout(request):
     return redirect(reverse('index'))
 
 
-def lost_password(request):
-    username = request.POST.get('username', '')
-    if username:
+class LostPasswordView(generic.FormView):
+    form_class = LostPasswordForm
+    template_name = 'lost_password.html'
+
+    def form_valid(self, form):
         try:
-            person = DjangoPerson.objects.get(user__username = username)
-        except DjangoPerson.DoesNotExist:
-            return render(request, 'lost_password.html', {
-                'message': 'That was not a valid username.'
-            })
-        path = utils.lost_url_for_user(username)
-        body = render_to_string('recovery_email.txt', {
-            'path': path,
-            'person': person,
-        })
-        try:
-            send_mail(
-                'Django People account recovery', body,
-                settings.RECOVERY_EMAIL_FROM, [person.user.email],
-                fail_silently=False
-            )
+            form.save()
         except smtplib.SMTPException:
-            return render(request, 'lost_password.html', {
-                'message': 'Could not e-mail you a recovery link.',
-            })
-        return render(request, 'lost_password.html', {
-            'message': ('An e-mail has been sent with instructions for '
-                "recovering your account. Don't forget to check your spam "
-                'folder!')
-        })
-    return render(request, 'lost_password.html')
+            return self.render_to_response(
+                self.get_context_data(
+                    message= _('Could not email you a recovery link.'),
+            ))
+        return self.render_to_response(
+            self.get_context_data(
+                message= _("An e-mail has been sent with instructions for "
+                           "recovering your account. Don't forget to check "
+                           "your spam folder!"),
+        ))
+lost_password = LostPasswordView.as_view()
+
 
 def lost_password_recover(request, username, days, hash):
     user = get_object_or_404(User, username=username)

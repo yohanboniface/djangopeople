@@ -167,9 +167,9 @@ class DjangoPerson(models.Model):
     def get_absolute_url(self):
         return '/%s/' % self.user.username
     
-    def save(self, force_insert=False, force_update=False): # TODO: Put in transaction
+    def save(self, force_insert=False, force_update=False, **kwargs): # TODO: Put in transaction
         # Update country and region counters
-        super(DjangoPerson, self).save(force_insert=False, force_update=False)
+        super(DjangoPerson, self).save(force_insert=False, force_update=False, **kwargs)
         self.country.num_people = self.country.djangoperson_set.count()
         self.country.save()
         if self.region:

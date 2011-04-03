@@ -1,10 +1,19 @@
 from django import forms
-from django.forms.forms import BoundField
+from django.conf import settings
+from django.core.mail import send_mail
 from django.db.models import ObjectDoesNotExist
-from djangopeople.models import DjangoPerson, Country, Region, User, RESERVED_USERNAMES
-from djangopeople.groupedselect import GroupedChoiceField
-from djangopeople.constants import SERVICES, IMPROVIDERS
+from django.forms.forms import BoundField
+from django.template.loader import render_to_string
+from django.utils.translation import ugettext_lazy as _
+
 from tagging.forms import TagField
+
+from djangopeople import utils
+from djangopeople.constants import SERVICES, IMPROVIDERS
+from djangopeople.groupedselect import GroupedChoiceField
+from djangopeople.models import (DjangoPerson, Country, Region, User,
+                                 RESERVED_USERNAMES)
+
 
 def region_choices():
     # For use with GroupedChoiceField
@@ -366,3 +375,29 @@ def make_validator(key, form):
             raise forms.ValidationError, 'You need to provide a URL'
         return form.cleaned_data.get(key)
     return check
+
+
+class LostPasswordForm(forms.Form):
+    username = forms.CharField()
+
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        try:
+            person = DjangoPerson.objects.get(user__username=username)
+        except DjangoPerson.DoesNotExist:
+            raise forms.ValidationError(_('That was not a valid username.'))
+        self.cleaned_data['person'] = person
+        return username
+
+    def save(self):
+        path = utils.lost_url_for_user(self.cleaned_data['username'])
+        person = self.cleaned_data['person']
+        body = render_to_string('recovery_email.txt', {
+            'path': path,
+            'person': person,
+        })
+        send_mail(
+            'Django People account recovery', body,
+            settings.RECOVERY_EMAIL_FROM, [person.user.email],
+            fail_silently=False
+        )

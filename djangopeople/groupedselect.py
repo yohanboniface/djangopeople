@@ -57,7 +57,7 @@ class GroupedChoiceField(forms.ChoiceField):
         value = super(forms.ChoiceField, self).clean(value)
         if value in (None, ''):
             value = u''
-        value = forms.util.smart_unicode(value)
+        value = smart_unicode(value)
         if value == u'':
             return value
         valid_values = []

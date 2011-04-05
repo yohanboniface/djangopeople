@@ -27,11 +27,11 @@ urlpatterns = patterns('',
         views.lost_password_recover, name='do_recover'),
     url(r'^signup/$', views.signup, name='signup'),
 
-    (r'^openid/$', 'django_openidconsumer.views.begin', {
+    url(r'^openid/$', 'django_openidconsumer.views.begin', {
         'sreg': 'email,nickname,fullname',
         'redirect_to': '/openid/complete/',
-    }),
-    (r'^openid/complete/$', 'django_openidconsumer.views.complete'),
+    }, name='openid_begin'),
+    url(r'^openid/complete/$', 'django_openidconsumer.views.complete', name='openid_complete'),
     (r'^openid/whatnext/$', views.openid_whatnext),
     (r'^openid/signout/$', 'django_openidconsumer.views.signout'),
     (r'^openid/associations/$', 'django_openidauth.views.associations'),

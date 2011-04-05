@@ -51,7 +51,7 @@ class SignupForm(forms.Form):
             kwargs.pop('openid')
         else:
             self.openid = False
-        
+
         super(SignupForm, self).__init__(*args, **kwargs)
         self.service_fields = []
         for shortname, name, icon in SERVICES:
@@ -66,7 +66,7 @@ class SignupForm(forms.Form):
                 'icon': icon,
                 'field': BoundField(self, field, 'service_' + shortname),
             })
-        
+
         self.improvider_fields = []
         for shortname, name, icon in IMPROVIDERS:
             field = forms.CharField(
@@ -80,7 +80,7 @@ class SignupForm(forms.Form):
                 'icon': icon,
                 'field': BoundField(self, field, 'im_' + shortname),
             })
-    
+
     # Fields for creating a User object
     username = forms.RegexField('^[a-zA-Z0-9]+$', min_length=3, max_length=30)
     first_name = forms.CharField(max_length=30)
@@ -88,23 +88,23 @@ class SignupForm(forms.Form):
     email = forms.EmailField()
     password1 = forms.CharField(widget=forms.PasswordInput, required=False)
     password2 = forms.CharField(widget=forms.PasswordInput, required=False)
-    
+
     # Fields for creating a DjangoPerson profile
     bio = forms.CharField(widget=forms.Textarea, required=False)
     blog = forms.URLField(required=False)
-    
+
     country = forms.ChoiceField(choices = [('', '')] + [
         (c.iso_code, c.name) for c in Country.objects.all()
     ])
     latitude = forms.FloatField(min_value=-90, max_value=90)
     longitude = forms.FloatField(min_value=-180, max_value=180)
     location_description = forms.CharField(max_length=50)
-    
+
     region = GroupedChoiceField(required=False, choices=region_choices())
-    
+
     privacy_search = forms.ChoiceField(
         choices = (
-            ('public', 
+            ('public',
              'Allow search engines to index my profile page (recommended)'),
             ('private', "Don't allow search engines to index my profile page"),
         ), widget = forms.RadioSelect, initial='public'
@@ -135,46 +135,46 @@ class SignupForm(forms.Form):
             ('full-time', 'Looking for full-time work'),
         ), required=False #, widget = forms.RadioSelect, initial=''
     )
-    
-    #skilltags = TagField(required=False)
-    
+
+    skilltags = TagField(required=False)
+
     # Upload a photo is a separate page, because if validation fails we 
     # don't want to tell them to upload it all over again
     #   photo = forms.ImageField(required=False)
-    
+
     # Fields used to create machinetags
-    
+
     # Validation
     def clean_password1(self):
         "Only required if NO openid set for this form"
         if not self.openid and not self.cleaned_data.get('password1', ''):
             raise forms.ValidationError('Password is required')
         return self.cleaned_data['password1']
-    
+
     def clean_password2(self):
         password1 = self.cleaned_data.get('password1', '')
         password2 = self.cleaned_data.get('password2', '')
         if password1.strip() and password1 != password2:
             raise forms.ValidationError('Passwords must match')
         return self.cleaned_data['password2']
-    
+
     def clean_username(self):
         already_taken = 'That username is unavailable'
         username = self.cleaned_data['username'].lower()
-        
+
         # No reserved usernames, or anything that looks like a 4 digit year 
         if username in RESERVED_USERNAMES or (len(username) == 4 and username.isdigit()):
             raise forms.ValidationError(already_taken)
-        
+
         try:
             user = User.objects.get(username = username)
         except User.DoesNotExist:
             pass
         else:
             raise forms.ValidationError(already_taken)
-        
+
         return username
-    
+
     def clean_email(self):
         email = self.cleaned_data['email']
         try:
@@ -184,7 +184,7 @@ class SignupForm(forms.Form):
         else:
             raise forms.ValidationError('That e-mail is already in use')
         return email
-    
+
     def clean_region(self):
         # If a region is selected, ensure it matches the selected country
         if self.cleaned_data['region']:
@@ -221,9 +221,9 @@ class LocationForm(forms.Form):
     latitude = forms.FloatField(min_value=-90, max_value=90)
     longitude = forms.FloatField(min_value=-180, max_value=180)
     location_description = forms.CharField(max_length=50)
-    
+
     region = GroupedChoiceField(required=False, choices=region_choices())
-    
+
     def clean_region(self):
         # If a region is selected, ensure it matches the selected country
         if self.cleaned_data['region']:
@@ -237,7 +237,7 @@ class LocationForm(forms.Form):
                     'The region you selected does not match the country'
                 )
         return self.cleaned_data['region']
-    
+
     clean_location_description = not_in_the_atlantic
 
 class FindingForm(forms.Form):
@@ -258,7 +258,7 @@ class FindingForm(forms.Form):
                 'icon': icon,
                 'field': BoundField(self, field, 'service_' + shortname),
             })
-        
+
         self.improvider_fields = []
         for shortname, name, icon in IMPROVIDERS:
             field = forms.CharField(
@@ -272,12 +272,12 @@ class FindingForm(forms.Form):
                 'icon': icon,
                 'field': BoundField(self, field, 'im_' + shortname),
             })
-    
+
     email = forms.EmailField()
     blog = forms.URLField(required=False)
     privacy_search = forms.ChoiceField(
         choices = (
-            ('public', 
+            ('public',
              'Allow search engines to index my profile page (recommended)'),
             ('private', "Don't allow search engines to index my profile page"),
         ), widget = forms.RadioSelect, initial='public'
@@ -308,7 +308,7 @@ class FindingForm(forms.Form):
             ('full-time', 'Looking for full-time work'),
         ), required=False #, widget = forms.RadioSelect, initial=''
     )
-    
+
     def clean_email(self):
         email = self.cleaned_data['email']
         if User.objects.filter(
@@ -344,7 +344,7 @@ class PortfolioForm(forms.Form):
             initial_data['title_%d' % num] = site.title
             initial_data['url_%d' % num] = site.url
             num += 1
-        
+
         # Add some more empty ones
         for i in range(num, num + 3):
             url_field = forms.URLField(
@@ -361,9 +361,9 @@ class PortfolioForm(forms.Form):
                 'title_id': 'id_title_%d' % i,
                 'url_id': 'id_url_%d' % i,
             })
-        
+
         self.initial = initial_data
-        
+
         # Add custom validator for each url field
         for key in [k for k in self.fields if k.startswith('url_')]:
             setattr(self, 'clean_%s' % key, make_validator(key, self))

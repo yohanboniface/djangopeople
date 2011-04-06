@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load url from future %}
 
 {% block title %}Update your portfolio |{% endblock %}
 
@@ -19,7 +20,7 @@
 
 {% block content %}
     <p class="help">Show off the sites and projects you've personally built (or contributed to) using Django.</p>
-    <form method="post" action="/{{ user.username }}/portfolio/">
+    <form method="post" action="{% url 'edit_portfolio' user.username %}">
     {% for bit in form.portfolio_fields %}
     <fieldset>
         <div class="fieldWrapper">

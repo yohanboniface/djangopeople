@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load url from future %}
 
 {% block title %}{{ tag }} |{% endblock %}
 
@@ -52,7 +53,7 @@ window.onload = function() {
 
 {% block header %}{% load thumbnail %}
         <h1>{{ tag }}</h1>
-        <p class="meta">{% if country %}<a href="{% url country_detail country.iso_code|lower %}" class="nobg"><img src="/static/img/flags/{{ country.iso_code|lower }}.gif" alt="{{ country }}" title="{{ country }}" class="flag"></a> {% endif %}{{ object_list|length }} Django {% ifequal object_list.count 1 %}Person{% else %}People{% endifequal %} mention this skill</p>
+        <p class="meta">{% if country %}<a href="{% url 'country_detail' country.iso_code|lower %}" class="nobg"><img src="/static/img/flags/{{ country.iso_code|lower }}.gif" alt="{{ country }}" title="{{ country }}" class="flag"></a> {% endif %}{{ object_list|length }} Django {% ifequal object_list.count 1 %}Person{% else %}People{% endifequal %} mention this skill</p>
 {% endblock %}
 
 {% block map %}

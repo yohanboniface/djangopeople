@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load url from future %}
 
 {% block title %}Sign up |{% endblock %}
 
@@ -22,11 +23,11 @@
 {% endblock %}
 
 {% block content %}
-    <form method="post" action="{% url signup %}">
+    <form method="post" action="{% url 'signup' %}">
     {% if not openid %}
-    <p>Got an <strong class="openid">OpenID</strong>? <a href="{% url openid_begin %}">Sign up with your OpenID now!</a></p>
+    <p>Got an <strong class="openid">OpenID</strong>? <a href="{% url 'openid_begin' %}">Sign up with your OpenID now!</a></p>
     {% else %}
-    <p>Your new account will be associated with with your OpenID: <strong class="openid">{{ openid }}</strong> (<a href="{% url openid_signout %}?next={% url signup %}">don't associate</a>)</p>
+    <p>Your new account will be associated with with your OpenID: <strong class="openid">{{ openid }}</strong> (<a href="{% url 'openid_signout' %}?next={% url 'signup' %}">don't associate</a>)</p>
     {% endif %}
     <h2>1. Tell us who you are</h2>    
 

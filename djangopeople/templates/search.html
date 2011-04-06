@@ -55,7 +55,7 @@ window.onload = function() {
 {% endblock %}
 
 {% block header %}{% load thumbnail %}
-	<form action="/search/" method="GET" class="search">
+	<form action="{% url search %}" method="GET" class="search">
         <h1><label for="q">Search{% if q %}: {{ q }}{% endif %}</label></h1>
         {% if results %}<p class="meta">{{ results|length }} result{{ results|length|pluralize }}</p>{% endif %}
         {% if has_badwords %}<p class="help"><strong>Terms must be three or more characters</strong></p>{% endif %}

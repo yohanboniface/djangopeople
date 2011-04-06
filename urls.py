@@ -42,7 +42,7 @@ urlpatterns = patterns('',
 #    (r'^openid/$', views.openid),
 
     url(r'^skills/(?P<tag>.*)/$', views.skill, name='skill_detail'),
-    url(r'^skills/$', views.skill_cloud, name='skill_list'),
+    url(r'^skills/$', views.skill_cloud, name='skill_cloud'),
 
     (r'^static/(?P<path>.*)$', 'django.views.static.serve', {
         'document_root': os.path.join(settings.OUR_ROOT, 'static')

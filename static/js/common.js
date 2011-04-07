@@ -56,7 +56,7 @@ function showNearbyPeople(gmap) {
 
 function getMarkerOpts() {
     var greenIcon = new google.maps.Icon(google.maps.DEFAULT_ICON);
-    greenIcon.image = "http://djangopeople.net/static/img/green-bubble.png";
+    greenIcon.image = "/static/img/green-bubble.png";
     greenIcon.iconSize = new google.maps.Size(32,32);
     greenIcon.shadowSize = new google.maps.Size(56,32);
     greenIcon.iconAnchor = new google.maps.Point(16,32);

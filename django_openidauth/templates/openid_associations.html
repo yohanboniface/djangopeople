@@ -38,7 +38,7 @@ ul.messages {
 {% endif %}
 
 {% if add_buttons %}
-<p>You are currently logged in with the following OpenID{{ add_buttons|pluralize }}. Click "associate" to allow {% ifequal add_buttons.__len__ 1 %}it{% else %}an OpenID{% endifequal %} to be used to sign in to your account.</p>
+<p>You are currently logged in with the following OpenID{{ add_buttons|pluralize }}. Click "associate" to allow {% ifequal add_buttons|length 1 %}it{% else %}an OpenID{% endifequal %} to be used to sign in to your account.</p>
 <ul>
 {% for button in add_buttons %}
     <li>{{ button.openid|escape }} - <input type="submit" name="{{ button.hash }}" value="Associate"></li>

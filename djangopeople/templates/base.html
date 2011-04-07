@@ -1,3 +1,4 @@
+{% load url from future %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
    "http://www.w3.org/TR/html4/strict.dtd">
 
@@ -14,28 +15,28 @@
 
     <div class="nav">
         <ul>
-            <li{% block nav_li_class_home %}{% endblock %}><a href="/">home</a></li>
-            <li{% block nav_li_class_about %}{% endblock %}><a href="/about/">about</a></li>
-            <li{% block nav_li_class_search %}{% endblock %}><a href="/search/">search</a></li>
+            <li{% block nav_li_class_home %}{% endblock %}><a href="{% url 'index' %}">home</a></li>
+            <li{% block nav_li_class_about %}{% endblock %}><a href="{% url 'about' %}">about</a></li>
+            <li{% block nav_li_class_search %}{% endblock %}><a href="{% url 'search' %}">search</a></li>
             {% if not user.is_authenticated %}
             <!-- not logged in -->
-            <li{% block nav_li_class_login %}{% endblock %}><a href="/login/" class="login">log in</a></li>
-            <li{% block nav_li_class_signup %}{% endblock %}><a href="/signup/">sign up as a django person</a></li>
+            <li{% block nav_li_class_login %}{% endblock %}><a href="{% url 'login' %}" class="login">log in</a></li>
+            <li{% block nav_li_class_signup %}{% endblock %}><a href="{% url 'signup' %}">sign up as a django person</a></li>
             {% else %}
             <!-- logged in -->
             <li>You are logged in as <strong>{{ user }}</strong></li>
-            {% if not user.get_profile.photo %}<li><a href="/{{ user.username }}/upload/">upload photo</a></li>
+            {% if not user.get_profile.photo %}<li><a href="{% url 'upload_profile_photo' user.username %}">upload photo</a></li>
             {% endif %}
-            <li{% block nav_li_class_profile %}{% endblock %}><a href="/{{ user.username }}/">your profile</a></li>
-            <li{% block nav_li_class_account %}{% endblock %}><a href="/{{ user.username }}/account/">your account</a></li>
-            <li><a href="/logout/">log out</a></li>
+            <li{% block nav_li_class_profile %}{% endblock %}><a href="{% url 'user_profile' user.username %}">your profile</a></li>
+            <li{% block nav_li_class_account %}{% endblock %}><a href="{% url 'edit_account' user.username %}">your account</a></li>
+            <li><a href="{% url 'logout' %}">log out</a></li>
             {% endif %}
 
         </ul>
 		{% if not user.is_authenticated %}
 		<div id="hiddenLogin" style="display: none">
-		    <form action="/login/" method="POST"><p><label for="id_usernameH">Username</label><input type="text" name="username" id="id_usernameH"></p><p><label for="id_passwordH">Password</label><input type="password" name="password" id="id_passwordH"></p><p><input type="submit" value="Log in" class="submit"></p>
-		        <p class="openid">Or <a href="/openid/">log in with <strong>OpenID</strong></a></p>
+		    <form action="{% url 'login' %}" method="POST"><p><label for="id_usernameH">Username</label><input type="text" name="username" id="id_usernameH"></p><p><label for="id_passwordH">Password</label><input type="password" name="password" id="id_passwordH"></p><p><input type="submit" value="Log in" class="submit"></p>
+		        <p class="openid">Or <a href="{% url 'openid_begin' %}">log in with <strong>OpenID</strong></a></p>
 		    </form>
 		</div>
 		{% endif %}

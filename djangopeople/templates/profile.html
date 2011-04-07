@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load url from future %}
 
 {% block title%}{{ person }} |{% endblock %}
 
@@ -51,12 +52,12 @@ div.bio a.edit {
 			<span class="given-name">{{ person.user.first_name }}</span> 
 			<span class="family-name">{{ person.user.last_name }}</span>
 			{% if is_owner %}
-				<a href="/{{ person.user.username }}/upload/" class="meta" id="uploadNewPhoto">(upload new photo)</a>{% endif %}
+				<a href="{% url 'upload_profile_photo' person.user.username %}" class="meta" id="uploadNewPhoto">(upload new photo)</a>{% endif %}
 		</h1>
         <p class="meta adr">
-			<a href="/{{ person.country.iso_code|lower }}/" class="nobg">
+			<a href="{% url 'country_detail' person.country.iso_code|lower %}" class="nobg">
 				<img src="/static/img/flags/{{ person.country.iso_code|lower }}.gif" alt="{{ person.country }}" title="{{ person.country }}" class="flag country-name">
-			</a> <span class="region">{{ person.location_description_html }}</span>{% if is_owner %} <a href="/{{ person.user.username }}/location/" class="changeloc">(change)</a>{% endif %}</p>
+			</a> <span class="region">{{ person.location_description_html }}</span>{% if is_owner %} <a href="{% url 'edit_location' person.user.username %}" class="changeloc">(change)</a>{% endif %}</p>
 {% endblock %}
 
 {% block map %}
@@ -69,17 +70,17 @@ div.bio a.edit {
         <div class="primary">
            {% if is_owner or person.bio or person.skilltags or mtags.profile.looking_for_work %}
             <div class="highlight">                
-                {% if person.bio %}<div class="summary">{% filter linebreaks %}{{ person.bio|urlize }}{% if is_owner %} <a class="edit" href="/{{ user.username }}/bio/">(edit bio)</a>{% endif %}{% endfilter %}</div>{% else %}{% if is_owner %}<p><a href="/{{ user.username }}/bio/">Create your bio</a></p>{% endif %}{% endif %}
+                {% if person.bio %}<div class="summary">{% filter linebreaks %}{{ person.bio|urlize }}{% if is_owner %} <a class="edit" href="{% url 'edit_bio' user.username %}">(edit bio)</a>{% endif %}{% endfilter %}</div>{% else %}{% if is_owner %}<p><a href="{% url 'edit_bio' user.username %}">Create your bio</a></p>{% endif %}{% endif %}
                 
                 <ul class="tags">{% for tag in person.skilltags %}
-                    <li><a rel="tag" class="skill" href="/skills/{{ tag|urlencode }}/">{{ tag }}</a></li>
+                    <li><a rel="tag" class="skill" href="{% url 'skill_detail' tag %}">{{ tag }}</a></li>
                 {% endfor %}
                 {% if is_owner %}
-                    <li class="edit"><a href="/{{ user.username }}/skills/">(edit skills)</a></li>
+                    <li class="edit"><a href="{% url 'edit_skills' user.username %}">(edit skills)</a></li>
                 {% endif %}
                 </ul>
                 {% if is_owner %}
-                <form action="/{{ person.user.username }}/skills/" method="POST" id="editSkills">
+                <form action="{% url 'edit_skills' person.user.username %}" method="POST" id="editSkills">
                 <p>{{ skills_form.skills }} <input type="submit" value="Save"></p>
                 </form>
                 {% endif %}
@@ -88,7 +89,7 @@ div.bio a.edit {
             {% endif %}
         {% if show_finding %}
             <div class="finding">
-            <h2>Finding {{ person.user.first_name }}{% if is_owner %} <a class="edit" href="/{{ user.username }}/finding/">(edit)</a>{% endif %}</h2>
+            <h2>Finding {{ person.user.first_name }}{% if is_owner %} <a class="edit" href="{% url 'edit_finding' user.username %}">(edit)</a>{% endif %}</h2>
             {% if privacy.show_email %}
                 <p><strong>email:</strong> <a href="mailto:{{ person.user.email }}" class="mail email">{{ person.user.email }}</a></p>
             {% endif %}
@@ -110,14 +111,14 @@ div.bio a.edit {
             </div>
         {% endif %}
         {% if person.portfoliosite_set.count %}
-            <h2>{{ person.user.first_name }}'s Django portfolio{% if is_owner %} <a class="edit" href="/{{ user.username }}/portfolio/">(edit)</a>{% endif %}</h2>
+            <h2>{{ person.user.first_name }}'s Django portfolio{% if is_owner %} <a class="edit" href="{% url 'edit_portfolio' user.username %}">(edit)</a>{% endif %}</h2>
             <p class="help">Django projects {{ person.user.first_name }} has contributed to</p>
             <ul class="siteList">
                 {% for site in person.portfoliosite_set.all %}
                 <li><a href="{{ site.url }}" class="url" rel="nofollow"><cite>{{ site.title }}</cite></a></li>
                 {% endfor %}
             </ul>
-        {% else %}{% if is_owner %}<p><a href="/{{ user.username }}/portfolio/">Add some sites</a> to your portfolio</p>{% endif %}
+        {% else %}{% if is_owner %}<p><a href="{% url 'edit_portfolio' user.username %}">Add some sites</a> to your portfolio</p>{% endif %}
         {% endif %}
         
         </div>
@@ -131,7 +132,7 @@ div.bio a.edit {
                 <li>
                     <img src="{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}/static/img/person_small_blank.png{% endif %}" alt="{{ person }}" class="main">
                     <h3><a href="{{ person.get_absolute_url }}">{{ person }}</a></h3>
-                    <p class="meta"><a href="/{{ person.country.iso_code|lower }}/" class="nobg"><img src="/static/img/flags/{{ person.country.iso_code|lower }}.gif" alt="{{ person.country }}" title="{{ person.country }}"></a>  {{ person.location_description }}<br>{{ person.distance_in_miles|floatformat:0 }} mile{{ person.distance_in_miles|floatformat:0|pluralize }} away</p>
+                    <p class="meta"><a href="{% url 'country_detail' person.country.iso_code|lower %}" class="nobg"><img src="/static/img/flags/{{ person.country.iso_code|lower }}.gif" alt="{{ person.country }}" title="{{ person.country }}"></a>  {{ person.location_description }}<br>{{ person.distance_in_miles|floatformat:0 }} mile{{ person.distance_in_miles|floatformat:0|pluralize }} away</p>
                 </li>
                 {% endfor %}
             </ul>

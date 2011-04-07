@@ -100,4 +100,7 @@ INSTALLED_APPS = (
     'sorl.thumbnail',
     'tagging',
     'south',
+    'django_nose',
 )
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'

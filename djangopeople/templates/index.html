@@ -4,13 +4,6 @@
 {% block nav_li_class_home %} class="current"{% endblock %}>
 
 {% block js %}{% load thumbnail %}
-<script src="http://www.google.com/jsapi?key={{ api_key }}" type="text/javascript">
-</script>
-<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key={{ api_key }}" type="text/javascript"></script>
-
-<script type="text/javascript">
-google.load('maps', '2');
-</script>
 <!--<script src="/static/js/clusterlizard.js" type="text/javascript"></script>-->
 <script type="text/javascript">
 
@@ -22,12 +15,13 @@ var people = [
 ];
 
 window.onload = function() {
-    window.gmap = new google.maps.Map2(document.getElementById('gmap'));
-    gmap.addControl(new google.maps.LargeMapControl());
-    gmap.addControl(new google.maps.MapTypeControl());
-    
-//    gmap.setCenter(new google.maps.LatLng(43.834526782236814, -37.265625), 2);
-    gmap.setCenter(new google.maps.LatLng(19.97335, -15.8203), 2);
+    var center = new google.maps.LatLng(19.97335, -15.8203);
+    var myOptions = {
+       zoom : 2,
+       center: center,
+       mapTypeId: google.maps.MapTypeId.ROADMAP
+    }
+    var gmap = new google.maps.Map(document.getElementById('gmap'), myOptions);
     // Plot the people as markers
     $.each(people, function() {
         var lat = this[0];
@@ -38,15 +32,22 @@ window.onload = function() {
         var photo = this[5];
         var iso_code = this[6];
         var point = new google.maps.LatLng(lat, lon);
-        var marker = new google.maps.Marker(point, getMarkerOpts());
-        gmap.addOverlay(marker);
-        // Hook up the marker click event
-        google.maps.Event.addListener(marker, 'click', function() {
-            marker.openInfoWindow(makeWindow(
-                name, username, location_description, photo, iso_code, 
-                lat, lon
-            ));
-        });                 
+        var marker = new google.maps.Marker({
+            map: gmap,
+            position: point,
+           });
+
+        var infoWindow = new google.maps.InfoWindow({
+           content: makeWindow(
+               name, username, location_description, photo, iso_code, 
+               lat, lon
+           )
+        });
+
+       // Hook up the marker click event
+       google.maps.event.addListener(marker, 'click', function() {
+            infoWindow.open(gmap, marker);
+       });
     });                  
     //GEvent.addListener(gmap, "zoomend", function() { 
     //    loadClusters(gmap.getZoom());        

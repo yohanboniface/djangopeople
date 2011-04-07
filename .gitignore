@@ -2,3 +2,4 @@ people.db
 _thumbs
 static/profiles/
 settings.py
+*.pyc

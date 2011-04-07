@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load url from future %}
 
 {% block title %}Log in |{% endblock %}
 
@@ -43,7 +44,7 @@ input.openid {
 {% endblock %}
 
 {% block content %}
-	<form method="post" action="/login/">
+	<form method="post" action="{% url 'login' %}">
 		{% if form.errors %}
 			<p class="invalid">Your login attempt failed.</p>
 		{% endif %}
@@ -52,7 +53,7 @@ input.openid {
 				{{ field.label_tag }}
 				{{ field }}
 				{% if field.name == 'password' %}
-				<p><a href="/recover/">Lost your password?</a></p>
+				<p><a href="{% url 'recover' %}">Lost your password?</a></p>
 				{% endif %}
 			</div>{% endfor %}
 			{% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
@@ -64,13 +65,13 @@ input.openid {
 
 	<h2>Or sign in with your OpenID</h2>
 
-    <form method="post" action="/openid/">
+    <form method="post" action="{% url 'openid_begin' %}">
     <fieldset>
         <div class="fieldWrapper">
             <label for="id_openid">OpenID</label>
             <input id="id_openid" class="openid" type="text" name="openid_url">
         </div>
-        <p><a href="/recover/">OpenID not working?</a></p>
+        <p><a href="{% url 'recover' %}">OpenID not working?</a></p>
     </fieldset>
     <div class="buttonContainer">
         <input type="submit" value="Log in with OpenID">

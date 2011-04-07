@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load url from future %}
 
 {% block title %}Edit your bio |{% endblock %}
 
@@ -10,7 +11,7 @@
 {% endblock %}
 
 {% block content %}
-    <form method="post" action="/{{ user.username }}/bio/">
+    <form method="post" action="{% url 'edit_bio' user.username %}">
     <p class="help">No HTML allowed, but paragraph tags will be added automatically and URLs will be turned in to links.</p>
     <fieldset>
         <div class="fieldWrapper">

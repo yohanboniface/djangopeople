@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from machinetags.models import MachineTaggedItem, add_machinetag
 from django.contrib.contenttypes import generic
 from geopy import distance
@@ -81,7 +82,7 @@ class Region(models.Model):
     num_people = models.IntegerField(default=0)
     
     def get_absolute_url(self):
-        return '/%s/%s/' % (self.country.iso_code.lower(), self.code.lower())
+        return reverse('country_region', args=[self.country.iso_code.lower(), self.code.lower()])
     
     def __unicode__(self):
         return self.name
@@ -165,7 +166,7 @@ class DjangoPerson(models.Model):
         return unicode(self.user.get_full_name())
     
     def get_absolute_url(self):
-        return '/%s/' % self.user.username
+        return reverse('user_profile', args=[self.user.username])
     
     def save(self, force_insert=False, force_update=False, **kwargs): # TODO: Put in transaction
         # Update country and region counters

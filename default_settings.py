@@ -98,4 +98,5 @@ INSTALLED_APPS = (
     'machinetags',
     'sorl.thumbnail',
     'tagging',
+    'south',
 )

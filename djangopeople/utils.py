@@ -1,4 +1,6 @@
-import md5, datetime
+import datetime
+import md5
+
 from django.conf import settings
 from django.core.urlresolvers import reverse
 
@@ -12,7 +14,7 @@ int_to_hex = lambda i: hex(i).replace('0x', '')
 def lost_url_for_user(username):
     days = int_to_hex((datetime.date.today() - ORIGIN_DATE).days)
     hash = md5.new(settings.SECRET_KEY + days + username).hexdigest()
-    return reverse('recover', args=[username, days, hash])
+    return reverse('do_recover', args=[username, days, hash])
 
 
 def hash_is_valid(username, days, hash):

@@ -1,4 +1,4 @@
-from django.db import models
+from django.contrib.gis.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -24,6 +24,9 @@ RESERVED_USERNAMES = set((
     'group groups bulletin bulletins messages message newsfeed events company '
     'companies active'
 ).split())
+
+# Be explicit about our srid.
+WGS84 = 4326
 
 class CountryManager(models.Manager):
     def top_countries(self):
@@ -51,6 +54,7 @@ class Country(models.Model):
     bbox_north = models.FloatField()
     bbox_east = models.FloatField()
     bbox_south = models.FloatField()
+    polygon = models.MultiPolygonField(srid=WGS84, blank=True, null=True)
     
     # De-normalised
     num_people = models.IntegerField(default=0)
@@ -77,6 +81,7 @@ class Region(models.Model):
     bbox_north = models.FloatField()
     bbox_east = models.FloatField()
     bbox_south = models.FloatField()
+    polygon = models.MultiPolygonField(srid=WGS84, blank=True, null=True)
     
     # De-normalised
     num_people = models.IntegerField(default=0)
@@ -100,6 +105,7 @@ class DjangoPerson(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
     location_description = models.CharField(max_length=50)
+    location = models.PointField(srid=WGS84, blank=True, null=True)
     
     # Profile photo
     photo = models.ImageField(blank=True, upload_to='profiles')

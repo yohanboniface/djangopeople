@@ -12,6 +12,7 @@ from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth import views as auth_views
 from django.core.urlresolvers import reverse
+from django.db import transaction
 from django.db.models import Q
 from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render_to_response, redirect
@@ -184,84 +185,91 @@ def openid_whatnext(request):
         return redirect(reverse('openid_associations'))
 
 
-def signup(request):
-    if not request.user.is_anonymous():
-        return redirect(reverse('index'))
-    if request.method == 'POST':
-        if request.openid:
-            form = SignupForm(
-                request.POST, request.FILES, openid=request.openid
-            )
-        else:
-            form = SignupForm(request.POST, request.FILES)
-        if form.is_valid():
-            # First create the user
-            creation_args = {
-                'username': form.cleaned_data['username'],
-                'email': form.cleaned_data['email'],
-            }
-            if form.cleaned_data.get('password1'):
-                creation_args['password'] = form.cleaned_data['password1']
+class SignupView(generic.FormView):
+    form_class = SignupForm
+    template_name = 'signup.html'
 
-            user = User.objects.create_user(**creation_args)
-            user.first_name = form.cleaned_data['first_name']
-            user.last_name = form.cleaned_data['last_name']
-            user.save()
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_anonymous():
+            return redirect(reverse('index'))
+        return super(SignupView, self).dispatch(request, *args, **kwargs)
 
-            if request.openid:
-                associate_openid(user, str(request.openid))
+    def form_valid(self, form):
+        creation_args = {
+            'username': form.cleaned_data['username'],
+            'email': form.cleaned_data['email'],
+        }
+        if form.cleaned_data.get('password1'):
+            creation_args['password'] = form.cleaned_data['password1']
+        user = User.objects.create(**creation_args)
+        user.first_name = form.cleaned_data['first_name']
+        user.last_name = form.cleaned_data['last_name']
+        user.save()
 
-            region = None
-            if form.cleaned_data['region']:
-                region = Region.objects.get(
-                    country__iso_code = form.cleaned_data['country'],
-                    code = form.cleaned_data['region']
-                )
+        if self.request.openid:
+            associate_openid(user, str(self.request.openid))
 
-            # Now create the DjangoPerson
-            person = DjangoPerson.objects.create(
-                user = user,
-                bio = form.cleaned_data['bio'],
-                country = Country.objects.get(
-                    iso_code = form.cleaned_data['country']
-                ),
-                region = region,
-                latitude = form.cleaned_data['latitude'],
-                longitude = form.cleaned_data['longitude'],
-                location_description = form.cleaned_data['location_description']
+        region = None
+        if form.cleaned_data['region']:
+            region = Region.objects.get(
+                country__iso_code=form.cleaned_data['country'],
+                code=form.cleaned_data['region'],
             )
 
-            # Set up the various machine tags
-            for fieldname, (namespace, predicate) in \
-                    MACHINETAGS_FROM_FIELDS.items():
-                if form.cleaned_data.has_key(fieldname) and \
-                    form.cleaned_data[fieldname].strip():
-                    value = form.cleaned_data[fieldname].strip()
-                    person.add_machinetag(namespace, predicate, value)
+        # Now create the DjangoPerson
+        person = DjangoPerson.objects.create(
+            user=user,
+            bio=form.cleaned_data['bio'],
+            country=Country.objects.get(
+                iso_code=form.cleaned_data['country'],
+            ),
+            region=region,
+            latitude=form.cleaned_data['latitude'],
+            longitude=form.cleaned_data['longitude'],
+            location_description=form.cleaned_data['location_description'],
+        )
 
-            # Stash their blog and looking_for_work
-            if form.cleaned_data['blog']:
-                person.add_machinetag(
-                    'profile', 'blog', form.cleaned_data['blog']
-                )
-            if form.cleaned_data['looking_for_work']:
-                person.add_machinetag(
-                    'profile', 'looking_for_work',
-                    form.cleaned_data['looking_for_work']
-                )
+        # Set up the various machine tags
+        for fieldname, (namespace, predicate) in \
+                MACHINETAGS_FROM_FIELDS.items():
+            if form.cleaned_data.has_key(fieldname) and \
+                form.cleaned_data[fieldname].strip():
+                value = form.cleaned_data[fieldname].strip()
+                person.add_machinetag(namespace, predicate, value)
 
-            # Finally, set their skill tags
-            person.skilltags = form.cleaned_data['skilltags']
+        # Stash their blog and looking_for_work
+        if form.cleaned_data['blog']:
+            person.add_machinetag(
+                'profile', 'blog', form.cleaned_data['blog']
+            )
+        if form.cleaned_data['looking_for_work']:
+            person.add_machinetag(
+                'profile', 'looking_for_work',
+                form.cleaned_data['looking_for_work']
+            )
 
-            # Log them in and redirect to their profile page
-            # HACK! http://groups.google.com/group/django-users/
-            #    browse_thread/thread/39488db1864c595f
-            user.backend='django.contrib.auth.backends.ModelBackend'
-            auth.login(request, user)
-            return redirect(person.get_absolute_url())
-    else:
-        if request.openid and request.openid.sreg:
-            sreg = request.openid.sreg
+        # Finally, set their skill tags
+        person.skilltags = form.cleaned_data['skilltags']
+
+        # Log them in and redirect to their profile page
+        user.backend='django.contrib.auth.backends.ModelBackend'
+        auth.login(self.request, user)
+        self.person = person
+        return super(SignupView, self).form_valid(form)
+
+    def get_success_url(self):
+        return self.person.get_absolute_url()
+
+    def get_form_kwargs(self):
+        kwargs = super(SignupView, self).get_form_kwargs()
+        if self.request.openid:
+            kwargs['openid'] = self.request.openid
+        return kwargs
+
+    def get_initial(self):
+        initial = super(SignupView, self).get_initial()
+        if self.request.openid and self.request.openid.sreg:
+            sreg = self.request.openid.sreg
             first_name = ''
             last_name = ''
             username = ''
@@ -273,22 +281,25 @@ def signup(request):
             # Find a not-taken username
             if sreg.get('nickname'):
                 username = derive_username(sreg['nickname'])
-            form = SignupForm(initial = {
+
+            initial.update({
                 'first_name': first_name,
                 'last_name': last_name,
                 'email': sreg.get('email', ''),
                 'username': username,
-            }, openid = request.openid)
-        elif request.openid:
-            form = SignupForm(openid = request.openid)
-        else:
-            form = SignupForm()
-    
-    return render(request, 'signup.html', {
-        'form': form,
-        'api_key': settings.GOOGLE_MAPS_API_KEY,
-        'openid': request.openid,
-    })
+            })
+        return initial
+
+    def get_context_data(self, **kwargs):
+        ctx = super(SignupView, self).get_context_data(**kwargs)
+        ctx.update({
+            'openid': self.request.openid,
+            'api_key': settings.GOOGLE_MAPS_API_KEY,
+        })
+        return ctx
+signup = SignupView.as_view()
+signup = transaction.commit_on_success(signup)
+
 
 def derive_username(nickname):
     nickname = NOTALPHA_RE.sub('', nickname)
@@ -304,6 +315,7 @@ def derive_username(nickname):
         nickname = base_nickname + str(to_add)
         to_add += 1
     return nickname
+
 
 @must_be_owner
 def upload_profile_photo(request, username):

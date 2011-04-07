@@ -5,6 +5,13 @@ much a work in progress, the plan is to:
 * Upgrade to django 1.3 by writing tests
 * Migrate the geopy / lat-lng stuff to geodjango
 
+The geodjango conversion is happening on the ``geodjango`` branch. This branch
+requires PostgreSQL and PostGIS, and all the GeoDjango dependencies installed.
+
+See the `GeoDjango docs`_ for more information.
+
+.. _GeoDjango docs: http://docs.djangoproject.com/en/dev/ref/contrib/gis/
+
 Original README from Simon Willison:
 
 This is an unmodified (except removal of secrets and API keys) dump of the

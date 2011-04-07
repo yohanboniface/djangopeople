@@ -67,10 +67,11 @@ class IndexView(generic.TemplateView):
 
     def get_context_data(self, **kwargs):
         people = DjangoPerson.objects.all().select_related()
-        people = people.order_by('-id')[:4]
+        people = people.order_by('-id')[:100]
         ctx = super(IndexView, self).get_context_data(**kwargs)
         ctx.update({
-            'recent_people_limited': people,
+            'recent_people': people,
+            'recent_people_limited': people[:4],
             'total_people': DjangoPerson.objects.count(),
             'api_key': settings.GOOGLE_MAPS_API_KEY,
             'countries': Country.objects.top_countries(),

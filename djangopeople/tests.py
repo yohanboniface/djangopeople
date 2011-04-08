@@ -12,6 +12,18 @@ from djangopeople.models import DjangoPerson, Country
 from djangopeople.views import signup
 
 
+def prepare_request(request, openid=True):
+    """
+    Given a raw request coming from a RequestFactory, process it
+    using the middleware and (if openid is True) attach an openid to it
+    """
+    if openid:
+        request.openid = OpenID('http://foo.example.com/', 1302206357)
+    for m in (CommonMiddleware, SessionMiddleware):
+        m().process_request(request)
+    return request
+
+
 class DjangoPeopleTest(TestCase):
 
     def test_simple_pages(self):
@@ -121,10 +133,7 @@ class DjangoPeopleTest(TestCase):
 
         # Registration with an OpenID shouldn't ask for a password
         factory = RequestFactory()
-        request = factory.get(url)
-        request.openid = OpenID('http://foo.example.com/', 1302206357)
-        for m in (CommonMiddleware, SessionMiddleware):
-            m().process_request(request)
+        request = prepare_request(factory.get(url))
         response = signup(request)
         response.render()
         self.assertTrue('foo.example.com' in response.content)
@@ -133,10 +142,7 @@ class DjangoPeopleTest(TestCase):
         del data['password2']
         data['username'] = 'meh'
         data['email'] = 'other@example.com'
-        request = factory.post(url, data)
-        for m in (CommonMiddleware, SessionMiddleware):
-            m().process_request(request)
-        request.openid = OpenID('http://foo.example.com/', 1302206357)
+        request = prepare_request(factory.post(url, data))
         response = signup(request)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'],

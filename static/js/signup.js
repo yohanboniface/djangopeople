@@ -4,9 +4,7 @@ jQuery.fn.yellowFade = function() {
     }).animate({
         'backgroundColor': 'white'
     }, 1500);
-}
-
-google.load('maps', '2');
+};
 
 var INITIAL_LAT = 43.834526782236814;
 var INITIAL_LON = -37.265625;
@@ -20,7 +18,7 @@ function reverseGeocode() {
             Math.abs(lon - INITIAL_LON) < 0.01)) {
         return;
     }
-    var url = 'http://ws.geonames.org/findNearbyPlaceNameJSON?'
+    var url = 'http://ws.geonames.org/findNearbyPlaceNameJSON?';
     url += 'lat=' + lat + '&lng=' + lon + '&callback=?';
     jQuery.getJSON(url, function(json) {
         if (typeof json.geonames != 'undefined' && json.geonames.length > 0) {
@@ -80,13 +78,30 @@ jQuery(function($) {
     // Latitude and longitude should be invisible too
     $('input#id_latitude').parent().hide();
     $('input#id_longitude').parent().hide();
-    
-    var gmap = new google.maps.Map2(document.getElementById('gmap'));
-    gmap.addControl(new google.maps.LargeMapControl());
-    gmap.addControl(new google.maps.MapTypeControl());    
+
+    var centerPoint;
+    var zoom;
+    /* If latitude and longitude are populated, center there */
+    if ($('#id_latitude').val() && $('#id_longitude').val()) {
+        centerPoint = new google.maps.LatLng(
+            $('#id_latitude').val(),
+            $('#id_longitude').val()
+        );
+        zoom = 10;
+    } else {
+        centerPoint = new google.maps.LatLng(INITIAL_LAT, INITIAL_LON);
+        zoom = 3;
+    }
+
+    var gmap = new google.maps.Map(document.getElementById('gmap'), {
+        zoom: zoom,
+        center: centerPoint,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+
     var lookupTimer = false;
     
-    google.maps.Event.addListener(gmap, "move", function() {
+    google.maps.event.addListener(gmap, "center_changed", function() {
         window.center = gmap.getCenter();
         if (lookupTimer) {
             clearTimeout(lookupTimer);
@@ -95,7 +110,7 @@ jQuery(function($) {
         $('#id_latitude').val(center.lat());
         $('#id_longitude').val(center.lng());
     });
-    google.maps.Event.addDomListener(document.getElementById('crosshair'),
+    google.maps.event.addDomListener(document.getElementById('crosshair'),
         'dblclick', function() {
             gmap.zoomIn();
         }
@@ -106,15 +121,5 @@ jQuery(function($) {
         $('html,body').animate({scrollTop: $('#gmap').offset().top}, 500);
     });
     
-    var point;
-    /* If latitude and longitude are populated, center there */
-    if ($('#id_latitude').val() && $('#id_longitude').val()) {
-        point = new google.maps.LatLng(
-            $('#id_latitude').val(),
-            $('#id_longitude').val()
-        );
-        gmap.setCenter(point, 10);
-    } else {
-        gmap.setCenter(new google.maps.LatLng(INITIAL_LAT, INITIAL_LON), 3);
-    }
+
 });

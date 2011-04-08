@@ -6,10 +6,11 @@ from django.middleware.common import CommonMiddleware
 from django.test import TestCase
 from django.test.client import RequestFactory
 
+from django_openidauth.models import associate_openid
 from django_openidconsumer.util import OpenID
 
 from djangopeople.models import DjangoPerson, Country
-from djangopeople.views import signup
+from djangopeople.views import signup, openid_whatnext
 
 
 def prepare_request(request, openid=True):
@@ -149,3 +150,42 @@ class DjangoPeopleTest(TestCase):
                          reverse('user_profile', args=['meh']))
         self.assertEqual(User.objects.count(), 2)
         self.assertEqual(DjangoPerson.objects.count(), 2)
+
+    def test_whatnext(self):
+        """Redirection after a successful openid login"""
+        url = reverse('openid_whatnext')
+
+        # No openid -> homepage
+        response = self.client.get(url)
+        self.assertRedirects(response, reverse('index'))
+
+        # Anonymous user, openid -> signup
+        factory = RequestFactory()
+        request = prepare_request(factory.get(url))
+        response = openid_whatnext(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], reverse('signup'))
+
+        user = User.objects.create_user('testuser', 'foo@example.com', 'pass')
+        profile = DjangoPerson.objects.create(
+            user=user,
+            country=Country.objects.get(pk=1),
+            latitude=44,
+            longitude=2,
+            location_description='Somewhere',
+        )
+        associate_openid(user, 'http://foo.example.com/')
+
+        # Anonymous user, openid + assoc. with an existing user -> profile
+        response = openid_whatnext(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'],
+                         reverse('user_profile', args=['testuser']))
+
+        # Authenticated user -> openid associations
+        self.client.login(username='testuser', password='pass')
+        request = prepare_request(factory.get(url))
+        request.session = self.client.session
+        response = openid_whatnext(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], reverse('openid_associations'))

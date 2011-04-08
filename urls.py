@@ -34,7 +34,7 @@ urlpatterns = patterns('',
         'redirect_to': '/openid/complete/',
     }, name='openid_begin'),
     url(r'^openid/complete/$', 'django_openidconsumer.views.complete', name='openid_complete'),
-    url(r'^openid/whatnext/$', views.openid_whatnext, name='opeind_whatnext'),
+    url(r'^openid/whatnext/$', views.openid_whatnext, name='openid_whatnext'),
     url(r'^openid/signout/$', 'django_openidconsumer.views.signout', name='openid_signout'),
     url(r'^openid/associations/$', 'django_openidauth.views.associations', name='openid_associations'),
 

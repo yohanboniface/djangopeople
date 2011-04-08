@@ -162,27 +162,33 @@ class LostPasswordRecoverView(generic.TemplateView):
 lost_password_recover = LostPasswordRecoverView.as_view()
 
 
-def openid_whatnext(request):
+class OpenIDWhatNext(generic.RedirectView):
     """
     If user is already logged in, send them to /openid/associations/
     Otherwise, send them to the signup page
     """
-    if not request.openid:
-        return redirect(reverse('index'))
-    if request.user.is_anonymous():
-        # Have they logged in with an OpenID that matches an account?
-        try:
-            user_openid = UserOpenID.objects.get(openid = str(request.openid))
-        except UserOpenID.DoesNotExist:
-            return redirect(reverse('signup'))
-        # Log the user in
-        user = user_openid.user
-        user.backend='django.contrib.auth.backends.ModelBackend'
-        auth.login(request, user)
-        return redirect(reverse('user_profile', args=[user.username]))
+    permanent = False
 
-    else:
-        return redirect(reverse('openid_associations'))
+    def get_redirect_url(self):
+        if not self.request.openid:
+            return reverse('index')
+
+        if self.request.user.is_anonymous():
+            # Have they logged in with an OpenID that matches an account?
+            try:
+                user_openid = UserOpenID.objects.get(
+                    openid=str(self.request.openid),
+                )
+            except UserOpenID.DoesNotExist:
+                return reverse('signup')
+
+            # Log the user in
+            user = user_openid.user
+            user.backend = 'django.contrib.auth.backends.ModelBackend'
+            auth.login(self.request, user)
+            return reverse('user_profile', args=[user.username])
+        return reverse('openid_associations')
+openid_whatnext = OpenIDWhatNext.as_view()
 
 
 class SignupView(generic.FormView):

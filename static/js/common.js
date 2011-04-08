@@ -19,7 +19,7 @@ function makeWindow(name, username, location, photo, iso_code, lat, lon) {
         '<p class="meta"><a href="/' + iso_code + '/" class="nobg">' + 
         '<img src="/static/img/flags/' + iso_code + '.gif"></a> ' + 
         location + '</p>' + 
-        '<p class="meta"><a href="#" onclick="zoomOn(' + lat + ', ' + lon + '); return false;">Zoom to point</a></p>'
+        '<p class="meta"><a href="#" onclick="zoomOn(' + lat + ', ' + lon + '); return false;">Zoom to point</a></p>' +
         '</li>';
     return html;
 }
@@ -52,7 +52,7 @@ function showNearbyPeople(gmap) {
             ));
         });
     });
-};
+}
 
 function getMarkerOpts() {
     var greenIcon = new google.maps.Icon(google.maps.DEFAULT_ICON);

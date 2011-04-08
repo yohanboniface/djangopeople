@@ -578,7 +578,13 @@ def edit_location(request, username):
             person.save()
             return redirect(reverse('user_profile', args=[username]))
     else:
-        form = LocationForm()
+        initial_data = {
+            'latitude': person.latitude,
+            'longitude': person.longitude,
+            'location_description': person.location_description,
+            'country': person.country.iso_code
+        }
+        form = LocationForm(initial=initial_data)
     return render(request, 'edit_location.html', {
         'form': form,
         'api_key': settings.GOOGLE_MAPS_API_KEY,

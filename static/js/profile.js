@@ -24,7 +24,12 @@ window.onload = function() {
                 google.maps.event.trigger(gmap, 'resize');
                 gmap.setCenter(personLatLng);
                 gmap.setZoom(12);
-                gmap.setOptions({draggable: false});
+                gmap.setOptions({
+                    draggable: false,
+                    panControl: false,
+                    zoomControl: false,
+                    mapTypeControl: false
+                });
                 $('#gmap').click(onMapClicked);
             });
         });
@@ -60,7 +65,12 @@ window.onload = function() {
         }, 500, 'swing', function() {
             google.maps.event.trigger(gmap, 'resize');
             gmap.panTo(personLatLng);
-            gmap.setOptions({draggable: true});
+            gmap.setOptions({
+                draggable: true,
+                panControl: true,
+                zoomControl: true,
+                mapTypeControl: true
+            });
             showPeopleOnMap(peopleArray, gmap);
 
             // Unbind event so user can actually interact with map

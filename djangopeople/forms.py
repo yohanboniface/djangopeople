@@ -1,5 +1,6 @@
 from django import forms
 from django.conf import settings
+from django.contrib.gis.geos import Point
 from django.core.mail import send_mail
 from django.db.models import ObjectDoesNotExist
 from django.forms.forms import BoundField
@@ -21,7 +22,7 @@ def region_choices():
     groups = [(False, (('', '---'),))]
     current_country = False
     current_group = []
-    
+
     for region in regions:
         if region.country.name != current_country:
             if current_group:
@@ -32,7 +33,7 @@ def region_choices():
     if current_group:
         groups.append((current_country, current_group))
         current_group = []
-    
+
     return groups
 
 def not_in_the_atlantic(self):
@@ -138,7 +139,7 @@ class SignupForm(forms.Form):
 
     skilltags = TagField(required=False)
 
-    # Upload a photo is a separate page, because if validation fails we 
+    # Upload a photo is a separate page, because if validation fails we
     # don't want to tell them to upload it all over again
     #   photo = forms.ImageField(required=False)
 
@@ -162,7 +163,7 @@ class SignupForm(forms.Form):
         already_taken = 'That username is unavailable'
         username = self.cleaned_data['username'].lower()
 
-        # No reserved usernames, or anything that looks like a 4 digit year 
+        # No reserved usernames, or anything that looks like a 4 digit year
         if username in RESERVED_USERNAMES or (len(username) == 4 and username.isdigit()):
             raise forms.ValidationError(already_taken)
 
@@ -198,6 +199,13 @@ class SignupForm(forms.Form):
                     'The region you selected does not match the country'
                 )
         return self.cleaned_data['region']
+
+    def clean(self):
+        # We don't need to do any further validation, but we do construct
+        # a Point instance for the location.
+        self.cleaned_data['location'] = Point(self.cleaned_data['longitude'],
+            self.cleaned_data['latitude'])
+        return self.cleaned_data
 
     clean_location_description = not_in_the_atlantic
 

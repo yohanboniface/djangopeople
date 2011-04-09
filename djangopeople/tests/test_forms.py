@@ -6,7 +6,7 @@ class SignupFormTestCase(TestCase):
     def setUp(self):
         from djangopeople.models import Country
         super(SignupFormTestCase, self).setUp()
-        
+
         # Some data will already have been loaded through fixtures. Grab
         # a couple of them for use in the tests.
         self.country = Country.objects.all()[0]
@@ -43,5 +43,6 @@ class SignupFormTestCase(TestCase):
         }
         form = self.form_class(form_data)
         self.assertTrue(form.is_valid(), form.errors)
-        expected = Point(longitude, latitude)
-        self.assertEqual(expected, form.cleaned_data['point'])
+        actual = form.cleaned_data['location']
+        self.assertAlmostEqual(-73.153, actual.x, 3)
+        self.assertAlmostEqual(-51.450, actual.y, 3)

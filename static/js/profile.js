@@ -16,7 +16,7 @@ window.onload = function() {
                 'title', 'Activate larger map'
             );
             gmap.controls[google.maps.ControlPosition.BOTTOM_LEFT].clear();
-            hideNearbyPeople(peopleArray);
+            hidePeopleOnMap(peopleArray);
             $('#gmap').animate({
                 height: '7em',
                 opacity: 0.6
@@ -60,7 +60,7 @@ window.onload = function() {
             google.maps.event.trigger(gmap, 'resize');
             gmap.panTo(personLatLng);
             gmap.setOptions({draggable: true});
-            showNearbyPeople(peopleArray, gmap);
+            showPeopleOnMap(peopleArray, gmap);
 
             // Unbind event so user can actually interact with map
             $('#gmap').unbind('click', onMapClicked);
@@ -76,7 +76,7 @@ window.onload = function() {
 
     //gets an array of person map markers, used for hiding and showing them on
     //the map
-    var peopleArray = getNearbyPeopleArray(nearby_people);
+    var peopleArray = getPeopleArray(nearby_people);
 
 };
 

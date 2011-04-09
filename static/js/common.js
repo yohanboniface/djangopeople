@@ -29,7 +29,7 @@ function zoomOn(lat, lon) {
     gmap.setCenter(new google.maps.LatLng(lat, lon), 12);
 }
 
-function hideNearbyPeople(peopleArray) {
+function hidePeopleOnMap(peopleArray) {
     if (peopleArray) {
         for (i in peopleArray) {
             peopleArray[i].setMap(null);
@@ -37,7 +37,7 @@ function hideNearbyPeople(peopleArray) {
     }
 }
 
-function showNearbyPeople(peopleArray, map) {
+function showPeopleOnMap(peopleArray, map) {
     if (peopleArray) {
         for (i in peopleArray) {
             peopleArray[i].setMap(map);
@@ -45,7 +45,7 @@ function showNearbyPeople(peopleArray, map) {
     }
 }
 
-function getNearbyPeopleArray(peopleList) {
+function getPeopleArray(peopleList) {
     var peopleArray = [];
     $.each(peopleList, function() {
         var lat = this[0];

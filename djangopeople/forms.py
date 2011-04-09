@@ -203,9 +203,13 @@ class SignupForm(forms.Form):
     def clean(self):
         # We don't need to do any further validation, but we do construct
         # a Point instance for the location.
-        self.cleaned_data['location'] = Point(self.cleaned_data['longitude'],
-            self.cleaned_data['latitude'])
-        return self.cleaned_data
+        cleaned_data = super(SignupForm, self).clean()
+        latitude = cleaned_data.get('latitude')
+        longitude = cleaned_data.get('longitude')
+        if latitude is not None and longitude is not None:
+            cleaned_data['location'] = Point(cleaned_data['longitude'],
+                cleaned_data['latitude'])
+        return cleaned_data
 
     clean_location_description = not_in_the_atlantic
 

@@ -233,6 +233,7 @@ class SignupView(generic.FormView):
             latitude=form.cleaned_data['latitude'],
             longitude=form.cleaned_data['longitude'],
             location_description=form.cleaned_data['location_description'],
+            location=form.cleaned_data['location'],
         )
 
         # Set up the various machine tags

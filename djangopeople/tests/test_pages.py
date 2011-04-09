@@ -27,6 +27,23 @@ def prepare_request(request, openid=True):
 
 class DjangoPeopleTest(TestCase):
 
+    def _get_signup_data(self):
+        # Helper method to get a dict of valid signup data, minus a password.
+        return {
+            'username': 'testuser',
+            'email': 'foo@example.com',
+            'first_name': 'Test',
+            'last_name': 'User',
+            'latitude': '45',
+            'longitude': '2',
+            'country': 'FR',
+            'location_description': 'Somewhere',
+            'privacy_search': 'public',
+            'privacy_email': 'private',
+            'privacy_im': 'private',
+            'privacy_irctrack': 'public',
+        }
+
     def test_simple_pages(self):
         """Simple pages with no action"""
         names = ['index', 'about', 'recent']
@@ -97,20 +114,7 @@ class DjangoPeopleTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-        data = {
-            'username': 'testuser',
-            'email': 'foo@example.com',
-            'first_name': 'Test',
-            'last_name': 'User',
-            'latitude': '45',
-            'longitude': '2',
-            'country': 'FR',
-            'location_description': 'Somewhere',
-            'privacy_search': 'public',
-            'privacy_email': 'private',
-            'privacy_im': 'private',
-            'privacy_irctrack': 'public',
-        }
+        data = self._get_signup_data()
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.count(), 0)
@@ -139,8 +143,7 @@ class DjangoPeopleTest(TestCase):
         response.render()
         self.assertTrue('foo.example.com' in response.content)
 
-        del data['password1']
-        del data['password2']
+        data = self._get_signup_data()
         data['username'] = 'meh'
         data['email'] = 'other@example.com'
         request = prepare_request(factory.post(url, data))
@@ -150,6 +153,19 @@ class DjangoPeopleTest(TestCase):
                          reverse('user_profile', args=['meh']))
         self.assertEqual(User.objects.count(), 2)
         self.assertEqual(DjangoPerson.objects.count(), 2)
+
+    def test_signup_sets_location(self):
+        """ Check that signup sets the location field correctly. """
+        data = self._get_signup_data()
+        data['password1'] = 'secret'
+        data['password2'] = 'secret'
+        response = self.client.post(reverse('signup'), data)
+        self.assertEqual(302, response.status_code)
+        user = User.objects.all()[0]
+        self.assertEqual(1, len(user.djangoperson_set.all()))
+        person = user.djangoperson_set.all()[0]
+        self.assertAlmostEqual(2, person.location.x, 0)
+        self.assertAlmostEqual(45, person.location.y, 0)
 
     def test_whatnext(self):
         """Redirection after a successful openid login"""

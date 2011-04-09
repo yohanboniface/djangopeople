@@ -41,6 +41,8 @@ window.onload = function() {
         var marker = new google.maps.Marker({
             map: gmap,
             position: point,
+            icon: greenIconImage(),
+            shadow: greenIconShadow()
         });
 
         var infoWindow = new google.maps.InfoWindow({

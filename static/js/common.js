@@ -58,7 +58,9 @@ function getPeopleArray(peopleList) {
         var point = new google.maps.LatLng(lat, lon);
 
         var marker = new google.maps.Marker({
-            position: point
+            position: point,
+            icon: greenIconImage(),
+            shadow: greenIconShadow()
         });
 
         peopleArray.push(marker);
@@ -79,14 +81,21 @@ function getPeopleArray(peopleList) {
     return peopleArray;
 }
 
-function getMarkerOpts() {
-    var greenIcon = new google.maps.Icon(google.maps.DEFAULT_ICON);
-    greenIcon.image = "/static/img/green-bubble.png";
-    greenIcon.iconSize = new google.maps.Size(32,32);
-    greenIcon.shadowSize = new google.maps.Size(56,32);
-    greenIcon.iconAnchor = new google.maps.Point(16,32);
-    greenIcon.infoWindowAnchor = new google.maps.Point(16,0); 
-    markerOpts = { icon: greenIcon };
-    return markerOpts;
+function greenIconImage() {
+    var greenIcon = new google.maps.MarkerImage('/static/img/green-bubble.png',
+            new google.maps.Size(32, 32),
+            new google.maps.Point(0, 0),
+            new google.maps.Point(16, 32)
+            );
+    return greenIcon;
+}
+
+function greenIconShadow() {
+    var greenIconShadow = new google.maps.MarkerImage('/static/img/green-bubble-shadow.png',
+            new google.maps.Size(49, 32),
+            new google.maps.Point(0, 0),
+            new google.maps.Point(16, 32)
+            );
+    return greenIconShadow;
 }
 

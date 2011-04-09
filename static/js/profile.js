@@ -82,7 +82,10 @@ window.onload = function() {
 
     var marker = new google.maps.Marker({
         position: personLatLng,
-        map: gmap
+        map: gmap,
+        icon: greenIconImage(),
+        shadow: greenIconShadow()
+
     });
 
     //gets an array of person map markers, used for hiding and showing them on

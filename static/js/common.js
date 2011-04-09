@@ -29,11 +29,25 @@ function zoomOn(lat, lon) {
     gmap.setCenter(new google.maps.LatLng(lat, lon), 12);
 }
 
-function hideNearbyPeople(gmap) {
-    gmap.clearOverlays();
+function hideNearbyPeople(peopleArray) {
+    if (peopleArray) {
+        for (i in peopleArray) {
+            peopleArray[i].setMap(null);
+        }
+    }
 }
-function showNearbyPeople(gmap) {
-    $.each(nearby_people, function() {
+
+function showNearbyPeople(peopleArray, map) {
+    if (peopleArray) {
+        for (i in peopleArray) {
+            peopleArray[i].setMap(map);
+        }
+    }
+}
+
+function getNearbyPeopleArray(peopleList) {
+    var peopleArray = [];
+    $.each(peopleList, function() {
         var lat = this[0];
         var lon = this[1];
         var name = this[2];
@@ -42,16 +56,27 @@ function showNearbyPeople(gmap) {
         var photo = this[5];
         var iso_code = this[6];
         var point = new google.maps.LatLng(lat, lon);
-        var marker = new google.maps.Marker(point, getMarkerOpts());
-        gmap.addOverlay(marker);
+
+        var marker = new google.maps.Marker({
+            position: point
+        });
+
+        peopleArray.push(marker);
+
+        var infoWindow = new google.maps.InfoWindow({
+            content: makeWindow(
+                         name, username, location_description, photo, iso_code, 
+                         lat, lon
+                         )
+        });
+
         // Hook up the marker click event
-        google.maps.Event.addListener(marker, 'click', function() {
-            marker.openInfoWindow(makeWindow(
-                name, username, location_description, photo, iso_code, 
-                lat, lon
-            ));
+        google.maps.event.addListener(marker, 'click', function() {
+            infoWindow.open(gmap, marker);
         });
     });
+
+    return peopleArray;
 }
 
 function getMarkerOpts() {

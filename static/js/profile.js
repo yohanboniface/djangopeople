@@ -1,6 +1,4 @@
 window.onload = function() {    
-    var personLatLng =  new google.maps.LatLng(person_latitude, person_longitude);
-
     function ShrinkControl(button) {
         button.innerHTML = 'Shrink map';
         button.style.color = "black";
@@ -18,18 +16,21 @@ window.onload = function() {
                 'title', 'Activate larger map'
             );
             gmap.controls[google.maps.ControlPosition.BOTTOM_LEFT].clear();
-            //hideNearbyPeople(gmap);
+            hideNearbyPeople(peopleArray);
             $('#gmap').animate({
                 height: '7em',
                 opacity: 0.6
             }, 500, 'swing', function() {
                 google.maps.event.trigger(gmap, 'resize');
                 gmap.setCenter(personLatLng);
+                gmap.setZoom(12);
                 gmap.setOptions({draggable: false});
                 $('#gmap').click(onMapClicked);
             });
         });
     }
+
+    var personLatLng =  new google.maps.LatLng(person_latitude, person_longitude);
 
     var myOptions = {
         zoom: 12,
@@ -45,6 +46,7 @@ window.onload = function() {
     shrinkButtonDiv.index = 1;
 
 
+
     /* Map enlarges and becomes active when you click on it */
     $('#gmap').css({'cursor': 'pointer', 'opacity': 0.6}).attr(
             'title', 'Activate larger map'
@@ -58,7 +60,8 @@ window.onload = function() {
             google.maps.event.trigger(gmap, 'resize');
             gmap.panTo(personLatLng);
             gmap.setOptions({draggable: true});
-            //showNearbyPeople(gmap);
+            showNearbyPeople(peopleArray, gmap);
+
             // Unbind event so user can actually interact with map
             $('#gmap').unbind('click', onMapClicked);
         });
@@ -70,6 +73,11 @@ window.onload = function() {
         position: personLatLng,
         map: gmap
     });
+
+    //gets an array of person map markers, used for hiding and showing them on
+    //the map
+    var peopleArray = getNearbyPeopleArray(nearby_people);
+
 };
 
 jQuery(function($) {

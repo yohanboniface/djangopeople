@@ -24,7 +24,7 @@ window.onload = function() {
                 opacity: 0.6
             }, 500, 'swing', function() {
                 google.maps.event.trigger(gmap, 'resize');
-                gmap.setCenter(personLatLng, 8);
+                gmap.setCenter(personLatLng);
                 gmap.setOptions({draggable: false});
                 $('#gmap').click(onMapClicked);
             });
@@ -32,7 +32,7 @@ window.onload = function() {
     }
 
     var myOptions = {
-        zoom: 8,
+        zoom: 12,
         center: personLatLng,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         draggable: false,

@@ -21,7 +21,8 @@ window.onload = function() {
           zoom: 5,
           maxZoom: 12,
           center: new google.maps.LatLng(0,0), 
-          mapTypeId: google.maps.MapTypeId.ROADMAP
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          scrollwheel: false
         };
     var gmap = new google.maps.Map(document.getElementById('gmap'), myOptions);
     // Plot the people as markers

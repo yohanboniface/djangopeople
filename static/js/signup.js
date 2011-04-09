@@ -96,7 +96,8 @@ jQuery(function($) {
     var gmap = new google.maps.Map(document.getElementById('gmap'), {
         zoom: zoom,
         center: centerPoint,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        scrollwheel: false
     });
 
     var lookupTimer = false;

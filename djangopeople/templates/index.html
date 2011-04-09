@@ -19,7 +19,8 @@ window.onload = function() {
     var myOptions = {
        zoom : 2,
        center: center,
-       mapTypeId: google.maps.MapTypeId.ROADMAP
+       mapTypeId: google.maps.MapTypeId.ROADMAP,
+       scrollwheel: false
     }
     var gmap = new google.maps.Map(document.getElementById('gmap'), myOptions);
     // Plot the people as markers

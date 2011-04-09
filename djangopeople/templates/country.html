@@ -19,7 +19,8 @@ window.onload = function() {
     var myOptions = {
       zoom: 9,
       center: boundBox.getCenter(),
-      mapTypeId: google.maps.MapTypeId.ROADMAP
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      scrollwheel: false
     };
     var gmap = new google.maps.Map(document.getElementById('gmap'), myOptions);
     gmap.fitBounds(boundBox);

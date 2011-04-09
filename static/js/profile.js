@@ -37,7 +37,8 @@ window.onload = function() {
         center: personLatLng,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         draggable: false,
-        disableDefaultUI: true
+        disableDefaultUI: true,
+        scrollwheel: false
     };
     var gmap = new google.maps.Map(document.getElementById('gmap'), myOptions);
 

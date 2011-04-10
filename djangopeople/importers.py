@@ -37,7 +37,12 @@ def import_countries(fp):
             if country.find(xml) is None or country.find(xml).text is None:
                 continue
             creation_args[db_field] = conv(country.find(xml).text)
-        
+
+        # Build a multipolygon based on the bounding box
+        creation_args['polygon'] = bbox_to_mpoly(
+            creation_args['bbox_north'], creation_args['bbox_east'],
+            creation_args['bbox_south'], creation_args['bbox_west'])
+
         Country.objects.get_or_create(iso_code = creation_args['iso_code'], 
             defaults = creation_args)
 

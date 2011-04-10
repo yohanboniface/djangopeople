@@ -30,6 +30,16 @@ class ImportCountryTest(TestCase):
         self.assertEqual(u'AE', uae.iso_code)
         self.assertEqual(u'United Arab Emirates', uae.name)
 
+    def test_import_polygon(self):
+        """ Check that the polygon is imported correctly based on the
+        data's bounding box.
+        """
+        from djangopeople.importers import bbox_to_mpoly
+        self._import()
+        andorra = Country.objects.get(iso_code=u'AD')
+        expected = bbox_to_mpoly(42.658695, 1.780389, 42.435081, 1.422111)
+        self.assertEqual(expected.coords, andorra.polygon.coords)
+
     def test_update(self):
         """ Test that if appropriate country records are present, then they
         are not updated from the feed.

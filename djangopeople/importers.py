@@ -3,6 +3,8 @@ try:
 except ImportError:
     from elementtree import ElementTree as ET
 
+from django.contrib.gis.geos import MultiPolygon, Polygon
+
 from djangopeople.models import Country, Region
 
 def import_countries(fp):
@@ -125,3 +127,22 @@ def import_us_states():
             bbox_east = bbox_east,
             flag = flag
         )
+
+def bbox_to_mpoly(north, east, south, west):
+    """ Convert a bounding box in the format used by geonames to a gis
+    MultiPolygon. Arguments are in degress latitude or longitude (as
+    approprate for the bounding box side). We don't do any srid transforms.
+    """
+
+    # Longitude comes before latitude in the Point constructor, so our points
+    # pass east/west before north/south. Polygons must also be closed, so we
+    # pass the final point at the start and the end of our list of points.
+    return MultiPolygon([
+        Polygon([
+            (west, north),
+            (east, north),
+            (east, south),
+            (west, south),
+            (west, north),
+        ])
+    ])

@@ -1,4 +1,5 @@
 from cStringIO import StringIO
+from django.contrib.gis.geos import MultiPolygon, Polygon
 from django.test import TestCase
 
 from djangopeople.models import Country
@@ -40,6 +41,32 @@ class ImportCountryTest(TestCase):
         self._import()
         andorra = Country.objects.get(pk=andorra.pk)
         self.assertEqual(u'Other Name', andorra.name)
+
+    def test_bbox_to_mpoly(self):
+        """ Test that the bBox* values are converted properly to the
+        appropriate MultiPolygon.
+        """
+        from djangopeople.importers import bbox_to_mpoly
+
+        # Define where the edges of the bounding box lie.
+        bbox_west = 2.0
+        bbox_east = 4.0
+        bbox_north = 5.0
+        bbox_south = 1.0
+
+        # MultiPolygons are made up from Polygons, which are in turn defined
+        # by their corners. Longitude (east-west) is the first argument to
+        # each point.
+        expected_mpoly = MultiPolygon(
+            Polygon([
+                (2.0, 5.0), # north-west
+                (4.0, 5.0), # north-east
+                (4.0, 1.0), # south-east
+                (2.0, 1.0), # south-west
+                (2.0, 5.0), # north-west again, close the polygon
+            ]))
+        actual = bbox_to_mpoly(bbox_north, bbox_east, bbox_south, bbox_west)
+        self.assertEqual(expected_mpoly.coords, actual.coords)
 
 
 COUNTRY_XML = """

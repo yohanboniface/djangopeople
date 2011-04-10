@@ -17,8 +17,9 @@ class ImportCountryTest(TestCase):
         import_countries(fp)
 
     def test_import_ok(self):
-        # Test that a straight import from the sample XML data creates
-        # countries' attributes
+        """ Test that a straight import from the sample XML data creates
+        countries' attributes
+        """
         self._import()
         andorra, uae = Country.objects.all().order_by('iso_code')
 
@@ -29,8 +30,9 @@ class ImportCountryTest(TestCase):
         self.assertEqual(u'United Arab Emirates', uae.name)
 
     def test_update(self):
-        # Test that if appropriate country records are present, then they
-        # are not updated from the feed.
+        """ Test that if appropriate country records are present, then they
+        are not updated from the feed.
+        """
         self._import()
         andorra = Country.objects.get(iso_code=u'AD')
         andorra.name = u'Other Name'

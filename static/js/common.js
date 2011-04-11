@@ -58,10 +58,10 @@ function hidePeopleOnMap(peopleArray) {
     }
 }
 
-function showPeopleOnMap(peopleArray, map) {
+function showPeopleOnMap(peopleArray, gmap) {
     if (peopleArray) {
         for (i in peopleArray) {
-            peopleArray[i].setMap(map);
+            peopleArray[i].setMap(gmap);
         }
     }
 }

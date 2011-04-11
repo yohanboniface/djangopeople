@@ -1,17 +1,11 @@
 {% extends "maps.html" %}
 {% load url from future %}
+{% load thumbnail %}
 
 {% block title %}{{ country }} |{% endblock %}
 
-{% block js %}{% load thumbnail %}
+{% block maps_code %}
 <script type="text/javascript">
-var people = [
-    // latitude, longitude, name, username, location description
-    {% for person in country.djangoperson_set.all %}
-    [{{ person.latitude }}, {{ person.longitude }}, "{{ person|escapejs }}", "{{ person.user.username|escapejs }}", "{{ person.location_description|escapejs }}", "{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}/static/img/person_small_blank.png{% endif %}", "{{ person.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
-    {% endfor %}
-];
-
 window.onload = function() {
     var swBound = new google.maps.LatLng({{ country.bbox_south }}, {{ country.bbox_west }});
     var neBound = new google.maps.LatLng({{ country.bbox_north }}, {{ country.bbox_east }});
@@ -28,13 +22,12 @@ window.onload = function() {
     plotPeopleOnMap(people, gmap);
 };
 </script>
-
 {% endblock %}
 
-{% block header %}{% load thumbnail %}
+{% block header %}
         {% if country.iso_code or country.flag %}<img src="{% if country.iso_code %}/static/img/flags/{{ country.iso_code|lower }}.gif{% else %}/static/{{ country.flag }}{% endif %}" alt="{{ country }}" class="main">{% endif %}
         <h1>{{ country }}</h1>
-        <p class="meta">{% if country.country %}<a href="{% url 'country_detail' country.country.iso_code|lower %}" class="nobg"><img src="/static/img/flags/{{ country.country.iso_code|lower }}.gif" title="{{ country.country }}" alt="{{ country.country }}" class="flag"></a> {% endif %}{{ country.djangoperson_set.count }} Django {% ifequal country.djangoperson_set.count 1 %}person{% else %}people{% endifequal %}</p>
+        <p class="meta">{% if country.country %}<a href="{% url 'country_detail' country.country.iso_code|lower %}" class="nobg"><img src="/static/img/flags/{{ country.country.iso_code|lower }}.gif" title="{{ country.country }}" alt="{{ country.country }}" class="flag"></a> {% endif %}{{ people_list.count }} Django {% ifequal people_list.count 1 %}person{% else %}people{% endifequal %}</p>
 {% endblock %}
 
 {% block map %}
@@ -57,7 +50,7 @@ window.onload = function() {
     {% endif %}
     {% endwith %}
         <ul class="detailsList split">
-            {% load person_list_items %}{% person_list_items country.djangoperson_set.all %}
+            {% load person_list_items %}{% person_list_items people_list %}
         </ul>
         {% if regions %}
         <h2>Regions</h2>

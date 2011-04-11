@@ -1,37 +1,12 @@
 {% extends "maps.html" %}
 {% load url from future %}
+{% load thumbnail %}
 
 {% block title %}{{ tag }} |{% endblock %}
 
-{% block js %}{% load thumbnail %}
-<script type="text/javascript">
-var people = [
-    // latitude, longitude, name, username, location description
-    {% for person in object_list %}
-    [{{ person.latitude }}, {{ person.longitude }}, "{{ person|escapejs }}", "{{ person.user.username|escapejs }}", "{{ person.location_description|escapejs }}", "{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}/static/img/person_small_blank.png{% endif %}", "{{ person.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
-    {% endfor %}
-];
-
-window.onload = function() {
-    var gmap = new google.maps.Map(document.getElementById('gmap'), {
-          zoom: 5,
-          maxZoom: 12,
-          center: new google.maps.LatLng(0,0), 
-          mapTypeId: google.maps.MapTypeId.ROADMAP,
-          scrollwheel: false
-        });
-    // Plot the people as markers
-    var bounds = plotPeopleOnMap(people, gmap);
-
-    gmap.fitBounds(bounds);
-
-};
-</script>
-{% endblock %}
-
-{% block header %}{% load thumbnail %}
+{% block header %}
         <h1>{{ tag }}</h1>
-        <p class="meta">{% if country %}<a href="{% url 'country_detail' country.iso_code|lower %}" class="nobg"><img src="/static/img/flags/{{ country.iso_code|lower }}.gif" alt="{{ country }}" title="{{ country }}" class="flag"></a> {% endif %}{{ object_list|length }} Django {% ifequal object_list.count 1 %}Person{% else %}People{% endifequal %} mention this skill</p>
+        <p class="meta">{% if country %}<a href="{% url 'country_detail' country.iso_code|lower %}" class="nobg"><img src="/static/img/flags/{{ country.iso_code|lower }}.gif" alt="{{ country }}" title="{{ country }}" class="flag"></a> {% endif %}{{ people_list.count }} Django {% ifequal people_list.count 1 %}Person{% else %}People{% endifequal %} mention this skill</p>
 {% endblock %}
 
 {% block map %}
@@ -42,7 +17,7 @@ window.onload = function() {
 
 {% block content %}
         <ul class="detailsList split">
-            {% load person_list_items %}{% person_list_items object_list %}
+            {% load person_list_items %}{% person_list_items people_list %}
         </ul>
 {% endblock %}
 

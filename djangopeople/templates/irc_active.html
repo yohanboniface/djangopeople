@@ -1,45 +1,16 @@
 {% extends "maps.html" %}
 {% load url from future %}
+{% load thumbnail %}
 
 {% block title %}Active on IRC in the past hour{% endblock %}
 
-{% block js %}{% load thumbnail %}
-{% if results %}
-<script type="text/javascript">
-
-var people = [
-    // latitude, longitude, name, username, location description
-    {% for person in results %}
-    [{{ person.latitude }}, {{ person.longitude }}, "{{ person|escapejs }}", "{{ person.user.username|escapejs }}", "{{ person.location_description|escapejs }}", "{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}/static/img/person_small_blank.png{% endif %}", "{{ person.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
-    {% endfor %}
-];
-
-window.onload = function() {
-    var myOptions = ;
-    var gmap = new google.maps.Map(document.getElementById('gmap'), {
-          zoom: 5,
-          maxZoom: 12,
-          center: new google.maps.LatLng(0,0), 
-          mapTypeId: google.maps.MapTypeId.ROADMAP,
-          scrollwheel: false
-        });
-    // Plot the people as markers
-    var bounds = plotPeopleOnMap(people, gmap);
-
-    gmap.fitBounds(bounds);
-
-};
-</script>
-{% endif %}
-{% endblock %}
-
-{% block header %}{% load thumbnail %}
+{% block header %}
         <h1>Active on IRC in the past hour</h1>
-        {% if results %}<p class="meta">{{ results|length }} {% ifequal results.__len__ 1 %}person{% else %}people{% endifequal %}{% else %}No one is currently active{% endif %}
+        {% if people_list %}<p class="meta">{{ people_list|length }} {% ifequal people_list.__len__ 1 %}person{% else %}people{% endifequal %}{% else %}No one is currently active{% endif %}
 {% endblock %}
 
 {% block map %}
-{% if results %}
+{% if people_list %}
     <div class="mapContainer major">
         <div id="gmap">&nbsp;</div>
     </div>
@@ -47,9 +18,9 @@ window.onload = function() {
 {% endblock %}
 
 {% block content %}
-{% if results %}
+{% if people_list %}
         <ul class="detailsList split">
-        {% for person in results %}
+        {% for person in people_list %}
         <li class="vcard">
             <img src="{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}/static/img/person_small_blank.png{% endif %}" alt="{{ person }}" class="main photo">
             <h3><a href="{{ person.get_absolute_url }}" class="url fn n"><span class="given-name">{{ person.user.first_name }}</span> <span class="family-name">{{ person.user.last_name }}</span></a></h3>

@@ -70,8 +70,8 @@ class IndexView(generic.TemplateView):
         people = people.order_by('-id')[:100]
         ctx = super(IndexView, self).get_context_data(**kwargs)
         ctx.update({
-            'recent_people': people,
-            'recent_people_limited': people[:4],
+            'people_list': people,
+            'people_list_limited': people[:4],
             'total_people': DjangoPerson.objects.count(),
             'countries': Country.objects.top_countries(),
         })
@@ -335,6 +335,7 @@ def country(request, country_code):
     country = get_object_or_404(Country, iso_code = country_code.upper())
     return render(request, 'country.html', {
         'country': country,
+        'people_list': country.djangoperson_set.all(),
         'regions': country.top_regions(),
     })
 
@@ -608,6 +609,7 @@ def skill(request, tag):
         related_tags = True,
         related_tag_counts = True,
         template_name = 'skill.html',
+        template_object_name = 'people',
     )
 
 def country_skill(request, country_code, tag):
@@ -661,7 +663,7 @@ def search(request):
         people = search_people(q)
         return render(request, 'search.html', {
             'q': q,
-            'results': people,
+            'people_list': people,
             'has_badwords': has_badwords,
         })
     else:
@@ -676,7 +678,7 @@ def irc_active(request):
     # Filter out the people who don't want to be tracked (inefficient)
     results = [r for r in results if r.irc_tracking_allowed()]
     return render(request, 'irc_active.html', {
-        'results': results,
+        'people_list': results,
     })
 
 # Custom variant of the generic view from django-tagging

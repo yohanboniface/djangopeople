@@ -1,18 +1,11 @@
 {% extends "maps.html" %}
 {% load url from future %}
+{% load thumbnail %}
 
 {% block nav_li_class_home %} class="current"{% endblock %}>
 
-{% block js %}{% load thumbnail %}
+{% block maps_code %}
 <script type="text/javascript">
-
-var people = [
-    // latitude, longitude, name, username, location description
-    {% for person in recent_people %}
-    [{{ person.latitude }}, {{ person.longitude }}, "{{ person|escapejs }}", "{{ person.user.username|escapejs }}", "{{ person.location_description|escapejs }}", "{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}/static/img/person_small_blank.png{% endif %}", "{{ person.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
-    {% endfor %}
-];
-
 window.onload = function() {
     var center = new google.maps.LatLng(19.97335, -15.8203);
     var gmap = new google.maps.Map(document.getElementById('gmap'), {
@@ -24,10 +17,8 @@ window.onload = function() {
     // Plot the people as markers
     plotPeopleOnMap(people, gmap);
 };
-
 </script>
-
-{% endblock %}
+{% endblock maps_code %}
 
 {% block map %}
     <div class="mapContainer major">
@@ -36,9 +27,9 @@ window.onload = function() {
 {% endblock %}
 
 {% block content %}
-    <p class="mapnote">Showing {{ recent_people_limited|length }} recent signups (out of {{ total_people }}){% if user.is_anonymous %} - if you're a Django developer, why not <a href="{% url 'signup' %}">add yourself</a> to the site?{% endif %}</p>
+<p class="mapnote">Showing {{ people_list_limited|length }} recent signups (out of {{ total_people }}){% if user.is_anonymous %} - if you're a Django developer, why not <a href="{% url 'signup' %}">add yourself</a> to the site?{% endif %}</p>
         <ul class="detailsList split">
-            {% for person in recent_people_limited %}
+            {% for person in people_list_limited %}
             <li>
                 <img src="{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}/static/img/person_small_blank.png{% endif %}" alt="{{ person }}" class="main">
                 <h3><a href="{{ person.get_absolute_url }}">{{ person.user.get_full_name }}</a></h3>

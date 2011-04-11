@@ -26,9 +26,13 @@ function makeWindow(name, username, location, photo, iso_code, lat, lon) {
 
 function zoomOn(lat, lon) {
     //gmap.closeInfoWindow();
-    gmap.setCenter(new google.maps.LatLng(lat, lon), 12);
+    gmap.setCenter(new google.maps.LatLng(lat, lon));
+    gmap.setZoom(12);
 }
 
+/* Plots people on the maps and adds an info window to it
+ * which becomes visible when you click the marker
+ */
 function plotPeopleOnMap(people, gmap) {
     var bounds = new google.maps.LatLngBounds();
     $.each(people, function(index, person) {
@@ -44,6 +48,7 @@ function plotPeopleOnMap(people, gmap) {
 
     return bounds;
 }
+
 
 function hidePeopleOnMap(peopleArray) {
     if (peopleArray) {
@@ -61,6 +66,7 @@ function showPeopleOnMap(peopleArray, map) {
     }
 }
 
+// Creates a Marker object for a person
 function getPersonMarker(person) {
     var lat = person[0];
     var lon = person[1];
@@ -73,9 +79,9 @@ function getPersonMarker(person) {
     });
 
     return marker;
-
 }
 
+// Creates a info dialog for a person
 function getPersonInfoWindow(person) {
     var lat = person[0];
     var lon = person[1];
@@ -95,6 +101,9 @@ function getPersonInfoWindow(person) {
     return infoWindow;
 }
 
+/* Creates an array of person Markers for easier toggling
+ * of their visibility on the map. 
+ */
 function getPeopleArray(peopleList) {
     var peopleArray = [];
     $.each(peopleList, function(index, person) {

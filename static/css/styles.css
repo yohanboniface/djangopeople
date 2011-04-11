@@ -24,7 +24,7 @@ strong * {
 	font-weight: bold;
 }
 strong.openid {
-	background-image: url(/static/img/openid-14x14.png);
+	background-image: url(../img/openid-14x14.png);
 	background-repeat: no-repeat;
 	padding-left: 17px;
 }
@@ -196,7 +196,7 @@ a.mail:hover,
 a.mail:active, 
 a.mail:focus {
 	padding: 0 0 0 35px;
-	background-image: url(/static/img/email_go.png);
+	background-image: url(../img/email_go.png);
 	background-repeat: no-repeat;
 	background-position: 10px 0;
 }
@@ -207,7 +207,7 @@ a.ext:hover,
 a.ext:active, 
 a.ext:focus {
 	padding: 0 0 0 35px;	
-	background-image: url(/static/img/world_go.png);
+	background-image: url(../img/world_go.png);
 	background-repeat: no-repeat;
 	background-position: 10px 0;
 }
@@ -226,37 +226,37 @@ div.finding {
 }
 span.aim {
 	padding: 0 0 0 35px;
-	background-image: url(/static/img/improviders/aim.png);
+	background-image: url(../img/improviders/aim.png);
 	background-repeat: no-repeat;
 	background-position: 10px 0;
 }
 span.yim {
 	padding: 0 0 0 35px;
-	background-image: url(/static/img/improviders/yim.png);
+	background-image: url(../img/improviders/yim.png);
 	background-repeat: no-repeat;
 	background-position: 10px 0;
 }
 span.jabber {
 	padding: 0 0 0 35px;
-	background-image: url(/static/img/improviders/jabber.png);
+	background-image: url(../img/improviders/jabber.png);
 	background-repeat: no-repeat;
 	background-position: 10px 0;
 }
 span.msn {
 	padding: 0 0 0 35px;
-	background-image: url(/static/img/improviders/msn.png);
+	background-image: url(../img/improviders/msn.png);
 	background-repeat: no-repeat;
 	background-position: 10px 0;
 }
 span.gtalk {
 	padding: 0 0 0 35px;
-	background-image: url(/static/img/improviders/gtalk.png);
+	background-image: url(../img/improviders/gtalk.png);
 	background-repeat: no-repeat;
 	background-position: 10px 0;
 }
 span.django {
 	padding: 0 0 0 35px;
-	background-image: url(/static/img/services/django.png);
+	background-image: url(../img/services/django.png);
 	background-repeat: no-repeat;
 	background-position: 10px 0;
 }
@@ -287,50 +287,50 @@ p.help {
 
 .services .delicious {
 	padding-left: 25px;
-	background-image: url(/static/img/services/delicious.png);
+	background-image: url(../img/services/delicious.png);
 	background-repeat: no-repeat;
 	background-position: left center;
 }
 .services .djangosnippets, 
 .services .djangosites {
 	padding-left: 25px;
-	background-image: url(/static/img/services/django.png);
+	background-image: url(../img/services/django.png);
 	background-repeat: no-repeat;
 	background-position: left center;
 }
 .services .facebook {
 	padding-left: 25px;
-	background-image: url(/static/img/services/facebook.png);
+	background-image: url(../img/services/facebook.png);
 	background-repeat: no-repeat;
 	background-position: left center;
 }
 .services .flickr {
 	padding-left: 25px;
-	background-image: url(/static/img/services/flickr.png);
+	background-image: url(../img/services/flickr.png);
 	background-repeat: no-repeat;
 	background-position: left center;
 }
 .services .linkedin {
 	padding-left: 25px;
-	background-image: url(/static/img/services/linkedin.png);
+	background-image: url(../img/services/linkedin.png);
 	background-repeat: no-repeat;
 	background-position: left center;
 }
 .services .magnolia {
 	padding-left: 25px;
-	background-image: url(/static/img/services/magnolia.png);
+	background-image: url(../img/services/magnolia.png);
 	background-repeat: no-repeat;
 	background-position: left center;
 }
 .services .pownce {
 	padding-left: 25px;
-	background-image: url(/static/img/services/pownce.png);
+	background-image: url(../img/services/pownce.png);
 	background-repeat: no-repeat;
 	background-position: left center;
 }
 .services .twitter {
 	padding-left: 25px;
-	background-image: url(/static/img/services/twitter.png);
+	background-image: url(../img/services/twitter.png);
 	background-repeat: no-repeat;
 	background-position: left center;
 }
@@ -347,7 +347,7 @@ p.help {
 .siteList li {
 	padding: 0 0 0 25px;
 	margin: 0 0 0.5em 0;
-	background-image: url(/static/img/world_go.png);
+	background-image: url(../img/world_go.png);
 	background-repeat: no-repeat;
 	background-position: 0 0;
 }
@@ -423,7 +423,7 @@ ul.split li {
 	border-width: 2px 0 1px 0;
 	margin: 2px 0 1px 0;
 	width: 100%;
-/*	background-image: url(/static/img/map.png); */
+/*	background-image: url(../img/map.png); */
 	background-position: top left;
 }
 
@@ -465,7 +465,7 @@ div.highlight a.ext:visited,
 div.highlight a.ext:hover,
 div.highlight a.ext:active,
 div.highlight a.ext:focus {
-	background-image: url(/static/img/world_go.png);
+	background-image: url(../img/world_go.png);
 	background-position: 0 0;
 	background-repeat: no-repeat;
 	padding: 0 0 0 25px;
@@ -474,7 +474,7 @@ div.highlight a.ext:focus {
 	margin: 1em 0 0 0;
 	padding: 0 0 0 25px;
 	color: black;
-	background-image: url(/static/img/star.png);
+	background-image: url(../img/star.png);
 	background-position: left top;
 	background-repeat: no-repeat;
 }
@@ -658,7 +658,7 @@ div#hiddenLogin .openid a:hover,
 div#hiddenLogin .openid a:focus,
 div#hiddenLogin .openid a:active {
 	background-color: transparent;
-	background-image: url(/static/img/openid-14x14.png);
+	background-image: url(../img/openid-14x14.png);
 	background-position: right top;
 	background-repeat: no-repeat;
 	padding-right: 19px;
@@ -776,7 +776,7 @@ div#crosshair {
     margin-top: -8px;
     margin-left: -8px;
     display: block;
-    background: url(/static/img/crosshair.gif);
+    background: url(../img/crosshair.gif);
     background-position: center center;
     background-repeat: no-repeat;
 }

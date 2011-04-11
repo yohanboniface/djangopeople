@@ -12,7 +12,7 @@ google.load('maps', '2');
 var people = [
     // latitude, longitude, name, username, location description
     {% for person in object_list %}
-    [{{ person.latitude }}, {{ person.longitude }}, "{{ person|escapejs }}", "{{ person.user.username|escapejs }}", "{{ person.location_description|escapejs }}", "{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}/static/img/person_small_blank.png{% endif %}", "{{ person.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
+    [{{ person.latitude }}, {{ person.longitude }}, "{{ person|escapejs }}", "{{ person.user.username|escapejs }}", "{{ person.location_description|escapejs }}", "{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}{{ STATIC_URL }}img/person_small_blank.png{% endif %}", "{{ person.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
     {% endfor %}
 ];
 
@@ -53,7 +53,7 @@ window.onload = function() {
 
 {% block header %}{% load thumbnail %}
         <h1>{{ tag }}</h1>
-        <p class="meta">{% if country %}<a href="{% url 'country_detail' country.iso_code|lower %}" class="nobg"><img src="/static/img/flags/{{ country.iso_code|lower }}.gif" alt="{{ country }}" title="{{ country }}" class="flag"></a> {% endif %}{{ object_list|length }} Django {% ifequal object_list.count 1 %}Person{% else %}People{% endifequal %} mention this skill</p>
+        <p class="meta">{% if country %}<a href="{% url 'country_detail' country.iso_code|lower %}" class="nobg"><img src="{{ STATIC_URL }}img/flags/{{ country.iso_code|lower }}.gif" alt="{{ country }}" title="{{ country }}" class="flag"></a> {% endif %}{{ object_list|length }} Django {% ifequal object_list.count 1 %}Person{% else %}People{% endifequal %} mention this skill</p>
 {% endblock %}
 
 {% block map %}

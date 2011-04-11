@@ -15,7 +15,7 @@ google.load('maps', '2');
 var people = [
     // latitude, longitude, name, username, location description
     {% for person in results %}
-    [{{ person.latitude }}, {{ person.longitude }}, "{{ person|escapejs }}", "{{ person.user.username|escapejs }}", "{{ person.location_description|escapejs }}", "{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}/static/img/person_small_blank.png{% endif %}", "{{ person.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
+    [{{ person.latitude }}, {{ person.longitude }}, "{{ person|escapejs }}", "{{ person.user.username|escapejs }}", "{{ person.location_description|escapejs }}", "{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}{{ STATIC_URL }}img/person_small_blank.png{% endif %}", "{{ person.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
     {% endfor %}
 ];
 

@@ -1,8 +1,10 @@
-from django.contrib import admin
+from django.contrib.gis import admin
 from djangopeople.models import Country, CountrySite, Region, DjangoPerson, PortfolioSite
+from olwidget.admin import GeoModelAdmin
 
-class CountryAdmin(admin.ModelAdmin):
+class CountryAdmin(GeoModelAdmin):
     list_display = ('name',)
+    map_fields = ['polygon']
 
 class CountrySiteAdmin(admin.ModelAdmin):
     pass

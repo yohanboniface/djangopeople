@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "maps.html" %}
 {% load url from future %}
 
 {% block title %}{{ tag }} |{% endblock %}
@@ -13,7 +13,6 @@ var people = [
 ];
 
 window.onload = function() {
-    var gmap = new google.maps.Map(document.getElementById('gmap'));
     var bounds = new google.maps.LatLngBounds();
     var myOptions = {
           zoom: 5,

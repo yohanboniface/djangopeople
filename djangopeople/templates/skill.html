@@ -13,47 +13,15 @@ var people = [
 ];
 
 window.onload = function() {
-    var bounds = new google.maps.LatLngBounds();
-    var myOptions = {
+    var gmap = new google.maps.Map(document.getElementById('gmap'), {
           zoom: 5,
           maxZoom: 12,
           center: new google.maps.LatLng(0,0), 
           mapTypeId: google.maps.MapTypeId.ROADMAP,
           scrollwheel: false
-        };
-    var gmap = new google.maps.Map(document.getElementById('gmap'), myOptions);
+        });
     // Plot the people as markers
-    $.each(people, function() {
-        var lat = this[0];
-        var lon = this[1];
-        var name = this[2];
-        var username = this[3];
-        var location_description = this[4];
-        var photo = this[5];
-        var iso_code = this[6];
-        var point = new google.maps.LatLng(lat, lon);
-        bounds.extend(point);
-
-        var marker = new google.maps.Marker({
-            map: gmap,
-            position: point,
-            icon: greenIconImage(),
-            shadow: greenIconShadow()
-        });
-
-        var infoWindow = new google.maps.InfoWindow({
-            content: makeWindow(
-                         name, username, location_description, photo, iso_code, 
-                         lat, lon
-                         )
-        });
-
-        // Hook up the marker click event
-        google.maps.event.addListener(marker, 'click', function() {
-            infoWindow.open(gmap, marker);
-        });
-    });
-
+    var bounds = plotPeopleOnMap(people, gmap);
 
     gmap.fitBounds(bounds);
 

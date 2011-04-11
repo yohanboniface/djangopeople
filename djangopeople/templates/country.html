@@ -16,50 +16,16 @@ window.onload = function() {
     var swBound = new google.maps.LatLng({{ country.bbox_south }}, {{ country.bbox_west }});
     var neBound = new google.maps.LatLng({{ country.bbox_north }}, {{ country.bbox_east }});
     var boundBox = new google.maps.LatLngBounds(swBound, neBound);
-    var myOptions = {
+    var gmap = new google.maps.Map(document.getElementById('gmap'), {
       zoom: 9,
       center: boundBox.getCenter(),
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       scrollwheel: false
-    };
-    var gmap = new google.maps.Map(document.getElementById('gmap'), myOptions);
+    });
     gmap.fitBounds(boundBox);
     
     // Plot the people as markers
-    $.each(people, function() {
-       var lat = this[0];
-       var lon = this[1];
-       var name = this[2];
-       var username = this[3];
-       var location_description = this[4];
-       var photo = this[5];
-       var iso_code = this[6];
-       var point = new google.maps.LatLng(lat, lon);
-       boundBox.extend(point);
-       // custom marker options removed for now
-       var marker = new google.maps.Marker({
-            map: gmap,
-            position: point,
-            icon: greenIconImage(),
-            shadow: greenIconShadow()
-           });
-
-       var infoWindow = new google.maps.InfoWindow({
-           content: makeWindow(
-               name, username, location_description, photo, iso_code, 
-               lat, lon
-           )
-        });
-
-       // Hook up the marker click event
-       google.maps.event.addListener(marker, 'click', function() {
-            infoWindow.open(gmap, marker);
-       });
-    });
-    // Re-plot, just in case someone was outside the original bounds (e.g. a 
-    // US resident of Hawaii)
-    gmap.fitBounds(boundBox);
-
+    plotPeopleOnMap(people, gmap);
 };
 </script>
 

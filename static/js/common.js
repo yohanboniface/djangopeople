@@ -29,6 +29,22 @@ function zoomOn(lat, lon) {
     gmap.setCenter(new google.maps.LatLng(lat, lon), 12);
 }
 
+function plotPeopleOnMap(people, gmap) {
+    var bounds = new google.maps.LatLngBounds();
+    $.each(people, function(index, person) {
+        var marker = getPersonMarker(person);
+        var infoWindow = getPersonInfoWindow(person);
+        marker.setMap(gmap);
+        bounds.extend(marker.getPosition());
+        // Hook up the marker click event
+        google.maps.event.addListener(marker, 'click', function() {
+            infoWindow.open(gmap, marker);
+            });
+    });   
+
+    return bounds;
+}
+
 function hidePeopleOnMap(peopleArray) {
     if (peopleArray) {
         for (i in peopleArray) {
@@ -45,37 +61,45 @@ function showPeopleOnMap(peopleArray, map) {
     }
 }
 
+function getPersonMarker(person) {
+    var lat = person[0];
+    var lon = person[1];
+    var point = new google.maps.LatLng(lat, lon);
+    // custom marker options removed for now
+    var marker = new google.maps.Marker({
+        position: point,
+        icon: greenIconImage(),
+        shadow: greenIconShadow()
+    });
+
+    return marker;
+
+}
+
+function getPersonInfoWindow(person) {
+    var lat = person[0];
+    var lon = person[1];
+    var name = person[2];
+    var username = person[3];
+    var location_description = person[4];
+    var photo = person[5];
+    var iso_code = person[6];
+
+    var infoWindow = new google.maps.InfoWindow({
+        content: makeWindow(
+                     name, username, location_description, photo, iso_code, 
+                     lat, lon
+                     )
+    });
+
+    return infoWindow;
+}
+
 function getPeopleArray(peopleList) {
     var peopleArray = [];
-    $.each(peopleList, function() {
-        var lat = this[0];
-        var lon = this[1];
-        var name = this[2];
-        var username = this[3];
-        var location_description = this[4];
-        var photo = this[5];
-        var iso_code = this[6];
-        var point = new google.maps.LatLng(lat, lon);
-
-        var marker = new google.maps.Marker({
-            position: point,
-            icon: greenIconImage(),
-            shadow: greenIconShadow()
-        });
-
+    $.each(peopleList, function(index, person) {
+        var marker = getPersonMarker(person);
         peopleArray.push(marker);
-
-        var infoWindow = new google.maps.InfoWindow({
-            content: makeWindow(
-                         name, username, location_description, photo, iso_code, 
-                         lat, lon
-                         )
-        });
-
-        // Hook up the marker click event
-        google.maps.event.addListener(marker, 'click', function() {
-            infoWindow.open(gmap, marker);
-        });
     });
 
     return peopleArray;

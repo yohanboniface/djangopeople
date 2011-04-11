@@ -44,10 +44,6 @@ urlpatterns = patterns('',
     url(r'^skills/(?P<tag>.*)/$', views.skill, name='skill_detail'),
     url(r'^skills/$', views.skill_cloud, name='skill_cloud'),
 
-    (r'^static/(?P<path>.*)$', 'django.views.static.serve', {
-        'document_root': os.path.join(settings.OUR_ROOT, 'static')
-    }),
-
     url(r'^api/irc_lookup/(.*?)/$', api.irc_lookup, name='irc_lookup'),
     url(r'^api/irc_spotted/(.*?)/$', api.irc_spotted, name='irc_spotted'),
     url(r'^irc/active/$', views.irc_active, name='irc_active'),
@@ -75,3 +71,7 @@ urlpatterns = patterns('',
 
 #    (r'^clusters/(\-?\d+\.?\d*)/(\-?\d+\.?\d*)/(\-?\d+\.?\d*)/(\-?\d+\.?\d*)/(\d+)/$', clustering.as_json),
 )
+
+if settings.DEBUG:
+    from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+    urlpatterns += staticfiles_urlpatterns()

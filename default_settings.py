@@ -46,7 +46,10 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = os.path.join(OUR_ROOT, 'static')
+MEDIA_ROOT = os.path.join(OUR_ROOT, 'media')
+
+# Absolute path to the directory where static media will be collected.
+STATIC_ROOT = os.path.join(OUR_ROOT, 'static')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).

@@ -11,13 +11,13 @@
 <script type="text/javascript">
 google.load('maps', '2');
 </script>
-<!--<script src="{{ STATIC_URL }}js/clusterlizard.js" type="text/javascript"></script>-->
+<!--<script src="{{ STATIC_URL }}djangopeople/js/clusterlizard.js" type="text/javascript"></script>-->
 <script type="text/javascript">
 
 var people = [
     // latitude, longitude, name, username, location description
     {% for person in recent_people %}
-    [{{ person.latitude }}, {{ person.longitude }}, "{{ person|escapejs }}", "{{ person.user.username|escapejs }}", "{{ person.location_description|escapejs }}", "{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}{{ STATIC_URL }}img/person_small_blank.png{% endif %}", "{{ person.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
+    [{{ person.latitude }}, {{ person.longitude }}, "{{ person|escapejs }}", "{{ person.user.username|escapejs }}", "{{ person.location_description|escapejs }}", "{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}{{ STATIC_URL }}djangopeople/img/person_small_blank.png{% endif %}", "{{ person.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
     {% endfor %}
 ];
 
@@ -94,9 +94,9 @@ var loading = false;
         <ul class="detailsList split">
             {% for person in recent_people_limited %}
             <li>
-                <img src="{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}{{ STATIC_URL }}img/person_small_blank.png{% endif %}" alt="{{ person }}" class="main">
+                <img src="{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}{{ STATIC_URL }}djangopeople/img/person_small_blank.png{% endif %}" alt="{{ person }}" class="main">
                 <h3><a href="{{ person.get_absolute_url }}">{{ person.user.get_full_name }}</a></h3>
-                <p class="meta"><a href="{% url 'country_detail' person.country.iso_code|lower %}" class="nobg"><img src="{{ STATIC_URL }}img/flags/{{ person.country.iso_code|lower }}.gif" alt="{{ person.country }}" title="{{ person.country }}"></a> {{ person.location_description }}</p>
+                <p class="meta"><a href="{% url 'country_detail' person.country.iso_code|lower %}" class="nobg"><img src="{{ STATIC_URL }}djangopeople/img/flags/{{ person.country.iso_code|lower }}.gif" alt="{{ person.country }}" title="{{ person.country }}"></a> {{ person.location_description }}</p>
                 
             </li>
             {% endfor %}
@@ -104,7 +104,7 @@ var loading = false;
         <ul class="detailsList split">
             {% for country in countries %}
             <li>
-                <a href="{% url 'country_detail' country.iso_code|lower %}" class="nobg"><img src="{{ STATIC_URL }}img/flags/{{ country.iso_code|lower }}.gif" alt="{{ country }}" title="{{ country }}"></a> <a href="{% url 'country_detail' country.iso_code|lower %}"><strong>{{ country }}</strong></a> {{ country.num_people }} {% ifequal country.num_people 1 %}person{% else %}people{% endifequal %}
+                <a href="{% url 'country_detail' country.iso_code|lower %}" class="nobg"><img src="{{ STATIC_URL }}djangopeople/img/flags/{{ country.iso_code|lower }}.gif" alt="{{ country }}" title="{{ country }}"></a> <a href="{% url 'country_detail' country.iso_code|lower %}"><strong>{{ country }}</strong></a> {{ country.num_people }} {% ifequal country.num_people 1 %}person{% else %}people{% endifequal %}
             </li>
             {% endfor %}
         </ul>

@@ -12,7 +12,7 @@ google.load('maps', '2');
 var people = [
     // latitude, longitude, name, username, location description
     {% for person in country.djangoperson_set.all %}
-    [{{ person.latitude }}, {{ person.longitude }}, "{{ person|escapejs }}", "{{ person.user.username|escapejs }}", "{{ person.location_description|escapejs }}", "{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}{{ STATIC_URL }}img/person_small_blank.png{% endif %}", "{{ person.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
+    [{{ person.latitude }}, {{ person.longitude }}, "{{ person|escapejs }}", "{{ person.user.username|escapejs }}", "{{ person.location_description|escapejs }}", "{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}{{ STATIC_URL }}djangopeople/img/person_small_blank.png{% endif %}", "{{ person.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
     {% endfor %}
 ];
 
@@ -60,9 +60,9 @@ window.onload = function() {
 {% endblock %}
 
 {% block header %}{% load thumbnail %}
-        {% if country.iso_code or country.flag %}<img src="{% if country.iso_code %}{{ STATIC_URL }}img/flags/{{ country.iso_code|lower }}.gif{% else %}{{ STATIC_URL }}{{ country.flag }}{% endif %}" alt="{{ country }}" class="main">{% endif %}
+        {% if country.iso_code or country.flag %}<img src="{% if country.iso_code %}{{ STATIC_URL }}djangopeople/img/flags/{{ country.iso_code|lower }}.gif{% else %}{{ STATIC_URL }}djangopeople/{{ country.flag }}{% endif %}" alt="{{ country }}" class="main">{% endif %}
         <h1>{{ country }}</h1>
-        <p class="meta">{% if country.country %}<a href="{% url 'country_detail' country.country.iso_code|lower %}" class="nobg"><img src="{{ STATIC_URL }}img/flags/{{ country.country.iso_code|lower }}.gif" title="{{ country.country }}" alt="{{ country.country }}" class="flag"></a> {% endif %}{{ country.djangoperson_set.count }} Django {% ifequal country.djangoperson_set.count 1 %}person{% else %}people{% endifequal %}</p>
+        <p class="meta">{% if country.country %}<a href="{% url 'country_detail' country.country.iso_code|lower %}" class="nobg"><img src="{{ STATIC_URL }}djangopeople/img/flags/{{ country.country.iso_code|lower }}.gif" title="{{ country.country }}" alt="{{ country.country }}" class="flag"></a> {% endif %}{{ country.djangoperson_set.count }} Django {% ifequal country.djangoperson_set.count 1 %}person{% else %}people{% endifequal %}</p>
 {% endblock %}
 
 {% block map %}

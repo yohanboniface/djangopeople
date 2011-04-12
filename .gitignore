@@ -3,3 +3,4 @@ _thumbs
 static/profiles/
 settings.py
 *.pyc
+.DS_Store

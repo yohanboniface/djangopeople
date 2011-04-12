@@ -71,10 +71,9 @@ class IndexView(generic.TemplateView):
         people = people.order_by('-id')[:100]
         ctx = super(IndexView, self).get_context_data(**kwargs)
         ctx.update({
-            'recent_people': people,
-            'recent_people_limited': people[:4],
+            'people_list': people,
+            'people_list_limited': people[:4],
             'total_people': DjangoPerson.objects.count(),
-            'api_key': settings.GOOGLE_MAPS_API_KEY,
             'countries': Country.objects.top_countries(),
         })
         return ctx
@@ -104,7 +103,6 @@ class RecentView(generic.TemplateView):
         people = DjangoPerson.objects.all().select_related()
         ctx.update({
             'people': people.order_by('-auth_user.date_joined')[:50],
-            'api_key': settings.GOOGLE_MAPS_API_KEY,
         })
         return ctx
 recent = RecentView.as_view()
@@ -300,7 +298,6 @@ class SignupView(generic.FormView):
         ctx = super(SignupView, self).get_context_data(**kwargs)
         ctx.update({
             'openid': self.request.openid,
-            'api_key': settings.GOOGLE_MAPS_API_KEY,
         })
         return ctx
 signup = SignupView.as_view()
@@ -356,7 +353,7 @@ def country(request, country_code):
     country = get_object_or_404(Country, iso_code = country_code.upper())
     return render(request, 'country.html', {
         'country': country,
-        'api_key': settings.GOOGLE_MAPS_API_KEY,
+        'people_list': country.djangoperson_set.all(),
         'regions': country.top_regions(),
     })
 
@@ -377,7 +374,6 @@ def region(request, country_code, region_code):
     )
     return render(request, 'country.html', {
         'country': region,
-        'api_key': settings.GOOGLE_MAPS_API_KEY,
     })
 
 def profile(request, username):
@@ -431,7 +427,6 @@ def profile(request, username):
     
     return render(request, 'profile.html', {
         'person': person,
-        'api_key': settings.GOOGLE_MAPS_API_KEY,
         'is_owner': request.user.username == username,
         'skills_form': SkillsForm(initial={
             'skills': edit_string_for_tags(person.skilltags)
@@ -596,10 +591,15 @@ def edit_location(request, username):
             person.save()
             return redirect(reverse('user_profile', args=[username]))
     else:
-        form = LocationForm()
+        initial_data = {
+            'latitude': person.latitude,
+            'longitude': person.longitude,
+            'location_description': person.location_description,
+            'country': person.country.iso_code
+        }
+        form = LocationForm(initial=initial_data)
     return render(request, 'edit_location.html', {
         'form': form,
-        'api_key': settings.GOOGLE_MAPS_API_KEY,
     })
 
 def skill_cloud(request):
@@ -627,9 +627,7 @@ def skill(request, tag):
         related_tags = True,
         related_tag_counts = True,
         template_name = 'skill.html',
-        extra_context = {
-            'api_key': settings.GOOGLE_MAPS_API_KEY,
-        },
+        template_object_name = 'people',
     )
 
 def country_skill(request, country_code, tag):
@@ -641,7 +639,6 @@ def country_skill(request, country_code, tag):
         extra_filter_args = {'country__iso_code': country_code.upper()},
         template_name = 'skill.html',
         extra_context = {
-            'api_key': settings.GOOGLE_MAPS_API_KEY,
             'country': Country.objects.get(iso_code = country_code.upper()),
         },
     )
@@ -684,8 +681,7 @@ def search(request):
         people = search_people(q)
         return render(request, 'search.html', {
             'q': q,
-            'results': people,
-            'api_key': settings.GOOGLE_MAPS_API_KEY,
+            'people_list': people,
             'has_badwords': has_badwords,
         })
     else:
@@ -700,8 +696,7 @@ def irc_active(request):
     # Filter out the people who don't want to be tracked (inefficient)
     results = [r for r in results if r.irc_tracking_allowed()]
     return render(request, 'irc_active.html', {
-        'results': results,
-        'api_key': settings.GOOGLE_MAPS_API_KEY,
+        'people_list': results,
     })
 
 # Custom variant of the generic view from django-tagging

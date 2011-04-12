@@ -1,68 +1,33 @@
-{% extends "base.html" %}
+{% extends "maps.html" %}
 {% load url from future %}
+{% load thumbnail %}
 
 {% block title %}{{ country }} |{% endblock %}
 
-{% block js %}{% load thumbnail %}
-<script src="http://www.google.com/jsapi?key={{ api_key }}" type="text/javascript">
-</script>
+{% block maps_code %}
 <script type="text/javascript">
-google.load('maps', '2');
-
-var people = [
-    // latitude, longitude, name, username, location description
-    {% for person in country.djangoperson_set.all %}
-    [{{ person.latitude }}, {{ person.longitude }}, "{{ person|escapejs }}", "{{ person.user.username|escapejs }}", "{{ person.location_description|escapejs }}", "{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}/static/img/person_small_blank.png{% endif %}", "{{ person.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
-    {% endfor %}
-];
-
 window.onload = function() {
-    window.gmap = new google.maps.Map2(document.getElementById('gmap'));
-    gmap.addControl(new google.maps.LargeMapControl());
-    gmap.addControl(new google.maps.MapTypeControl());
-    // Figure out map settings based on country bounds
-    // We have to render the map first or the bounds calculations will fail
-    gmap.setCenter(new google.maps.LatLng({{ country.bbox_north }}, {{ country.bbox_west }}));
-    var bounds = new google.maps.LatLngBounds();
-    bounds.extend(new google.maps.LatLng({{ country.bbox_north }}, {{ country.bbox_west }}));
-    bounds.extend(new google.maps.LatLng({{ country.bbox_south }}, {{ country.bbox_east }}));
-    gmap.setZoom(gmap.getBoundsZoomLevel(bounds));
-    gmap.setCenter(bounds.getCenter());
+    var swBound = new google.maps.LatLng({{ country.bbox_south }}, {{ country.bbox_west }});
+    var neBound = new google.maps.LatLng({{ country.bbox_north }}, {{ country.bbox_east }});
+    var boundBox = new google.maps.LatLngBounds(swBound, neBound);
+    var gmap = new google.maps.Map(document.getElementById('gmap'), {
+      zoom: 9,
+      center: boundBox.getCenter(),
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      scrollwheel: false
+    });
+    gmap.fitBounds(boundBox);
     
     // Plot the people as markers
-    $.each(people, function() {
-        var lat = this[0];
-        var lon = this[1];
-        var name = this[2];
-        var username = this[3];
-        var location_description = this[4];
-        var photo = this[5];
-        var iso_code = this[6];
-        var point = new google.maps.LatLng(lat, lon);
-        bounds.extend(point);
-        var marker = new google.maps.Marker(point, getMarkerOpts());
-        gmap.addOverlay(marker);
-        // Hook up the marker click event
-        google.maps.Event.addListener(marker, 'click', function() {
-            marker.openInfoWindow(makeWindow(
-                name, username, location_description, photo, iso_code, 
-                lat, lon
-            ));
-        });
-    });
-    // Re-plot, just in case someone was outside the original bounds (e.g. a 
-    // US resident of Hawaii)
-    gmap.setCenter(bounds.getCenter());
-
+    plotPeopleOnMap(people, gmap);
 };
 </script>
-
 {% endblock %}
 
-{% block header %}{% load thumbnail %}
+{% block header %}
         {% if country.iso_code or country.flag %}<img src="{% if country.iso_code %}/static/img/flags/{{ country.iso_code|lower }}.gif{% else %}/static/{{ country.flag }}{% endif %}" alt="{{ country }}" class="main">{% endif %}
         <h1>{{ country }}</h1>
-        <p class="meta">{% if country.country %}<a href="{% url 'country_detail' country.country.iso_code|lower %}" class="nobg"><img src="/static/img/flags/{{ country.country.iso_code|lower }}.gif" title="{{ country.country }}" alt="{{ country.country }}" class="flag"></a> {% endif %}{{ country.djangoperson_set.count }} Django {% ifequal country.djangoperson_set.count 1 %}person{% else %}people{% endifequal %}</p>
+        <p class="meta">{% if country.country %}<a href="{% url 'country_detail' country.country.iso_code|lower %}" class="nobg"><img src="/static/img/flags/{{ country.country.iso_code|lower }}.gif" title="{{ country.country }}" alt="{{ country.country }}" class="flag"></a> {% endif %}{{ people_list.count }} Django {% ifequal people_list.count 1 %}person{% else %}people{% endifequal %}</p>
 {% endblock %}
 
 {% block map %}
@@ -85,7 +50,7 @@ window.onload = function() {
     {% endif %}
     {% endwith %}
         <ul class="detailsList split">
-            {% load person_list_items %}{% person_list_items country.djangoperson_set.all %}
+            {% load person_list_items %}{% person_list_items people_list %}
         </ul>
         {% if regions %}
         <h2>Regions</h2>

@@ -22,7 +22,7 @@
 </ul>
 <br>
 {% with user.useropenid_set.count as ocount %}
-<p class="help">{% if ocount %}You have {{ ocount }} OpenID{{ ocount|pluralize }} associated with your account. <a href="{% url 'openid_associations' %}">Manage your OpenID{{ ocount|pluralize }}</a>{% else %}If you have an <a href="http://openid.net/">OpenID</a>, you can <a href=""{% url 'openid_associations' %}>associate it with your account</a>. This will allow you to log in using your OpenID instead of your password.{% endif %}</p>
+<p class="help">{% if ocount %}You have {{ ocount }} OpenID{{ ocount|pluralize }} associated with your account. <a href="{% url 'openid_associations' %}">Manage your OpenID{{ ocount|pluralize }}</a>{% else %}If you have an <a href="http://openid.net/">OpenID</a>, you can <a href="{% url 'openid_associations' %}">associate it with your account</a>. This will allow you to log in using your OpenID instead of your password.{% endif %}</p>
 {% endwith %}
 
     <h2>Advanced: Use your profile page as an OpenID</h2>

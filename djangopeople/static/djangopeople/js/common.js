@@ -17,7 +17,7 @@ function makeWindow(name, username, location, photo, iso_code, lat, lon) {
         '<img src="' + photo + '" alt="' + name + '" class="main">' + 
         '<h3><a href="/' + username + '/">' + name + '</a></h3>' + 
         '<p class="meta"><a href="/' + iso_code + '/" class="nobg">' + 
-        '<img src="/static/img/flags/' + iso_code + '.gif"></a> ' + 
+        '<img src="' + STATIC_URL + 'djangopeople/img/flags/' + iso_code + '.gif"></a> ' +
         location + '</p>' + 
         '<p class="meta"><a href="#" onclick="zoomOn(' + lat + ', ' + lon + '); return false;">Zoom to point</a></p>'
         '</li>';
@@ -56,7 +56,7 @@ function showNearbyPeople(gmap) {
 
 function getMarkerOpts() {
     var greenIcon = new google.maps.Icon(google.maps.DEFAULT_ICON);
-    greenIcon.image = "/static/img/green-bubble.png";
+    greenIcon.image = STATIC_URL + "djangopeople/img/green-bubble.png";
     greenIcon.iconSize = new google.maps.Size(32,32);
     greenIcon.shadowSize = new google.maps.Size(56,32);
     greenIcon.iconAnchor = new google.maps.Point(16,32);

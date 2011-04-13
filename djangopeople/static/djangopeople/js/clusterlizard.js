@@ -13,8 +13,8 @@ window.ClusterLizard = {
 
 	clusterIcon: function (size, w, h) {
 		var icon = new GIcon();
-		icon.image = "/static/img/marker_" + size + ".png"
-		icon.shadowImage = "/static/img/marker_" + size + "_shadow.png"
+		icon.image = STATIC_URL + "djangopeople/img/marker_" + size + ".png"
+		icon.shadowImage = STATIC_URL + "djangopeople/img/marker_" + size + "_shadow.png"
 		icon.iconSize = new GSize(w, h);
 		icon.shadowSize = icon.iconSize;
 		icon.iconAnchor = new GPoint(w/2, h/2);

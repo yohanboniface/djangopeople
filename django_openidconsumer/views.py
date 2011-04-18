@@ -10,7 +10,8 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.core.context_processors import csrf
 from django.http import HttpResponse, HttpResponseRedirect, get_host
-from django.shortcuts import render_to_response as render
+from django.shortcuts import render_to_response
+from django.template import RequestContext
 from django.utils.encoding import smart_unicode
 from django.utils.html import escape
 
@@ -37,6 +38,10 @@ def is_valid_next_url(next):
     # path, not a complete URL.
     return bool(NEXT_URL_RE.match(next))
 
+def render(request, template, context_dict=None):
+    return render_to_response(
+        template, context_dict or {}, context_instance=RequestContext(request)
+    )
 
 def begin(request, sreg=None, extension_args=None,
           redirect_to=None, on_failure=None):
@@ -79,7 +84,7 @@ def begin(request, sreg=None, extension_args=None,
                 'next': request.GET['next']
             })
 
-        return render('openid_signin.html', {
+        return render(request, 'openid_signin.html', {
             'action': request_path,
             'logo': request.path + '?logo=1',
             'csrf_token': c['csrf_token'],
@@ -150,7 +155,7 @@ def default_on_success(request, identity_url, openid_response):
 
 
 def default_on_failure(request, message):
-    return render('openid_failure.html', {
+    return render(request, 'openid_failure.html', {
         'message': message
     })
 

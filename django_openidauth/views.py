@@ -1,8 +1,9 @@
-from django.shortcuts import render_to_response as render
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as log_user_in, load_backend
 from django.core.context_processors import csrf
+from django.shortcuts import render_to_response
+from django.template import RequestContext
 from django.utils.html import escape
 from django.conf import settings
 
@@ -15,6 +16,11 @@ def _make_hash(hash_type, user, openid):
     return hashlib.md5('%s:%d:%s:%s' % (
         hash_type, user.id, str(openid), settings.SECRET_KEY
     )).hexdigest()
+    
+def render(request, template, context_dict=None):
+    return render_to_response(
+        template, context_dict or {}, context_instance=RequestContext(request)
+    )   
 
 @login_required
 def associations(request, template_name='openid_associations.html'):
@@ -123,7 +129,7 @@ def associations(request, template_name='openid_associations.html'):
         for openid in associated_openids
     ]
     
-    return render(template_name, {
+    return render(request, template_name, {
         'csrf_token': c['csrf_token'],
         'user': request.user,
         'messages': messages,

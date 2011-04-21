@@ -1,11 +1,9 @@
-{% extends "base.html" %}
+{% extends "maps.html" %}
 {% load url from future %}
 
 {% block title %}Change your location |{% endblock %}
 
 {% block js %}
-<script src="http://www.google.com/jsapi?key={{ api_key }}" type="text/javascript">
-</script>
 <script type="text/javascript" src="{{ STATIC_URL }}djangopeople/js/jquery.color.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}djangopeople/js/signup.js"></script>
 <link rel="stylesheet" href="{{ STATIC_URL }}djangopeople/css/flags.css" type="text/css">

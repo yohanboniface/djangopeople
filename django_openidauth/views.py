@@ -8,10 +8,10 @@ from django.conf import settings
 from models import UserOpenID, associate_openid, unassociate_openid
 from django_openidconsumer import views as consumer_views
 
-import time, md5, datetime
+import time, hashlib, datetime
 
 def _make_hash(hash_type, user, openid):
-    return md5.new('%s:%d:%s:%s' % (
+    return hashlib.md5('%s:%d:%s:%s' % (
         hash_type, user.id, str(openid), settings.SECRET_KEY
     )).hexdigest()
 

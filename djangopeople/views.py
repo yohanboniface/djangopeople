@@ -11,7 +11,6 @@ from PIL import Image
 from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth import views as auth_views
-from django.core.context_processors import csrf
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import Http404, HttpResponseForbidden
@@ -184,7 +183,6 @@ def openid_whatnext(request):
 
 
 def signup(request):
-    c = csrf(request) 
     if not request.user.is_anonymous():
         return redirect(reverse('index'))
     if request.method == 'POST':
@@ -287,7 +285,6 @@ def signup(request):
     return render(request, 'signup.html', {
         'form': form,
         'openid': request.openid,
-        'csrf_token': c['csrf_token'],
     })
 
 def derive_username(nickname):
@@ -307,7 +304,6 @@ def derive_username(nickname):
 
 @must_be_owner
 def upload_profile_photo(request, username):
-    c = csrf(request)
     person = get_object_or_404(DjangoPerson, user__username = username)
     if request.method == 'POST':
         form = PhotoUploadForm(request.POST, request.FILES)
@@ -328,7 +324,6 @@ def upload_profile_photo(request, username):
     return render(request, 'upload_profile_photo.html', {
         'form': form,
         'person': person,
-        'csrf_token': c['csrf_token'],
     })
 
 @must_be_owner
@@ -427,7 +422,6 @@ def profile(request, username):
 
 @must_be_owner
 def edit_finding(request, username):
-    c = csrf(request)
     person = get_object_or_404(DjangoPerson, user__username = username)
     if request.method == 'POST':
         form = FindingForm(request.POST, person=person)
@@ -475,12 +469,10 @@ def edit_finding(request, username):
     return render(request, 'edit_finding.html', {
         'form': form,
         'person': person,
-        'csrf_token': c['csrf_token'],
     })
 
 @must_be_owner
 def edit_portfolio(request, username):
-    c = csrf(request)
     person = get_object_or_404(DjangoPerson, user__username = username)
     if request.method == 'POST':
         form = PortfolioForm(request.POST, person = person)
@@ -496,12 +488,10 @@ def edit_portfolio(request, username):
         form = PortfolioForm(person = person)
     return render(request, 'edit_portfolio.html', {
         'form': form,
-        'csrf_token': c['csrf_token'],
     })
 
 @must_be_owner
 def edit_account(request, username):
-    c = csrf(request)
     person = get_object_or_404(DjangoPerson, user__username = username)
     if request.method == 'POST':
         form = AccountForm(request.POST)
@@ -519,26 +509,22 @@ def edit_account(request, username):
         'form': form,
         'person': person,
         'user': person.user,
-        'csrf_token': c['csrf_token'],
     })
 
 @must_be_owner
 def edit_skills(request, username):
-    c = csrf(request)
     person = get_object_or_404(DjangoPerson, user__username = username)
     if not request.POST.get('skills'):
         return render(request, 'edit_skills.html', {
             'form': SkillsForm(initial={
                 'skills': edit_string_for_tags(person.skilltags)
             }),
-            'csrf_token': c['csrf_token'],
         })
     person.skilltags = request.POST.get('skills', '')
     return redirect(reverse('user_profile', args=[username]))
 
 @must_be_owner
 def edit_password(request, username):
-    c = csrf(request)
     user = get_object_or_404(User, username = username)
     p1 = request.POST.get('password1', '')
     p2 = request.POST.get('password2', '')
@@ -547,13 +533,10 @@ def edit_password(request, username):
         user.save()
         return redirect(reverse('user_profile', args=[username]))
     else:
-        return render(request, 'edit_password.html', { 
-            'csrf_token': c['csrf_token'],
-        })
+        return render(request, 'edit_password.html', {})
 
 @must_be_owner
 def edit_bio(request, username):
-    c = csrf(request)
     person = get_object_or_404(DjangoPerson, user__username = username)
     if request.method == 'POST':
         form = BioForm(request.POST)
@@ -566,12 +549,10 @@ def edit_bio(request, username):
 
     return render(request, 'edit_bio.html', {
         'form': form,
-        'csrf_token': c['csrf_token'],
     })
 
 @must_be_owner
 def edit_location(request, username):
-    c = csrf(request)
     person = get_object_or_404(DjangoPerson, user__username = username)
     if request.method == 'POST':
         form = LocationForm(request.POST)
@@ -602,7 +583,6 @@ def edit_location(request, username):
         form = LocationForm(initial=initial_data)
     return render(request, 'edit_location.html', {
         'form': form,
-        'csrf_token': c['csrf_token'],
     })
 
 def skill_cloud(request):

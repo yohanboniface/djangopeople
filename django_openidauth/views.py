@@ -1,7 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as log_user_in, load_backend
-from django.core.context_processors import csrf
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.html import escape
@@ -32,7 +31,6 @@ def associations(request, template_name='openid_associations.html'):
         # process and make sure they are redirected back here afterwards
         return consumer_views.begin(request, redirect_to='/openid/complete/')
     
-    c = csrf(request)
     messages = []
     associated_openids = [
         rec.openid
@@ -130,7 +128,6 @@ def associations(request, template_name='openid_associations.html'):
     ]
     
     return render(request, template_name, {
-        'csrf_token': c['csrf_token'],
         'user': request.user,
         'messages': messages,
         'action': request.path,

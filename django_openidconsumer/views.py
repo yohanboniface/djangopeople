@@ -8,7 +8,6 @@ from openid.yadis import xri
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.core.context_processors import csrf
 from django.http import HttpResponse, HttpResponseRedirect, get_host
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -45,7 +44,6 @@ def render(request, template, context_dict=None):
 
 def begin(request, sreg=None, extension_args=None,
           redirect_to=None, on_failure=None):
-    c = csrf(request)
     on_failure = on_failure or default_on_failure
 
     if request.GET.get('logo'):
@@ -87,7 +85,6 @@ def begin(request, sreg=None, extension_args=None,
         return render(request, 'openid_signin.html', {
             'action': request_path,
             'logo': request.path + '?logo=1',
-            'csrf_token': c['csrf_token'],
         })
 
     if xri.identifierScheme(user_url) == 'XRI' and getattr(

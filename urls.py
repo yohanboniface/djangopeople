@@ -2,7 +2,9 @@ import os
 
 from django.conf.urls.defaults import patterns, url, include
 from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.shortcuts import redirect
 
 from tagging.views import tagged_object_list
@@ -44,10 +46,6 @@ urlpatterns = patterns('',
     url(r'^skills/(?P<tag>.*)/$', views.skill, name='skill_detail'),
     url(r'^skills/$', views.skill_cloud, name='skill_cloud'),
 
-    (r'^static/(?P<path>.*)$', 'django.views.static.serve', {
-        'document_root': os.path.join(settings.OUR_ROOT, 'static')
-    }),
-
     url(r'^api/irc_lookup/(.*?)/$', api.irc_lookup, name='irc_lookup'),
     url(r'^api/irc_spotted/(.*?)/$', api.irc_spotted, name='irc_spotted'),
     url(r'^irc/active/$', views.irc_active, name='irc_active'),
@@ -73,3 +71,6 @@ urlpatterns = patterns('',
     url(r'^([a-z0-9]{3,})/upload/$', views.upload_profile_photo, name='upload_profile_photo'),
     url(r'^([a-z0-9]{3,})/upload/done/$', views.upload_done, name='upload_done'),
 )
+
+urlpatterns += staticfiles_urlpatterns()
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,25 +1,25 @@
 SERVICES = (
     # shortname, name, icon
-    ('flickr', 'Flickr', '/static/img/services/flickr.png'),
-    ('delicious', 'del.icio.us', '/static/img/services/delicious.png'),
-    ('magnolia', 'Ma.gnolia.com', '/static/img/services/magnolia.png'),
-    ('twitter', 'Twitter', '/static/img/services/twitter.png'),
-    ('facebook', 'Facebook', '/static/img/services/facebook.png'),
-    ('linkedin', 'LinkedIn', '/static/img/services/linkedin.png'),
-    ('pownce', 'Pownce', '/static/img/services/pownce.png'),
-    ('djangosnippets', 'djangosnippets.org', '/static/img/services/django.png'),
-    ('djangosites', 'DjangoSites.org', '/static/img/services/django.png'),
+    ('flickr', 'Flickr', 'img/services/flickr.png'),
+    ('delicious', 'del.icio.us', 'img/services/delicious.png'),
+    ('magnolia', 'Ma.gnolia.com', 'img/services/magnolia.png'),
+    ('twitter', 'Twitter', 'img/services/twitter.png'),
+    ('facebook', 'Facebook', 'img/services/facebook.png'),
+    ('linkedin', 'LinkedIn', 'img/services/linkedin.png'),
+    ('pownce', 'Pownce', 'img/services/pownce.png'),
+    ('djangosnippets', 'djangosnippets.org', 'img/services/django.png'),
+    ('djangosites', 'DjangoSites.org', 'img/services/django.png'),
 )
 SERVICES_DICT = dict([(r[0], r) for r in SERVICES])
 
 IMPROVIDERS = (
     # shortname, name, icon
-    ('aim', 'AIM', '/static/img/improviders/aim.png'),
-    ('yim', 'Y!IM', '/static/img/improviders/yim.png'),
-    ('gtalk', 'GTalk', '/static/img/improviders/gtalk.png'),
-    ('msn', 'MSN', '/static/img/improviders/msn.png'),
-    ('jabber', 'Jabber', '/static/img/improviders/jabber.png'),
-    ('django', '#django IRC', '/static/img/services/django.png'),
+    ('aim', 'AIM', 'img/improviders/aim.png'),
+    ('yim', 'Y!IM', 'img/improviders/yim.png'),
+    ('gtalk', 'GTalk', 'img/improviders/gtalk.png'),
+    ('msn', 'MSN', 'img/improviders/msn.png'),
+    ('jabber', 'Jabber', 'img/improviders/jabber.png'),
+    ('django', '#django IRC', 'img/services/django.png'),
 )
 IMPROVIDERS_DICT = dict([(r[0], r) for r in IMPROVIDERS])
 

@@ -1,14 +1,19 @@
 {% load url from future %}
+{% load static %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
    "http://www.w3.org/TR/html4/strict.dtd">
-
+{# Not all our third-party app views use RequestContext #}
+{% get_static_prefix as STATIC_URL %}
 <html lang="en">{% load thumbnail %}
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>{% block title %}{% endblock %} Django People</title>
-    <link rel="stylesheet" href="/static/css/styles.css" type="text/css" media="all" charset="utf-8">
-    <script type="text/javascript" src="/static/js/jquery-1.2.1.js"></script>
-    <script type="text/javascript" src="/static/js/common.js"></script>
+    <link rel="stylesheet" href="{{ STATIC_URL }}djangopeople/css/styles.css" type="text/css" media="all" charset="utf-8">
+    <script type="text/javascript" src="{{ STATIC_URL }}djangopeople/js/jquery-1.5.2.min.js"></script>
+    <script type="text/javascript">
+        var STATIC_URL = '{{ STATIC_URL }}';
+    </script>
+    <script type="text/javascript" src="{{ STATIC_URL }}djangopeople/js/common.js"></script>
     {% block maps_api %}{% endblock %}
     {% block js %}{% endblock %}
 </head>

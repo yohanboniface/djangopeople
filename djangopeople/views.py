@@ -1,5 +1,5 @@
 import datetime
-import md5
+import hashlib
 import operator
 import os
 import re
@@ -330,7 +330,7 @@ def upload_profile_photo(request, username):
             image_content = request.FILES['photo'].read()
             format = Image.open(StringIO(image_content)).format
             format = format.lower().replace('jpeg', 'jpg')
-            filename = md5.new(image_content).hexdigest() + '.' + format
+            filename = hashlib.md5(image_content).hexdigest() + '.' + format
             # Save the image
             path = os.path.join(settings.MEDIA_ROOT, 'profiles', filename)
             open(path, 'w').write(image_content)

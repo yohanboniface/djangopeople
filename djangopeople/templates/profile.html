@@ -14,14 +14,14 @@
 var nearby_people = [
     // latitude, longitude, name, username, location description, flag, isocode
     {% for p in person.get_nearest %}
-    [{{ p.latitude }}, {{ p.longitude }}, "{{ p|escapejs }}", "{{ p.user.username|escapejs }}", "{{ p.location_description|escapejs }}", "{% if p.photo %}{% thumbnail p.photo 40x40 crop %}{% else %}/static/img/person_small_blank.png{% endif %}", "{{ p.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
+    [{{ p.latitude }}, {{ p.longitude }}, "{{ p|escapejs }}", "{{ p.user.username|escapejs }}", "{{ p.location_description|escapejs }}", "{% if p.photo %}{% thumbnail p.photo 40x40 crop %}{% else %}{{ STATIC_URL }}djangopeople/img/person_small_blank.png{% endif %}", "{{ p.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
     {% endfor %}
 ];
 
 var person_latitude = {{ person.latitude }};
 var person_longitude = {{ person.longitude }};
 </script>
-<script type="text/javascript" src="/static/js/profile.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}djangopeople/js/profile.js"></script>
 <style type="text/css">
 #id_skills {
     width: 80%;
@@ -52,7 +52,7 @@ div.bio a.edit {
 		</h1>
         <p class="meta adr">
 			<a href="{% url 'country_detail' person.country.iso_code|lower %}" class="nobg">
-				<img src="/static/img/flags/{{ person.country.iso_code|lower }}.gif" alt="{{ person.country }}" title="{{ person.country }}" class="flag country-name">
+				<img src="{{ STATIC_URL }}djangopeople/img/flags/{{ person.country.iso_code|lower }}.gif" alt="{{ person.country }}" title="{{ person.country }}" class="flag country-name">
 			</a> <span class="region">{{ person.location_description_html }}</span>{% if is_owner %} <a href="{% url 'edit_location' person.user.username %}" class="changeloc">(change)</a>{% endif %}</p>
 {% endblock %}
 
@@ -126,9 +126,9 @@ div.bio a.edit {
             <ul class="detailsList">
                 {% for person in people %}
                 <li>
-                    <img src="{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}/static/img/person_small_blank.png{% endif %}" alt="{{ person }}" class="main">
+                    <img src="{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}{{ STATIC_URL }}djangopeople/img/person_small_blank.png{% endif %}" alt="{{ person }}" class="main">
                     <h3><a href="{{ person.get_absolute_url }}">{{ person }}</a></h3>
-                    <p class="meta"><a href="{% url 'country_detail' person.country.iso_code|lower %}" class="nobg"><img src="/static/img/flags/{{ person.country.iso_code|lower }}.gif" alt="{{ person.country }}" title="{{ person.country }}"></a>  {{ person.location_description }}<br>{{ person.distance_in_miles|floatformat:0 }} mile{{ person.distance_in_miles|floatformat:0|pluralize }} away</p>
+                    <p class="meta"><a href="{% url 'country_detail' person.country.iso_code|lower %}" class="nobg"><img src="{{ STATIC_URL }}djangopeople/img/flags/{{ person.country.iso_code|lower }}.gif" alt="{{ person.country }}" title="{{ person.country }}"></a>  {{ person.location_description }}<br>{{ person.distance_in_miles|floatformat:0 }} mile{{ person.distance_in_miles|floatformat:0|pluralize }} away</p>
                 </li>
                 {% endfor %}
             </ul>

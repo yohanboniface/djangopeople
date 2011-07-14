@@ -199,26 +199,22 @@ class DjangoPeopleTest(TestCase):
         # search with too short string
         data = {'q': 'ab'}
         response = self.client.get(url, data)
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue('Terms must be three or more characters' in response.content)
+        self.assertContains(response, 'Terms must be three or more characters')
 
         # search non-existent user
         data = {'q': 'Santa'}
         response = self.client.get(url, data)
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue('No users found.' in response.content)
+        self.assertContains(response, 'No users found.')
 
         # search and find (first_name)
         data = {'q': 'Dave'}
         response = self.client.get(url, data)
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue('<span class="family-name">Brubeck</span>' in response.content)
+        self.assertContains(response, '<span class="family-name">Brubeck</span>')
 
         # search and find (username)
         data = {'q': 'DaveB'}
         response = self.client.get(url, data)
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue('<span class="family-name">Brubeck</span>' in response.content)
+        self.assertContains(response, '<span class="family-name">Brubeck</span>')
 
         # search and find (last_name)
         data = {'q': 'brubec'}

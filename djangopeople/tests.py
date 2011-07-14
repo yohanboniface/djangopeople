@@ -26,6 +26,7 @@ def prepare_request(request, openid=True):
 
 
 class DjangoPeopleTest(TestCase):
+    fixtures = ['test_data.json']
 
     def test_simple_pages(self):
         """Simple pages with no action"""
@@ -113,18 +114,18 @@ class DjangoPeopleTest(TestCase):
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(User.objects.count(), 0)
+        self.assertEqual(User.objects.count(), 2)
 
         data['password1'] = 'secret'
         data['password2'] = 'othersecret'
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(User.objects.count(), 0)
+        self.assertEqual(User.objects.count(), 2)
 
         data['password2'] = 'secret'
         response = self.client.post(url, data, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(User.objects.count(), 1)
+        self.assertEqual(User.objects.count(), 3)
         self.assertEqual(len(response.redirect_chain), 1)
 
         # Logged in users go back to the homepage
@@ -148,8 +149,8 @@ class DjangoPeopleTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'],
                          reverse('user_profile', args=['meh']))
-        self.assertEqual(User.objects.count(), 2)
-        self.assertEqual(DjangoPerson.objects.count(), 2)
+        self.assertEqual(User.objects.count(), 4)
+        self.assertEqual(DjangoPerson.objects.count(), 3)
 
     def test_whatnext(self):
         """Redirection after a successful openid login"""
@@ -189,3 +190,38 @@ class DjangoPeopleTest(TestCase):
         response = openid_whatnext(request)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], reverse('openid_associations'))
+
+    def test_search(self):
+        url = reverse('search')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        # search with too short string
+        data = {'q': 'ab'}
+        response = self.client.get(url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('Terms must be three or more characters' in response.content)
+
+        # search non-existent user
+        data = {'q': 'Santa'}
+        response = self.client.get(url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('No users found.' in response.content)
+
+        # search and find (first_name)
+        data = {'q': 'Dave'}
+        response = self.client.get(url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('<span class="family-name">Brubeck</span>' in response.content)
+
+        # search and find (username)
+        data = {'q': 'DaveB'}
+        response = self.client.get(url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('<span class="family-name">Brubeck</span>' in response.content)
+
+        # search and find (last_name)
+        data = {'q': 'brubec'}
+        response = self.client.get(url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('<span class="family-name">Brubeck</span>' in response.content)

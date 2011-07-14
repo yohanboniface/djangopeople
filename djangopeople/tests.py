@@ -225,3 +225,4 @@ class DjangoPeopleTest(TestCase):
         response = self.client.get(url, data)
         self.assertEqual(response.status_code, 200)
         self.assertTrue('<span class="family-name">Brubeck</span>' in response.content)
+        self.assertTrue('1 result' in response.content)

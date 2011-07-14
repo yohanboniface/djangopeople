@@ -656,36 +656,36 @@ def country_looking_for(request, country_code, looking_for):
         'looking_for': looking_for,
     })
 
-def search_people(q):
-    words = [w.strip() for w in q.split() if len(w.strip()) > 2]
-    if not words:
-        return []
-    
-    terms = []
-    for word in words:
-        terms.append(Q(
-            user__username__icontains = word) | 
-            Q(user__first_name__icontains = word) | 
-            Q(user__last_name__icontains = word)
-        )
-    
-    combined = reduce(operator.and_, terms)
-    return DjangoPerson.objects.filter(combined).select_related().distinct()
-    
-def search(request):
-    q = request.GET.get('q', '')
-    has_badwords = [
-        w.strip() for w in q.split() if len(w.strip()) in (1, 2)
-    ]
-    if q:
-        people = search_people(q)
-        return render(request, 'search.html', {
-            'q': q,
-            'people_list': people,
-            'has_badwords': has_badwords,
-        })
-    else:
-        return render(request, 'search.html')
+class SearchView(generic.TemplateView):
+    template_name = 'search.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(SearchView, self).get_context_data(**kwargs)
+        q = self.request.GET.get('q', '')
+        has_badwords = [w.strip() for w in q.split() if len(w.strip()) in (1, 2)]
+        if q:
+            people = self.search_people(q)
+            context.update({'q': q,
+                'people_list': people,
+                'has_badwords': has_badwords})
+        return context
+
+    def search_people(self, q):
+        words = [w.strip() for w in q.split() if len(w.strip()) > 2]
+        if not words:
+            return []
+
+        terms = []
+        for word in words:
+            terms.append(Q(
+                user__username__icontains = word) |
+                Q(user__first_name__icontains = word) |
+                Q(user__last_name__icontains = word)
+            )
+
+        combined = reduce(operator.and_, terms)
+        return DjangoPerson.objects.filter(combined).select_related().distinct()
+search = SearchView.as_view()
 
 def irc_active(request):
     "People active on IRC in the last hour"

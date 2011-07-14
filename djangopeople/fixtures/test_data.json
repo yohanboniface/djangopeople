@@ -42,7 +42,7 @@
       "last_active_on_irc": null, 
       "bio": "ad", 
       "profile_views": 1, 
-      "country": 10, 
+      "country": 12,
       "region": null, 
       "longitude": 14.9853515625, 
       "location_description": "Vienna, Austria", 
@@ -51,6 +51,54 @@
       "latitude": 50.035973672195468, 
       "openid_server": "", 
       "openid_delegate": ""
+    }
+  },
+  {
+    "pk": 1,
+    "model": "tagging.tag",
+    "fields": {
+      "name": "jazz"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "tagging.tag",
+    "fields": {
+      "name": "linux"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "tagging.tag",
+    "fields": {
+      "name": "python"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "tagging.taggeditem",
+    "fields": {
+      "tag": 1,
+      "object_id": 1,
+      "content_type": 15
+    }
+  },
+  {
+    "pk": 2,
+    "model": "tagging.taggeditem",
+    "fields": {
+      "tag": 2,
+      "object_id": 1,
+      "content_type": 15
+    }
+  },
+  {
+    "pk": 3,
+    "model": "tagging.taggeditem",
+    "fields": {
+      "tag": 3,
+      "object_id": 1,
+      "content_type": 15
     }
   }
 ]

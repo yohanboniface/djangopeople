@@ -602,23 +602,36 @@ def edit_location(request, username):
         'form': form,
     })
 
-def skill_cloud(request):
-    tags = DjangoPerson.skilltags.cloud(steps=5)
-    calculate_cloud(tags, 5)
-    return render(request, 'skills.html', {
-        'tags': tags
-    })
+class SkillCloudView(generic.TemplateView):
+    template_name = 'skills.html'
 
-def country_skill_cloud(request, country_code):
-    country = get_object_or_404(Country, iso_code = country_code.upper())
-    tags = Tag.objects.cloud_for_model(DjangoPerson, steps=5, filters={
-        'country': country
-    })
-    calculate_cloud(tags, 5)
-    return render(request, 'skills.html', {
-        'tags': tags,
-        'country': country
-    })
+    def get_context_data(self, **kwargs):
+        tags = DjangoPerson.skilltags.cloud(steps=5)
+        calculate_cloud(tags, 5)
+        context = super(SkillCloudView, self).get_context_data(**kwargs)
+        context.update({
+            'tags': tags,
+        })
+        return context
+skill_cloud = SkillCloudView.as_view()
+
+class CountrySkillCloudView(generic.TemplateView):
+    template_name = 'skills.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CountrySkillCloudView, self).get_context_data(**kwargs)
+        country_code = context['params']['country_code']
+        country = get_object_or_404(Country, iso_code = country_code.upper())
+        tags = Tag.objects.cloud_for_model(DjangoPerson, steps=5, filters={
+            'country': country,
+        })
+        calculate_cloud(tags, 5)
+        context.update({
+            'tags': tags,
+            'country': country,
+        })
+        return context
+country_skill_cloud = CountrySkillCloudView.as_view()
 
 def skill(request, tag):
     return tagged_object_list(request,

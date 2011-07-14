@@ -222,3 +222,30 @@ class DjangoPeopleTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue('<span class="family-name">Brubeck</span>' in response.content)
         self.assertTrue('1 result' in response.content)
+
+    def test_skill_cloud(self):
+        url = reverse('skill_cloud')
+        response = self.client.get(url)
+        self.assertContains(response, '/skills/linux/')
+
+    def test_skill_detail(self):
+        url = '/skills/jazz/'
+        response = self.client.get(url)
+        self.assertContains(response, '1 Django Person mention this skill')
+        self.assertTrue('<span class="family-name">Brubeck</span>', response.content)
+
+        response_404 = self.client.get('/skills/xxx')
+        self.assertTrue(response_404.status_code, 404)
+
+    def test_country_skill_cloud(self):
+        url = '/at/skills/'
+        response = self.client.get(url)
+        self.assertContains(response, '/at/skills/python/')
+        self.assertTrue('img/flags/at.gif' in response.content)
+
+        response_404 = self.client.get('/xy/skills/')
+        self.assertTrue(response_404.status_code, 404)
+
+    # FIXME:
+    def test_country_skill(self):
+        url = '/at/skills/python/'

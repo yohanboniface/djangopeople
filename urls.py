@@ -52,7 +52,7 @@ urlpatterns = patterns('',
     url(r'^irc/(.*?)/$', api.irc_redirect, name='irc_redirect'),
 
     (r'^uk/$', perm_redirect('/gb/')),
-    url(r'^([a-z]{2})/$', views.country, name='country_detail'),
+    url(r'^(?P<country_code>[a-z]{2})/$', views.country, name='country_detail'),
     url(r'^([a-z]{2})/sites/$', views.country_sites, name='country_sites'),
     url(r'^(?P<country_code>[a-z]{2})/skills/$', views.country_skill_cloud,
         name='country_skill_cloud'),

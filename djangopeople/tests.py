@@ -259,3 +259,13 @@ class DjangoPeopleTest(TestCase):
         url = '/fr/looking-for/freelance/'
         response = self.client.get(url)
         self.assertContains(response, 'France, seeking freelance work')
+
+    def test_country_detail(self):
+        url = '/at/'
+        response = self.client.get(url)
+        self.assertContains(response, 'Austria')
+        self.assertTrue('1 Django person', response.content)
+        self.assertTrue('Dave', response.content)
+
+        response_404 = self.client.get('/xy/')
+        self.assertTrue(response_404.status_code, 404)

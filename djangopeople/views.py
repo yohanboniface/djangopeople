@@ -349,13 +349,20 @@ def upload_done(request, username):
     "Using a double redirect to try and stop back button from re-uploading"
     return redirect(reverse('user_profile', args=[username]))
 
-def country(request, country_code):
-    country = get_object_or_404(Country, iso_code = country_code.upper())
-    return render(request, 'country.html', {
-        'country': country,
-        'people_list': country.djangoperson_set.all(),
-        'regions': country.top_regions(),
-    })
+class CountryDetailView(generic.TemplateView):
+    template_name = 'country.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CountryDetailView, self).get_context_data(**kwargs)
+        country_code = context['params']['country_code']
+        country = get_object_or_404(Country, iso_code = country_code.upper())
+        context.update({
+            'country': country,
+            'people_list': country.djangoperson_set.all(),
+            'regions': country.top_regions(),
+        })
+        return context
+country = CountryDetailView.as_view()
 
 def country_sites(request, country_code):
     country = get_object_or_404(Country, iso_code = country_code.upper())

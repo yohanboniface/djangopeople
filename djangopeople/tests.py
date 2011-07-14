@@ -249,3 +249,13 @@ class DjangoPeopleTest(TestCase):
     # FIXME:
     def test_country_skill(self):
         url = '/at/skills/python/'
+
+    def test_country_looking_for(self):
+        url = '/at/looking-for/full-time/'
+        response = self.client.get(url)
+        self.assertContains(response, 'Austria, seeking full-time work')
+        self.assertTrue('Dave Brubeck' in response.content)
+
+        url = '/fr/looking-for/freelance/'
+        response = self.client.get(url)
+        self.assertContains(response, 'France, seeking freelance work')

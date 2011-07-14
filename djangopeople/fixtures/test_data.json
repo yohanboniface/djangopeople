@@ -100,5 +100,16 @@
       "object_id": 1,
       "content_type": 15
     }
+  },
+  {
+    "pk": 1,
+    "model": "machinetags.machinetaggeditem",
+    "fields": {
+      "predicate": "looking_for_work",
+      "namespace": "profile",
+      "content_type": 15,
+      "value": "full-time",
+      "object_id": 1
+    }
   }
 ]

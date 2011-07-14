@@ -656,18 +656,27 @@ def country_skill(request, country_code, tag):
         },
     )
 
-def country_looking_for(request, country_code, looking_for):
-    country = get_object_or_404(Country, iso_code = country_code.upper())
-    ids = [
-        o['object_id'] for o in MachineTaggedItem.objects.filter(
-        namespace='profile', predicate='looking_for_work', value=looking_for).values('object_id')
-    ]
-    people = DjangoPerson.objects.filter(country = country, id__in = ids)
-    return render(request, 'country_looking_for.html', {
-        'people': people,
-        'country': country,
-        'looking_for': looking_for,
-    })
+class CountryLookingForView(generic.TemplateView):
+    template_name = 'country_looking_for.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CountryLookingForView, self).get_context_data(**kwargs)
+        country_code = context['params']['country_code']
+        country = get_object_or_404(Country, iso_code = country_code.upper())
+        looking_for =  context['params']['looking_for']
+        ids = [
+            o['object_id'] for o in MachineTaggedItem.objects.filter(
+            namespace='profile', predicate='looking_for_work',
+            value=looking_for).values('object_id')
+        ]
+        people = DjangoPerson.objects.filter(country = country, id__in = ids)
+        context.update({
+            'people': people,
+            'country': country,
+            'looking_for': looking_for,
+        })
+        return context
+country_looking_for = CountryLookingForView.as_view()
 
 class SearchView(generic.TemplateView):
     template_name = 'search.html'

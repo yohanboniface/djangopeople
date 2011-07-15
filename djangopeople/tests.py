@@ -264,8 +264,15 @@ class DjangoPeopleTest(TestCase):
         url = '/at/'
         response = self.client.get(url)
         self.assertContains(response, 'Austria')
-        self.assertTrue('1 Django person', response.content)
-        self.assertTrue('Dave', response.content)
+        self.assertTrue('1 Django person'in response.content)
+        self.assertTrue('Dave' in response.content)
 
         response_404 = self.client.get('/xy/')
         self.assertTrue(response_404.status_code, 404)
+
+    def test_region(self):
+        url = '/at/sites/'
+        response = self.client.get(url)
+        self.assertTrue('Sites in Austria', response.content)
+        self.assertTrue('Dave' in response.content)
+        self.assertTrue('cheese-shop' in response.content)

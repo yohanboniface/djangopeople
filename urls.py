@@ -53,7 +53,7 @@ urlpatterns = patterns('',
 
     (r'^uk/$', perm_redirect('/gb/')),
     url(r'^(?P<country_code>[a-z]{2})/$', views.country, name='country_detail'),
-    url(r'^([a-z]{2})/sites/$', views.country_sites, name='country_sites'),
+    url(r'^(?P<country_code>[a-z]{2})/sites/$', views.country_sites, name='country_sites'),
     url(r'^(?P<country_code>[a-z]{2})/skills/$', views.country_skill_cloud,
         name='country_skill_cloud'),
     url(r'^([a-z]{2})/skills/(.*)/$', views.country_skill, name='country_skill'),

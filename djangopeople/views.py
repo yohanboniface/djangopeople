@@ -374,14 +374,22 @@ def country_sites(request, country_code):
         'sites': sites,
     })
 
-def region(request, country_code, region_code):
-    region = get_object_or_404(Region, 
-        country__iso_code = country_code.upper(),
-        code = region_code.upper()
-    )
-    return render(request, 'country.html', {
-        'country': region,
-    })
+class RegionView(generic.TemplateView):
+    template_name = 'country.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CountryDetailView, self).get_context_data(**kwargs)
+        country_code = context['params']['country_code']
+        region_code = context['params']['region_code']
+        region = get_object_or_404(Region,
+            country__iso_code = country_code.upper(),
+            code = region_code.upper()
+        )
+        context.update({
+            'country': region,
+        })
+        return context
+region = RegionView.as_view()
 
 def profile(request, username):
     person = get_object_or_404(DjangoPerson, user__username = username)

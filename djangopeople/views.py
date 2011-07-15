@@ -730,17 +730,22 @@ class SearchView(generic.TemplateView):
         return DjangoPerson.objects.filter(combined).select_related().distinct()
 search = SearchView.as_view()
 
-def irc_active(request):
-    "People active on IRC in the last hour"
-    results = DjangoPerson.objects.filter(
-        last_active_on_irc__gt = 
-            datetime.datetime.now() - datetime.timedelta(hours=1)
-    ).order_by('-last_active_on_irc')
-    # Filter out the people who don't want to be tracked (inefficient)
-    results = [r for r in results if r.irc_tracking_allowed()]
-    return render(request, 'irc_active.html', {
-        'people_list': results,
-    })
+class IRCActiveView(generic.TemplateView):
+    template_name = 'irc_active.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(IRCActiveView, self).get_context_data(**kwargs)
+        results = DjangoPerson.objects.filter(
+            last_active_on_irc__gt =
+                datetime.datetime.now() - datetime.timedelta(hours=1)
+        ).order_by('-last_active_on_irc')
+        # Filter out the people who don't want to be tracked (inefficient)
+        results = [r for r in results if r.irc_tracking_allowed()]
+        context.update({
+            'people_list': results,
+        })
+        return context
+irc_active = IRCActiveView.as_view()
 
 # Custom variant of the generic view from django-tagging
 def tagged_object_list(request, model=None, tag=None, related_tags=False,

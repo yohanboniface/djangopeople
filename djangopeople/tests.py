@@ -219,9 +219,8 @@ class DjangoPeopleTest(TestCase):
         # search and find (last_name)
         data = {'q': 'brubec'}
         response = self.client.get(url, data)
-        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '1 result')
         self.assertTrue('<span class="family-name">Brubeck</span>' in response.content)
-        self.assertTrue('1 result' in response.content)
 
     def test_skill_cloud(self):
         url = reverse('skill_cloud')
@@ -234,8 +233,8 @@ class DjangoPeopleTest(TestCase):
         self.assertContains(response, '1 Django Person mention this skill')
         self.assertTrue('<span class="family-name">Brubeck</span>', response.content)
 
-        response_404 = self.client.get('/skills/xxx')
-        self.assertTrue(response_404.status_code, 404)
+        response_404 = self.client.get('/skills/xxx/')
+        self.assertEquals(response_404.status_code, 404)
 
     def test_country_skill_cloud(self):
         url = '/at/skills/'
@@ -244,7 +243,7 @@ class DjangoPeopleTest(TestCase):
         self.assertTrue('img/flags/at.gif' in response.content)
 
         response_404 = self.client.get('/xy/skills/')
-        self.assertTrue(response_404.status_code, 404)
+        self.assertEquals(response_404.status_code, 404)
 
     # FIXME:
     def test_country_skill(self):
@@ -268,7 +267,7 @@ class DjangoPeopleTest(TestCase):
         self.assertTrue('Dave' in response.content)
 
         response_404 = self.client.get('/xy/')
-        self.assertTrue(response_404.status_code, 404)
+        self.assertEquals(response_404.status_code, 404)
 
     def test_sites(self):
         url = '/at/sites/'
@@ -281,9 +280,9 @@ class DjangoPeopleTest(TestCase):
         url = '/daveb/'
         response = self.client.get(url)
         self.assertContains(response, 'Django projects Dave has contributed to')
-        self.assertTrue('Brubeck', response.content)
-        self.assertTrue('jazz', response.content)
-        self.assertTrue('cheese-shop', response.content)
-        self.assertTrue('full-time', response.content)
-        self.assertTrue('Vienna, Austria', response.content)
-        self.assertTrue('profiles/731e42684e06d08884454bfbaf57456f.png', response.content)
+        self.assertTrue('Brubeck' in response.content)
+        self.assertTrue('jazz' in response.content)
+        self.assertTrue('cheese-shop' in response.content)
+        self.assertTrue('full-time' in response.content)
+        self.assertTrue('Vienna, Austria' in response.content)
+        self.assertTrue('fbaf57456f_png_83x83_crop_q85.jpg' in response.content)

@@ -245,9 +245,11 @@ class DjangoPeopleTest(TestCase):
         response_404 = self.client.get('/xy/skills/')
         self.assertEquals(response_404.status_code, 404)
 
-    # FIXME:
     def test_country_skill(self):
         url = '/at/skills/python/'
+        response = self.client.get(url)
+        self.assertContains(response, 'Dave Brubeck')
+        self.assertTrue('1 Django Person mention this skill' in response.content)
 
     def test_country_looking_for(self):
         url = '/at/looking-for/full-time/'

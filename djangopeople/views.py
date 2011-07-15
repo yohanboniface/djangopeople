@@ -671,6 +671,7 @@ def country_skill(request, country_code, tag):
         related_tag_counts = True,
         extra_filter_args = {'country__iso_code': country_code.upper()},
         template_name = 'skill.html',
+        template_object_name = 'people',
         extra_context = {
             'country': Country.objects.get(iso_code = country_code.upper()),
         },

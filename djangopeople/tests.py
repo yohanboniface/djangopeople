@@ -273,6 +273,7 @@ class DjangoPeopleTest(TestCase):
     def test_sites(self):
         url = '/at/sites/'
         response = self.client.get(url)
-        self.assertTrue('Sites in Austria', response.content)
+        self.assertContains(response, 'Sites in Austria')
         self.assertTrue('Dave' in response.content)
         self.assertTrue('cheese-shop' in response.content)
+

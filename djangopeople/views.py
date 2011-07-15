@@ -364,32 +364,31 @@ class CountryDetailView(generic.TemplateView):
         return context
 country = CountryDetailView.as_view()
 
-def country_sites(request, country_code):
-    country = get_object_or_404(Country, iso_code = country_code.upper())
-    sites = PortfolioSite.objects.select_related().filter(
-        contributor__country = country
-    ).order_by('contributor')
-    return render(request, 'country_sites.html', {
-        'country': country,
-        'sites': sites,
-    })
-
-class RegionView(generic.TemplateView):
-    template_name = 'country.html'
+class CountrySitesView(generic.TemplateView):
+    template_name = 'country_sites.html'
 
     def get_context_data(self, **kwargs):
-        context = super(CountryDetailView, self).get_context_data(**kwargs)
+        context = super(CountrySitesView, self).get_context_data(**kwargs)
         country_code = context['params']['country_code']
-        region_code = context['params']['region_code']
-        region = get_object_or_404(Region,
-            country__iso_code = country_code.upper(),
-            code = region_code.upper()
-        )
+        country = get_object_or_404(Country, iso_code = country_code.upper())
+        sites = PortfolioSite.objects.select_related().filter(
+            contributor__country = country
+        ).order_by('contributor')
         context.update({
-            'country': region,
+            'country': country,
+            'sites': sites,
         })
         return context
-region = RegionView.as_view()
+country_sites = CountrySitesView.as_view()
+
+def region(request, country_code, region_code):
+    region = get_object_or_404(Region,
+        country__iso_code = country_code.upper(),
+        code = region_code.upper()
+    )
+    return render(request, 'country.html', {
+        'country': region,
+    })
 
 def profile(request, username):
     person = get_object_or_404(DjangoPerson, user__username = username)

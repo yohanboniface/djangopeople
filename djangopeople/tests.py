@@ -270,7 +270,7 @@ class DjangoPeopleTest(TestCase):
         response_404 = self.client.get('/xy/')
         self.assertTrue(response_404.status_code, 404)
 
-    def test_region(self):
+    def test_sites(self):
         url = '/at/sites/'
         response = self.client.get(url)
         self.assertTrue('Sites in Austria', response.content)

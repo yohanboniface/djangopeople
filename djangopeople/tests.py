@@ -11,6 +11,7 @@ from django_openidconsumer.util import OpenID
 
 from djangopeople.models import DjangoPerson, Country
 from djangopeople.views import signup, openid_whatnext
+from datetime import datetime
 
 
 def prepare_request(request, openid=True):
@@ -287,4 +288,15 @@ class DjangoPeopleTest(TestCase):
         self.assertTrue('cheese-shop' in response.content)
         self.assertTrue('full-time' in response.content)
         self.assertTrue('Vienna, Austria' in response.content)
-        self.assertTrue('fbaf57456f_png_83x83_crop_q85.jpg' in response.content)
+
+    def test_irc_active(self):
+        # update dave's irc time
+        dave = DjangoPerson.objects.get(pk=1)
+        dave.last_active_on_irc = datetime.now()
+        dave.save()
+
+        url = reverse('irc_active')
+        response = self.client.get(url)
+        self.assertContains(response, 'Active on IRC in the past hour')
+        self.assertTrue('Dave Brubeck' in response.content)
+        self.assertTrue('1 people' in response.content) #TODO fix the singular in template

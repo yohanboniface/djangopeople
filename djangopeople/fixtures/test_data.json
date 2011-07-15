@@ -21,7 +21,7 @@
     "pk": 2, 
     "model": "auth.user", 
     "fields": {
-      "username": "DaveB", 
+      "username": "daveb",
       "first_name": "Dave", 
       "last_name": "Brubeck", 
       "is_active": true, 
@@ -47,7 +47,7 @@
       "longitude": 14.9853515625, 
       "location_description": "Vienna, Austria", 
       "user": 2, 
-      "photo": "", 
+      "photo": "profiles/731e42684e06d08884454bfbaf57456f.png",
       "latitude": 50.035973672195468, 
       "openid_server": "", 
       "openid_delegate": ""

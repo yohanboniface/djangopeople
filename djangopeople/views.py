@@ -390,67 +390,73 @@ def region(request, country_code, region_code):
         'country': region,
     })
 
-def profile(request, username):
-    person = get_object_or_404(DjangoPerson, user__username = username)
-    person.profile_views += 1 # Not bothering with transactions; only a stat
-    person.save()
-    mtags = tagdict(person.machinetags.all())
-    
-    # Set up convenient iterables for IM and services
-    ims = []
-    for key, value in mtags.get('im', {}).items():
-        shortname, name, icon = IMPROVIDERS_DICT.get(key, ('', '', ''))
-        if not shortname:
-            continue # Bad machinetag
-        ims.append({
-            'shortname': shortname,
-            'name': name,
-            'value': value,
+class ProfileView(generic.TemplateView):
+    template_name = 'profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ProfileView, self).get_context_data(**kwargs)
+        username = context['params']['username']
+        person = get_object_or_404(DjangoPerson, user__username = username)
+        person.profile_views += 1 # Not bothering with transactions; only a stat
+        person.save()
+        mtags = tagdict(person.machinetags.all())
+
+        # Set up convenient iterables for IM and services
+        ims = []
+        for key, value in mtags.get('im', {}).items():
+            shortname, name, icon = IMPROVIDERS_DICT.get(key, ('', '', ''))
+            if not shortname:
+                continue # Bad machinetag
+            ims.append({
+                'shortname': shortname,
+                'name': name,
+                'value': value,
+            })
+        ims.sort(lambda x, y: cmp(x['shortname'], y['shortname']))
+
+        services = []
+        for key, value in mtags.get('services', {}).items():
+            shortname, name, icon = SERVICES_DICT.get(key, ('', '', ''))
+            if not shortname:
+                continue # Bad machinetag
+            services.append({
+                'shortname': shortname,
+                'name': name,
+                'value': value,
+            })
+        services.sort(lambda x, y: cmp(x['shortname'], y['shortname']))
+
+        # Set up vars that control privacy stuff
+        privacy = {
+            'show_im': (
+                mtags['privacy']['im'] == 'public' or
+                not self.request.user.is_anonymous()
+            ),
+            'show_email': (
+                mtags['privacy']['email'] == 'public' or
+                (not self.request.user.is_anonymous() and mtags['privacy']['email'] == 'private')
+            ),
+            'hide_from_search': mtags['privacy']['search'] != 'public',
+            'show_last_irc_activity': bool(person.last_active_on_irc and person.irc_tracking_allowed()),
+        }
+
+        # Should we show the 'Finding X' section at all?
+        show_finding = services or privacy['show_email'] or \
+            (privacy['show_im'] and ims)
+        context.update({
+            'person': person,
+            'is_owner': self.request.user.username == username,
+            'skills_form': SkillsForm(initial={
+                'skills': edit_string_for_tags(person.skilltags)
+            }),
+            'mtags': mtags,
+            'ims': ims,
+            'services': services,
+            'privacy': privacy,
+            'show_finding': show_finding,
         })
-    ims.sort(lambda x, y: cmp(x['shortname'], y['shortname']))
-    
-    services = []
-    for key, value in mtags.get('services', {}).items():
-        shortname, name, icon = SERVICES_DICT.get(key, ('', '', ''))
-        if not shortname:
-            continue # Bad machinetag
-        services.append({
-            'shortname': shortname,
-            'name': name,
-            'value': value,
-        })
-    services.sort(lambda x, y: cmp(x['shortname'], y['shortname']))
-    
-    # Set up vars that control privacy stuff
-    privacy = {
-        'show_im': (
-            mtags['privacy']['im'] == 'public' or 
-            not request.user.is_anonymous()
-        ),
-        'show_email': (
-            mtags['privacy']['email'] == 'public' or 
-            (not request.user.is_anonymous() and mtags['privacy']['email'] == 'private')
-        ),
-        'hide_from_search': mtags['privacy']['search'] != 'public',
-        'show_last_irc_activity': bool(person.last_active_on_irc and person.irc_tracking_allowed()),
-    }
-    
-    # Should we show the 'Finding X' section at all?
-    show_finding = services or privacy['show_email'] or \
-        (privacy['show_im'] and ims)
-    
-    return render(request, 'profile.html', {
-        'person': person,
-        'is_owner': request.user.username == username,
-        'skills_form': SkillsForm(initial={
-            'skills': edit_string_for_tags(person.skilltags)
-        }),
-        'mtags': mtags,
-        'ims': ims,
-        'services': services,
-        'privacy': privacy,
-        'show_finding': show_finding,
-    })
+        return context
+profile = ProfileView.as_view()
 
 @must_be_owner
 def edit_finding(request, username):

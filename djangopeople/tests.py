@@ -277,3 +277,13 @@ class DjangoPeopleTest(TestCase):
         self.assertTrue('Dave' in response.content)
         self.assertTrue('cheese-shop' in response.content)
 
+    def test_user_profile(self):
+        url = '/daveb/'
+        response = self.client.get(url)
+        self.assertContains(response, 'Django projects Dave has contributed to')
+        self.assertTrue('Brubeck', response.content)
+        self.assertTrue('jazz', response.content)
+        self.assertTrue('cheese-shop', response.content)
+        self.assertTrue('full-time', response.content)
+        self.assertTrue('Vienna, Austria', response.content)
+        self.assertTrue('profiles/731e42684e06d08884454bfbaf57456f.png', response.content)

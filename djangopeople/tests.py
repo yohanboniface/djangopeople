@@ -300,3 +300,14 @@ class DjangoPeopleTest(TestCase):
         self.assertContains(response, 'Active on IRC in the past hour')
         self.assertTrue('Dave Brubeck' in response.content)
         self.assertTrue('1 people' in response.content) #TODO fix the singular in template
+
+    def test_irc_lookup(self):
+        url = '/api/irc_lookup/nobody/'
+        response = self.client.get(url)
+        self.assertContains(response, 'no match')
+
+        url = '/api/irc_lookup/davieboy/'
+        response = self.client.get(url)
+        self.assertContains(response,
+            'Dave Brubeck, Vienna, Austria, Austria, http://djangopeople.net/daveb/')
+

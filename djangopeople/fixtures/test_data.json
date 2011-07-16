@@ -113,6 +113,26 @@
     }
   },
   {
+    "pk": 2,
+    "model": "machinetags.machinetaggeditem",
+    "fields": {
+      "predicate": "django",
+      "namespace": "im",
+      "content_type": 15,
+      "value": "davieboy",
+      "object_id": 1
+    }
+  },
+  {
+    "pk": 15,
+    "model": "contenttypes.contenttype",
+    "fields": {
+      "model": "djangoperson",
+      "name": "django person",
+      "app_label": "djangopeople"
+    }
+  },
+  {
     "pk": 1,
     "model": "djangopeople.portfoliosite",
     "fields": {

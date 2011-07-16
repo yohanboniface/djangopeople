@@ -12,6 +12,7 @@ from django_openidconsumer.util import OpenID
 from djangopeople.models import DjangoPerson, Country
 from djangopeople.views import signup, openid_whatnext
 from datetime import datetime
+import settings
 
 
 def prepare_request(request, openid=True):
@@ -320,3 +321,22 @@ class DjangoPeopleTest(TestCase):
         response = self.client.get(url)
         self.assertTrue(response.status_code == 302)
         # redirect to djangopeople.net
+
+    def test_irc_spotted(self):
+        url = '/api/irc_spotted/nobody/'
+
+        data = {'sekrit': 'wrong password',}
+        response = self.client.post(url, data)
+        self.assertContains(response, 'BAD_SEKRIT')
+
+        data = {'sekrit': settings.API_PASSWORD,}
+        response = self.client.post(url, data)
+        self.assertContains(response, 'NO_MATCH')
+
+        url = '/api/irc_spotted/davieboy/'
+        data = {'sekrit': settings.API_PASSWORD,}
+        response = self.client.post(url, data)
+        self.assertContains(response, 'FIRST_TIME_SEEN')
+
+        response = self.client.post(url, data)
+        self.assertContains(response, 'TRACKED')

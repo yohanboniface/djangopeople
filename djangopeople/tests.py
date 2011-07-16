@@ -310,7 +310,7 @@ class DjangoPeopleTest(TestCase):
         url = '/api/irc_lookup/davieboy/'
         response = self.client.get(url)
         self.assertContains(response,
-            'Dave Brubeck, Vienna, Austria, Austria, http://djangopeople.net/daveb/')
+            'Dave Brubeck, Vienna, Austria, Austria, http://testserver/daveb/')
 
     def test_irc_redirect(self):
         url = '/irc/nobody/'
@@ -319,8 +319,7 @@ class DjangoPeopleTest(TestCase):
 
         url = '/irc/davieboy/'
         response = self.client.get(url)
-        self.assertTrue(response.status_code == 302)
-        # redirect to djangopeople.net
+        self.assertRedirects(response, 'http://testserver/daveb/')
 
     def test_irc_spotted(self):
         url = '/api/irc_spotted/nobody/'

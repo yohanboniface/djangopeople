@@ -1,3 +1,6 @@
+from datetime import datetime
+
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.core import mail
@@ -11,8 +14,6 @@ from django_openidconsumer.util import OpenID
 
 from djangopeople.models import DjangoPerson, Country
 from djangopeople.views import signup, openid_whatnext
-from datetime import datetime
-import settings
 
 
 def prepare_request(request, openid=True):
@@ -28,7 +29,7 @@ def prepare_request(request, openid=True):
 
 
 class DjangoPeopleTest(TestCase):
-    fixtures = ['test_data.json']
+    fixtures = ['test_data']
 
     def test_simple_pages(self):
         """Simple pages with no action"""
@@ -222,107 +223,118 @@ class DjangoPeopleTest(TestCase):
         data = {'q': 'brubec'}
         response = self.client.get(url, data)
         self.assertContains(response, '1 result')
-        self.assertTrue('<span class="family-name">Brubeck</span>' in response.content)
+        self.assertContains(response,
+                            '<span class="family-name">Brubeck</span>')
 
     def test_skill_cloud(self):
         url = reverse('skill_cloud')
         response = self.client.get(url)
-        self.assertContains(response, '/skills/linux/')
+        linux_url = reverse('skill_detail', args=['linux'])
+        self.assertContains(response, linux_url)
 
     def test_skill_detail(self):
-        url = '/skills/jazz/'
+        url = reverse('skill_detail', args=['jazz'])
         response = self.client.get(url)
         self.assertContains(response, '1 Django Person mention this skill')
-        self.assertTrue('<span class="family-name">Brubeck</span>', response.content)
+        self.assertContains(response,
+                            '<span class="family-name">Brubeck</span')
 
-        response_404 = self.client.get('/skills/xxx/')
-        self.assertEquals(response_404.status_code, 404)
+        url = reverse('skill_detail', args=['xxx'])
+        response = self.client.get(url)
+        self.assertEquals(response.status_code, 404)
 
     def test_country_skill_cloud(self):
-        url = '/at/skills/'
+        url = reverse('country_skill_cloud', args=['at'])
         response = self.client.get(url)
-        self.assertContains(response, '/at/skills/python/')
-        self.assertTrue('img/flags/at.gif' in response.content)
 
-        response_404 = self.client.get('/xy/skills/')
-        self.assertEquals(response_404.status_code, 404)
+        python_url = reverse('country_skill', args=['at', 'python'])
+        self.assertContains(response, python_url)
+        self.assertContains(response, 'img/flags/at.gif')
+
+        url = reverse('country_skill_cloud', args=['xy'])
+        response = self.client.get(url)
+        self.assertEquals(response.status_code, 404)
 
     def test_country_skill(self):
-        url = '/at/skills/python/'
+        url = reverse('country_skill', args=['at', 'python'])
         response = self.client.get(url)
         self.assertContains(response, 'Dave Brubeck')
-        self.assertTrue('1 Django Person mention this skill' in response.content)
+        self.assertContains(response, '1 Django Person mention this skill')
 
     def test_country_looking_for(self):
-        url = '/at/looking-for/full-time/'
+        url = reverse('country_looking_for', args=['at', 'full-time'])
         response = self.client.get(url)
         self.assertContains(response, 'Austria, seeking full-time work')
         self.assertTrue('Dave Brubeck' in response.content)
 
-        url = '/fr/looking-for/freelance/'
+        url = reverse('country_looking_for', args=['fr', 'freelance'])
         response = self.client.get(url)
         self.assertContains(response, 'France, seeking freelance work')
 
     def test_country_detail(self):
-        url = '/at/'
+        url = reverse('country_detail', args=['at'])
         response = self.client.get(url)
         self.assertContains(response, 'Austria')
-        self.assertTrue('1 Django person'in response.content)
-        self.assertTrue('Dave' in response.content)
+        self.assertContains(response, '1 Django person')
+        self.assertContains(response, 'Dave')
 
-        response_404 = self.client.get('/xy/')
-        self.assertEquals(response_404.status_code, 404)
+        url = reverse('country_detail', args=['xy'])
+        response = self.client.get(url)
+        self.assertEquals(response.status_code, 404)
 
     def test_sites(self):
-        url = '/at/sites/'
+        url = reverse('country_sites', args=['at'])
         response = self.client.get(url)
         self.assertContains(response, 'Sites in Austria')
-        self.assertTrue('Dave' in response.content)
-        self.assertTrue('cheese-shop' in response.content)
+        self.assertContains(response, 'Dave')
+        self.assertContains(response, 'cheese-shop')
 
     def test_user_profile(self):
-        url = '/daveb/'
+        url = reverse('user_profile', args=['daveb'])
         response = self.client.get(url)
         self.assertContains(response, 'Django projects Dave has contributed to')
-        self.assertTrue('Brubeck' in response.content)
-        self.assertTrue('jazz' in response.content)
-        self.assertTrue('cheese-shop' in response.content)
-        self.assertTrue('full-time' in response.content)
-        self.assertTrue('Vienna, Austria' in response.content)
+        self.assertContains(response, 'Brubeck')
+        self.assertContains(response, 'jazz')
+        self.assertContains(response, 'cheese-shop')
+        self.assertContains(response, 'full-time')
+        self.assertContains(response, 'Vienna, Austria')
 
     def test_irc_active(self):
+        url = reverse('irc_active')
+        response = self.client.get(url)
+        self.assertContains(response, 'Active on IRC in the past hour')
+        self.assertContains(response, 'No one is currently active')
+
         # update dave's irc time
         dave = DjangoPerson.objects.get(pk=1)
         dave.last_active_on_irc = datetime.now()
         dave.save()
 
-        url = reverse('irc_active')
         response = self.client.get(url)
-        self.assertContains(response, 'Active on IRC in the past hour')
-        self.assertTrue('Dave Brubeck' in response.content)
-        self.assertTrue('1 people' in response.content) #TODO fix the singular in template
+        self.assertContains(response, 'Dave Brubeck')
+        self.assertContains(response, '1 person')
 
     def test_irc_lookup(self):
-        url = '/api/irc_lookup/nobody/'
+        url = reverse('irc_lookup', args=['nobody'])
         response = self.client.get(url)
         self.assertContains(response, 'no match')
 
-        url = '/api/irc_lookup/davieboy/'
+        url = reverse('irc_lookup', args=['davieboy'])
         response = self.client.get(url)
         self.assertContains(response,
             'Dave Brubeck, Vienna, Austria, Austria, http://testserver/daveb/')
 
     def test_irc_redirect(self):
-        url = '/irc/nobody/'
+        url = reverse('irc_redirect', args=['nobody'])
         response = self.client.get(url)
         self.assertContains(response, 'no match')
 
-        url = '/irc/davieboy/'
+        url = reverse('irc_redirect', args=['davieboy'])
         response = self.client.get(url)
         self.assertRedirects(response, 'http://testserver/daveb/')
 
     def test_irc_spotted(self):
-        url = '/api/irc_spotted/nobody/'
+        url = reverse('irc_spotted', args=['nobody'])
 
         data = {'sekrit': 'wrong password',}
         response = self.client.post(url, data)
@@ -332,7 +344,7 @@ class DjangoPeopleTest(TestCase):
         response = self.client.post(url, data)
         self.assertContains(response, 'NO_MATCH')
 
-        url = '/api/irc_spotted/davieboy/'
+        url = reverse('irc_spotted', args=['davieboy'])
         data = {'sekrit': settings.API_PASSWORD,}
         response = self.client.post(url, data)
         self.assertContains(response, 'FIRST_TIME_SEEN')

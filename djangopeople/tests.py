@@ -311,3 +311,12 @@ class DjangoPeopleTest(TestCase):
         self.assertContains(response,
             'Dave Brubeck, Vienna, Austria, Austria, http://djangopeople.net/daveb/')
 
+    def test_irc_redirect(self):
+        url = '/irc/nobody/'
+        response = self.client.get(url)
+        self.assertContains(response, 'no match')
+
+        url = '/irc/davieboy/'
+        response = self.client.get(url)
+        self.assertTrue(response.status_code == 302)
+        # redirect to djangopeople.net

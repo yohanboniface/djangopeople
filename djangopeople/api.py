@@ -28,22 +28,22 @@ def irc_redirect(request, irc_nick):
 def irc_spotted(request, irc_nick):
     if request.POST.get('sekrit', '') != settings.API_PASSWORD:
         return api_response('BAD_SEKRIT')
-    
+
     try:
         person = MachineTaggedItem.objects.get(
             namespace = 'im', predicate = 'django', value = irc_nick
         ).content_object
     except MachineTaggedItem.DoesNotExist:
         return api_response('NO_MATCH')
-    
+
     if not person.irc_tracking_allowed():
         return api_response('TRACKING_FORBIDDEN')
-    
+
     first_time_seen = not person.last_active_on_irc
-    
+
     person.last_active_on_irc = datetime.datetime.now()
     person.save()
-    
+
     if first_time_seen:
         return api_response('FIRST_TIME_SEEN')
     else:

@@ -524,24 +524,26 @@ def edit_finding(request, username):
     })
 
 
-@must_be_owner
-def edit_portfolio(request, username):
-    person = get_object_or_404(DjangoPerson, user__username = username)
-    if request.method == 'POST':
-        form = PortfolioForm(request.POST, person = person)
-        if form.is_valid():
-            person.portfoliosite_set.all().delete()
-            for key in [k for k in request.POST if k.startswith('title_')]:
-                title = request.POST[key]
-                url = request.POST[key.replace('title_', 'url_')]
-                if title.strip() and url.strip():
-                    person.portfoliosite_set.create(title = title, url = url)
-            return redirect(reverse('user_profile', args=[username]))
-    else:
-        form = PortfolioForm(person = person)
-    return render(request, 'edit_portfolio.html', {
-        'form': form,
-    })
+class EditPortfolioView(generic.FormView):
+    form_class = PortfolioForm
+    template_name = 'edit_portfolio.html'
+
+    def get_form_kwargs(self):
+        kwargs = super(EditPortfolioView, self).get_form_kwargs()
+        person = get_object_or_404(DjangoPerson,
+                                   user__username=self.kwargs['username'])
+        kwargs.update({'person': person})
+        return kwargs
+    
+    def form_valid(self, form):
+        person = get_object_or_404(DjangoPerson, user__username=self.kwargs['username'])
+        person.portfoliosite_set.all().delete()
+        for key in [k for k in self.request.POST if k.startswith('title_')]:
+            title = self.request.POST[key]
+            url = self.request.POST[key.replace('title_', 'url_')]
+            if title.strip() and url.strip():
+                person.portfoliosite_set.create(title = title, url = url)
+            return redirect(reverse('user_profile', args=[self.kwargs['username']]))
 
 
 @must_be_owner

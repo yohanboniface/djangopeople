@@ -80,7 +80,7 @@ urlpatterns = patterns('',
         views.edit_account, name='edit_account'),
 
     url(r'^(?P<username>[a-z0-9]{3,})/portfolio/$',
-        views.must_be_owner(views.EditPortfolioView.as_view()), name='edit_portfolio'),
+        views.edit_portfolio, name='edit_portfolio'),
 
     url(r'^([a-z0-9]{3,})/location/$',
         views.edit_location, name='edit_location'),

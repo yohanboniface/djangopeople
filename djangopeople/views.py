@@ -539,7 +539,7 @@ class EditPortfolioView(generic.CreateView):
             num += 1
         initial['num'] = num
         return initial
-    
+
     def get_form_kwargs(self):
         kwargs = super(EditPortfolioView, self).get_form_kwargs()
         person = get_object_or_404(DjangoPerson,
@@ -549,6 +549,7 @@ class EditPortfolioView(generic.CreateView):
 
     def get_success_url(self):
         return reverse('user_profile', args=[self.kwargs['username']])
+edit_portfolio = must_be_owner(EditPortfolioView.as_view())
 
 
 @must_be_owner

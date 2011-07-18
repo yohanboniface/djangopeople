@@ -597,7 +597,7 @@ def edit_password(request, username):
         user.save()
         return redirect(reverse('user_profile', args=[username]))
     else:
-        return render(request, 'edit_password.html')
+        return render(request, 'edit_password.html', {})
 
 
 @must_be_owner
@@ -611,6 +611,7 @@ def edit_bio(request, username):
             return redirect(reverse('user_profile', args=[username]))
     else:
         form = BioForm(initial = {'bio': person.bio})
+
     return render(request, 'edit_bio.html', {
         'form': form,
     })

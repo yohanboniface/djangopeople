@@ -2,7 +2,11 @@
 {% load url from future %}
 {% load thumbnail %}
 
-{% block nav_li_class_home %} class="current"{% endblock %}>
+{% block extrahead %}{{ block.super }}
+	<link rel="stylesheet" href="{{ STATIC_URL }}djangopeople/css/flags.css" type="text/css" media="all" charset="utf-8">
+{% endblock %}
+
+{% block nav_li_class_home %} class="current"{% endblock %}
 
 {% block maps_code %}
 <script type="text/javascript">

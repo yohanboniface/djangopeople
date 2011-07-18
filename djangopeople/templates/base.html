@@ -9,7 +9,6 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>{% block title %}{% endblock %} Django People</title>
     <link rel="stylesheet" href="{{ STATIC_URL }}djangopeople/css/styles.css" type="text/css" media="all" charset="utf-8">
-    <link rel="stylesheet" href="{{ STATIC_URL }}djangopeople/css/flags.css" type="text/css" media="all" charset="utf-8">
     <script type="text/javascript" src="{{ STATIC_URL }}djangopeople/js/jquery-1.5.2.min.js"></script>
     <script type="text/javascript">
         var STATIC_URL = '{{ STATIC_URL }}';
@@ -17,6 +16,7 @@
     <script type="text/javascript" src="{{ STATIC_URL }}djangopeople/js/common.js"></script>
     {% block maps_api %}{% endblock %}
     {% block js %}{% endblock %}
+    {% block extrahead %}{% endblock %}
 </head>
 <body{% block bodymeta %}{% endblock %}>
 

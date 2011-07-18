@@ -12,7 +12,8 @@ from django.test.client import RequestFactory
 from django_openidauth.models import associate_openid
 from django_openidconsumer.util import OpenID
 
-from djangopeople.models import DjangoPerson, Country
+from djangopeople.models import (Country, CountrySite, DjangoPerson, Region,
+                                 PortfolioSite)
 from djangopeople.views import signup, openid_whatnext
 
 
@@ -117,18 +118,18 @@ class DjangoPeopleTest(TestCase):
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(User.objects.count(), 2)
+        self.assertEqual(User.objects.count(), 3)
 
         data['password1'] = 'secret'
         data['password2'] = 'othersecret'
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(User.objects.count(), 2)
+        self.assertEqual(User.objects.count(), 3)
 
         data['password2'] = 'secret'
         response = self.client.post(url, data, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(User.objects.count(), 3)
+        self.assertEqual(User.objects.count(), 4)
         self.assertEqual(len(response.redirect_chain), 1)
 
         # Logged in users go back to the homepage
@@ -152,8 +153,8 @@ class DjangoPeopleTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'],
                          reverse('user_profile', args=['meh']))
-        self.assertEqual(User.objects.count(), 4)
-        self.assertEqual(DjangoPerson.objects.count(), 3)
+        self.assertEqual(User.objects.count(), 5)
+        self.assertEqual(DjangoPerson.objects.count(), 4)
 
     def test_whatnext(self):
         """Redirection after a successful openid login"""
@@ -171,7 +172,7 @@ class DjangoPeopleTest(TestCase):
         self.assertEqual(response['Location'], reverse('signup'))
 
         user = User.objects.create_user('testuser', 'foo@example.com', 'pass')
-        profile = DjangoPerson.objects.create(
+        DjangoPerson.objects.create(
             user=user,
             country=Country.objects.get(pk=1),
             latitude=44,
@@ -358,11 +359,11 @@ class DjangoPeopleTest(TestCase):
 
 class EditViewTest(TestCase):
     fixtures = ['test_data']
-    
+
     def setUp(self):
         super(EditViewTest, self).setUp()
         self.client.login(username='daveb', password='123456')
-        
+
     def test_change_portfolio_entry(self):
         url_profile = reverse('user_profile', args=['daveb'])
         url_edit_portfolio = reverse('edit_portfolio', args=['daveb'])
@@ -370,8 +371,6 @@ class EditViewTest(TestCase):
         self.assertContains(response, '<li><a href="http://example.org/" '
                                       'class="url" rel="nofollow"><cite>'
                                       'cheese-shop</cite></a></li>')
-
-        
 
         # test change existing portfolio entry
         response = self.client.post(url_edit_portfolio,
@@ -381,13 +380,12 @@ class EditViewTest(TestCase):
         self.assertNotContains(response, '<li><a href="http://example.org/" '
                                          'class="url" rel="nofollow"><cite>'
                                          'cheese-shop</cite></a></li>')
-        self.assertContains(response, '<li><a href="http://cs.org/" class="url" '
-                                      'rel="nofollow"><cite>chocolate shop'
+        self.assertContains(response, '<li><a href="http://cs.org/" class="url'
+                                      '" rel="nofollow"><cite>chocolate shop'
                                       '</cite></a></li>')
 
     def test_remove_portfolio_entry(self):
         # test remove existing portfolio entry
-        
         url_profile = reverse('user_profile', args=['daveb'])
         url_edit_portfolio = reverse('edit_portfolio', args=['daveb'])
         response = self.client.post(url_edit_portfolio,
@@ -412,8 +410,8 @@ class EditViewTest(TestCase):
                                     follow=True)
         self.assertRedirects(response, url_profile)
         self.assertNotContains(response, 'Add some sites')
-        self.assertContains(response, '<li><a href="http://cs.org/" class="url" '
-                                      'rel="nofollow"><cite>chocolate shop'
+        self.assertContains(response, '<li><a href="http://cs.org/" class="url'
+                                      '" rel="nofollow"><cite>chocolate shop'
                                       '</cite></a></li>')
 
     def test_portfolio_form_url_error(self):
@@ -424,8 +422,8 @@ class EditViewTest(TestCase):
                                       'name="title_1" value="cheese-shop" '
                                       'maxlength="100" />')
         self.assertContains(response, '<input id="id_url_1" type="text" '
-                                      'name="url_1" value="http://example.org/" '
-                                      'maxlength="255" />')
+                                      'name="url_1" value="http://example.org/'
+                                      '" maxlength="255" />')
         self.assertContains(response, '<input id="id_title_2" type="text" '
                                       'name="title_2" maxlength="100" />')
         self.assertContains(response, '<input id="id_url_2" type="text" '
@@ -451,11 +449,11 @@ class EditViewTest(TestCase):
             longitude=2,
             location_description='Somewhere',
         )
-        
+
         url_profile = reverse('user_profile', args=['testuser'])
         url_edit_portfolio = reverse('edit_portfolio', args=['testuser'])
 
-        # no Add some sites link for user daveb on testuser's profile page 
+        # no Add some sites link for user daveb on testuser's profile page
         response = self.client.get(url_profile)
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, 'Add some sites')
@@ -467,6 +465,48 @@ class EditViewTest(TestCase):
         self.assertEqual(response.status_code, 403)
 
         response = self.client.get(url_profile)
-        self.assertNotContains(response, '<li><a href="http://cs.org/" class="url" '
-                                      'rel="nofollow"><cite>chocolate shop'
-                                      '</cite></a></li>')
+        self.assertNotContains(response, '<li><a href="http://cs.org/" class="'
+                                         'url" rel="nofollow"><cite>chocolate '
+                                         'shop </cite></a></li>')
+
+
+class DjangoPeopleUnitTest(TestCase):
+    fixtures = ['test_data']
+
+    def test_region(self):
+        ak = Region.objects.get(pk=36)
+        self.assertEquals(ak.__unicode__(), u'Alaska')
+        self.assertEquals(ak.get_absolute_url(), '/us/ak/')
+
+    def test_country(self):
+        us = Country.objects.get(pk=219)
+        self.assertEquals(us.__unicode__(), u'United States')
+        hawaii = Region.objects.get(pk=32)
+        self.assertTrue(hawaii in us.top_regions())
+        self.assertTrue(us in Country.objects.top_countries())
+        us.num_people = 100000
+        us.save()
+        self.assertEquals(us, Country.objects.top_countries()[0])
+
+    def test_portfolio_site(self):
+        p = PortfolioSite.objects.get(pk=1)
+        self.assertEquals(p.__unicode__(),
+            u'cheese-shop <http://example.org/>')
+
+    def test_country_site(self):
+        cs = CountrySite.objects.get(pk=1)
+        self.assertEquals(cs.__unicode__(),
+            u'django AT <http://example.org/>')
+
+    def test_django_person(self):
+        dave = DjangoPerson.objects.get(pk=1)
+        louis = DjangoPerson.objects.get(pk=2)
+        self.assertEquals(dave.__unicode__(),
+            u'Dave Brubeck')
+        self.assertEquals(dave.irc_nick(), 'davieboy')
+        self.assertEquals(louis.irc_nick(), '<none>')
+        self.assertTrue(dave.irc_tracking_allowed())
+        self.assertEquals(dave.get_nearest(), [louis])
+        self.assertEquals(louis.location_description_html(),
+            'Paris, France')
+        self.assertEquals(louis.get_absolute_url(), '/satchmo/')

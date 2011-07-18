@@ -36,6 +36,24 @@
     }
   },
   {
+    "pk": 3,
+    "model": "auth.user",
+    "fields": {
+      "username": "satchmo",
+      "first_name": "Louis",
+      "last_name": "Armstrong",
+      "is_active": true,
+      "is_superuser": false,
+      "is_staff": false,
+      "last_login": "2010-07-14 15:31:33",
+      "groups": [],
+      "user_permissions": [],
+      "password": "sha1$4c2cd$0a67924b8f443f903f8ee3bc92afc0116c8dac21",
+      "email": "satchmo@example.org",
+      "date_joined": "2011-07-14 15:31:33"
+    }
+  },
+  {
     "pk": 1, 
     "model": "djangopeople.djangoperson", 
     "fields": {
@@ -50,6 +68,24 @@
       "photo": null,
       "latitude": 50.035973672195468, 
       "openid_server": "", 
+      "openid_delegate": ""
+    }
+  },
+  {
+    "pk": 2,
+    "model": "djangopeople.djangoperson",
+    "fields": {
+      "last_active_on_irc": null,
+      "bio": "ad",
+      "profile_views": 1,
+      "country": 70,
+      "region": null,
+      "longitude": 14.9853515625,
+      "location_description": "Paris, France",
+      "user": 3,
+      "photo": null,
+      "latitude": 50.035973672195468,
+      "openid_server": "",
       "openid_delegate": ""
     }
   },
@@ -139,6 +175,15 @@
       "url": "http://example.org/",
       "contributor": 1,
       "title": "cheese-shop"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "djangopeople.countrysite",
+    "fields": {
+      "url": "http://example.org/",
+      "country": 12,
+      "title": "django AT"
     }
   }
 ]

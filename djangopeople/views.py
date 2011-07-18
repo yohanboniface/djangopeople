@@ -524,26 +524,31 @@ def edit_finding(request, username):
     })
 
 
-class EditPortfolioView(generic.FormView):
+class EditPortfolioView(generic.CreateView):
     form_class = PortfolioForm
     template_name = 'edit_portfolio.html'
 
+    def get_initial(self):
+        initial = {}
+        person = get_object_or_404(DjangoPerson,
+                                   user__username=self.kwargs['username'])
+        num = 1
+        for site in person.portfoliosite_set.all():
+            initial['title_%d' % num] = site.title
+            initial['url_%d' % num] = site.url
+            num += 1
+        initial['num'] = num
+        return initial
+    
     def get_form_kwargs(self):
         kwargs = super(EditPortfolioView, self).get_form_kwargs()
         person = get_object_or_404(DjangoPerson,
                                    user__username=self.kwargs['username'])
         kwargs.update({'person': person})
         return kwargs
-    
-    def form_valid(self, form):
-        person = get_object_or_404(DjangoPerson, user__username=self.kwargs['username'])
-        person.portfoliosite_set.all().delete()
-        for key in [k for k in self.request.POST if k.startswith('title_')]:
-            title = self.request.POST[key]
-            url = self.request.POST[key.replace('title_', 'url_')]
-            if title.strip() and url.strip():
-                person.portfoliosite_set.create(title = title, url = url)
-            return redirect(reverse('user_profile', args=[self.kwargs['username']]))
+
+    def get_success_url(self):
+        return reverse('user_profile', args=[self.kwargs['username']])
 
 
 @must_be_owner

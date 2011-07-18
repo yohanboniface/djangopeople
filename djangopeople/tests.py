@@ -321,7 +321,7 @@ class DjangoPeopleTest(TestCase):
         self.assertNotContains(response, '<li><a href="http://example.org/" '
                                          'class="url" rel="nofollow"><cite>'
                                          'cheese-shop</cite></a></li>')
-        self.assertContains(response, '<li><a href="cs.org" class="url" '
+        self.assertContains(response, '<li><a href="http://cs.org/" class="url" '
                                       'rel="nofollow"><cite>chocolate shop'
                                       '</cite></a></li>')
 
@@ -332,7 +332,7 @@ class DjangoPeopleTest(TestCase):
         self.assertNotContains(response, '<li><a href="http://example.org/" '
                                          'class="url" rel="nofollow"><cite>'
                                          'cheese-shop</cite></a></li>')
-        self.assertNotContains(response, '<li><a href="cs.org" class="url" '
+        self.assertNotContains(response, '<li><a href="cs.org/" class="url" '
                                          'rel="nofollow"><cite>chocolate shop'
                                          '</cite></a></li>')
         self.assertContains(response, 'Add some sites')
@@ -344,7 +344,7 @@ class DjangoPeopleTest(TestCase):
                                     follow=True)
         self.assertRedirects(response, url_profile)
         self.assertNotContains(response, 'Add some sites')
-        self.assertContains(response, '<li><a href="cs.org" class="url" '
+        self.assertContains(response, '<li><a href="http://cs.org/" class="url" '
                                       'rel="nofollow"><cite>chocolate shop'
                                       '</cite></a></li>')
 
@@ -354,7 +354,7 @@ class DjangoPeopleTest(TestCase):
                                       'name="title_1" value="chocolate shop" '
                                       'maxlength="100" />')
         self.assertContains(response, '<input id="id_url_1" type="text" '
-                                      'name="url_1" value="cs.org" '
+                                      'name="url_1" value="http://cs.org/" '
                                       'maxlength="255" />')
         self.assertContains(response, '<input id="id_title_2" type="text" '
                                       'name="title_2" maxlength="100" />')
@@ -396,7 +396,7 @@ class DjangoPeopleTest(TestCase):
         self.assertEqual(response.status_code, 403)
 
         response = self.client.get(url_profile)
-        self.assertNotContains(response, '<li><a href="cs.org" class="url" '
+        self.assertNotContains(response, '<li><a href="http://cs.org/" class="url" '
                                       'rel="nofollow"><cite>chocolate shop'
                                       '</cite></a></li>')
     def test_irc_active(self):

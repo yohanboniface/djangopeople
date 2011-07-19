@@ -524,16 +524,24 @@ def edit_finding(request, username):
     })
 
 
-class EditPortfolioView(generic.CreateView):
+class PersonMixin(object):
+    def get_person(self, username):
+        return get_object_or_404(DjangoPerson,
+                                 user__username=username)
+        
+
+class EditPortfolioView(generic.CreateView, PersonMixin):
     form_class = PortfolioForm
     template_name = 'edit_portfolio.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        self.person = self.get_person(kwargs['username'])
+        return super(EditPortfolioView, self).dispatch(request, *args, **kwargs)
+    
     def get_initial(self):
         initial = {}
-        person = get_object_or_404(DjangoPerson,
-                                   user__username=self.kwargs['username'])
         num = 1
-        for site in person.portfoliosite_set.all():
+        for site in self.person.portfoliosite_set.all():
             initial['title_%d' % num] = site.title
             initial['url_%d' % num] = site.url
             num += 1
@@ -542,9 +550,7 @@ class EditPortfolioView(generic.CreateView):
 
     def get_form_kwargs(self):
         kwargs = super(EditPortfolioView, self).get_form_kwargs()
-        person = get_object_or_404(DjangoPerson,
-                                   user__username=self.kwargs['username'])
-        kwargs.update({'person': person})
+        kwargs.update({'person': self.person})
         return kwargs
 
     def get_success_url(self):
@@ -552,43 +558,43 @@ class EditPortfolioView(generic.CreateView):
 edit_portfolio = must_be_owner(EditPortfolioView.as_view())
 
 
-class EditAccountView(generic.FormView):
+class EditAccountView(generic.FormView, PersonMixin):
     form_class = AccountForm
     template_name = 'edit_account.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        self.person = self.get_person(kwargs['username'])
+        return super(EditAccountView, self).dispatch(request, *args, **kwargs)
+    
     def get_initial(self):
         initial = {}
-        person = get_object_or_404(DjangoPerson,
-                                   user__username=self.kwargs['username'])
-        initial['openid_server'] = person.openid_server
-        initial['openid_delegate'] = person.openid_delegate
+        initial['openid_server'] = self.person.openid_server
+        initial['openid_delegate'] = self.person.openid_delegate
         return initial
 
     def form_valid(self, form):
-        person = get_object_or_404(DjangoPerson,
-                                   user__username=self.kwargs['username'])
-        person.openid_server = form.cleaned_data['openid_server']
-        person.openid_delegate = form.cleaned_data['openid_delegate']
-        person.save()
+        self.person.openid_server = form.cleaned_data['openid_server']
+        self.person.openid_delegate = form.cleaned_data['openid_delegate']
+        self.person.save()
         return HttpResponseRedirect(reverse('user_profile',
                                             args=[self.kwargs['username']]))
 edit_account = must_be_owner(EditAccountView.as_view())
 
 
-class EditSkillsView(generic.FormView):
+class EditSkillsView(generic.FormView, PersonMixin):
     form_class = SkillsForm
     template_name = 'edit_skills.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        self.person = self.get_person(kwargs['username'])
+        return super(EditSkillsView, self).dispatch(request, *args, **kwargs)
+
     def get_initial(self):
         initial = {}
-        person = get_object_or_404(DjangoPerson,
-                                   user__username=self.kwargs['username'])
-        initial['skills'] = edit_string_for_tags(person.skilltags)
+        initial['skills'] = edit_string_for_tags(self.person.skilltags)
 
     def form_valid(self, form):
-        person = get_object_or_404(DjangoPerson,
-                                   user__username=self.kwargs['username'])
-        form.save(person)
+        form.save(self.person)
         return HttpResponseRedirect(reverse('user_profile', args=[self.kwargs['username']]))
 edit_skills = must_be_owner(EditSkillsView.as_view())
 

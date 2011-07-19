@@ -524,19 +524,16 @@ def edit_finding(request, username):
     })
 
 
-class PersonMixin(object):
-    def get_person(self, username):
-        return get_object_or_404(DjangoPerson,
-                                 user__username=username)
+class PersonMixin(generic.View):
+    def dispatch(self, request, *args, **kwargs):
+        self.person = get_object_or_404(DjangoPerson,
+                                 user__username=kwargs['username'])
+        return super(PersonMixin, self).dispatch(request, *args, **kwargs)
         
 
 class EditPortfolioView(generic.CreateView, PersonMixin):
     form_class = PortfolioForm
     template_name = 'edit_portfolio.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        self.person = self.get_person(kwargs['username'])
-        return super(EditPortfolioView, self).dispatch(request, *args, **kwargs)
     
     def get_initial(self):
         initial = {}
@@ -561,10 +558,6 @@ edit_portfolio = must_be_owner(EditPortfolioView.as_view())
 class EditAccountView(generic.FormView, PersonMixin):
     form_class = AccountForm
     template_name = 'edit_account.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        self.person = self.get_person(kwargs['username'])
-        return super(EditAccountView, self).dispatch(request, *args, **kwargs)
     
     def get_initial(self):
         initial = {}
@@ -586,10 +579,6 @@ edit_account = must_be_owner(EditAccountView.as_view())
 class EditSkillsView(generic.FormView, PersonMixin):
     form_class = SkillsForm
     template_name = 'edit_skills.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        self.person = self.get_person(kwargs['username'])
-        return super(EditSkillsView, self).dispatch(request, *args, **kwargs)
 
     def get_initial(self):
         initial = {}

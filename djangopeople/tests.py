@@ -9,6 +9,8 @@ from django.middleware.common import CommonMiddleware
 from django.test import TestCase
 from django.test.client import RequestFactory
 
+from tagging.utils import edit_string_for_tags
+
 from django_openidauth.models import associate_openid
 from django_openidconsumer.util import OpenID
 
@@ -362,6 +364,72 @@ class EditViewTest(TestCase):
     def setUp(self):
         super(EditViewTest, self).setUp()
         self.client.login(username='daveb', password='123456')
+
+    def test_edit_skill_permission(self):
+        '''
+        logged in user can only edit his own skills
+        '''
+        url_edit_skills = reverse('edit_skills', args=['daveb'])
+        response = self.client.get(url_edit_skills)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post(url_edit_skills)
+        self.assertEqual(response.status_code, 302)
+
+        url_edit_skills = reverse('edit_skills', args=['satchmo'])
+        response = self.client.get(url_edit_skills)
+        self.assertEqual(response.status_code, 403)
+        response = self.client.post(url_edit_skills)
+        self.assertEqual(response.status_code, 403)
+
+    def test_add_skills(self):
+        '''
+        test adding skills
+        '''
+        url_edit_skills = reverse('edit_skills', args=['daveb'])
+        
+        p = DjangoPerson.objects.get(user__username='daveb')
+        self.assertEqual(len(p.skilltags), 3)
+        self.assertTrue('jazz' in edit_string_for_tags(p.skilltags))
+        self.assertTrue('linux' in edit_string_for_tags(p.skilltags))
+        self.assertTrue('python' in edit_string_for_tags(p.skilltags))
+        
+        skills = '%s django'%(edit_string_for_tags(p.skilltags))
+        self.client.post(url_edit_skills, {'skills': skills})
+
+        p = DjangoPerson.objects.get(user__username='daveb')
+        self.assertEqual(len(p.skilltags), 4)
+        self.assertTrue('jazz' in edit_string_for_tags(p.skilltags))
+        self.assertTrue('linux' in edit_string_for_tags(p.skilltags))
+        self.assertTrue('python' in edit_string_for_tags(p.skilltags))
+        self.assertTrue('django' in edit_string_for_tags(p.skilltags))
+
+    def test_delete_skill(self):
+        '''
+        test deleting skills
+        '''
+        url_edit_skills = reverse('edit_skills', args=['daveb'])
+        
+        p = DjangoPerson.objects.get(user__username='daveb')
+        self.assertEqual(len(p.skilltags), 3)
+        self.assertTrue('jazz' in edit_string_for_tags(p.skilltags))
+        self.assertTrue('linux' in edit_string_for_tags(p.skilltags))
+        self.assertTrue('python' in edit_string_for_tags(p.skilltags))
+
+        # delete jazz skill
+        skills = 'linux python'
+        self.client.post(url_edit_skills, {'skills': skills})
+        p = DjangoPerson.objects.get(user__username='daveb')
+        self.assertEqual(len(p.skilltags), 2)
+        self.assertTrue('linux' in edit_string_for_tags(p.skilltags))
+        self.assertTrue('python' in edit_string_for_tags(p.skilltags))
+        self.assertFalse('jazz' in edit_string_for_tags(p.skilltags))
+        
+        # delete all skills
+        response = self.client.post(url_edit_skills, {'skills': ''})
+        p = DjangoPerson.objects.get(user__username='daveb')
+
+        self.assertEqual(len(p.skilltags), 0)
+        self.assertEqual(edit_string_for_tags(p.skilltags), '')
 
     def test_edit_account_permission(self):
         '''

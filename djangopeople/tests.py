@@ -356,13 +356,89 @@ class DjangoPeopleTest(TestCase):
         response = self.client.post(url, data)
         self.assertContains(response, 'TRACKED')
 
-
 class EditViewTest(TestCase):
     fixtures = ['test_data']
 
     def setUp(self):
         super(EditViewTest, self).setUp()
         self.client.login(username='daveb', password='123456')
+
+    def test_edit_account_permission(self):
+        '''
+        logged in user can only edit his own account
+        '''
+        url_edit_account = reverse('edit_account', args=['daveb'])
+        response = self.client.get(url_edit_account)
+        self.assertEqual(response.status_code, 200)
+
+        url_edit_account = reverse('edit_account', args=['satchmo'])
+        response = self.client.get(url_edit_account)
+        self.assertEqual(response.status_code, 403)
+
+    def test_edit_account(self):
+        '''
+        add and change openid
+        '''
+        url_profile = reverse('user_profile', args=['daveb'])
+        url_edit_account = reverse('edit_account', args=['daveb'])
+
+        p = DjangoPerson.objects.get(user__username='daveb')
+        self.assertEqual(p.openid_server, u'')
+        self.assertEqual(p.openid_delegate, u'')
+        
+        response = self.client.post(url_edit_account,
+                                    {'openid_server': 'example.com',
+                                     'openid_delegate': 'fooBar.com'})
+
+        self.assertRedirects(response, url_profile)
+
+        p = DjangoPerson.objects.get(user__username='daveb')
+        self.assertEqual(p.openid_server, 'http://example.com/')
+        self.assertEqual(p.openid_delegate, 'http://fooBar.com/')
+
+        # test display openid change form (with initial data)
+        response = self.client.get(url_edit_account)
+        self.assertContains(response, '<input type="text" name="openid_server" '
+                                      'value="http://example.com/" '
+                                      'id="id_openid_server" />')
+        self.assertContains(response, '<input type="text" '
+                                      'name="openid_delegate" '
+                                      'value="http://fooBar.com/" '
+                                      'id="id_openid_delegate" />')
+
+        # test change openid settings
+        response = self.client.post(url_edit_account,
+                                    {'openid_server': 'google.com',
+                                     'openid_delegate': 'foo.com'})
+
+        p = DjangoPerson.objects.get(user__username='daveb')
+        self.assertEqual(p.openid_server, 'http://google.com/')
+        self.assertEqual(p.openid_delegate, 'http://foo.com/')
+        
+    def test_edit_account_form_error(self):
+        '''
+        check AccountForm error messages
+        '''
+        
+        p = DjangoPerson.objects.get(user__username='daveb')
+        self.assertEqual(p.openid_server, u'')
+        self.assertEqual(p.openid_delegate, u'')
+        
+        url_edit_account = reverse('edit_account', args=['daveb'])
+        response = self.client.post(url_edit_account,
+                                    {'openid_server': 'example',
+                                     'openid_delegate': 'fooBar'})
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertFormError(response, 'form', 'openid_server',
+                             'Enter a valid URL.')
+        self.assertFormError(response, 'form', 'openid_delegate',
+                             'Enter a valid URL.')
+        
+        p = DjangoPerson.objects.get(user__username='daveb')
+        self.assertEqual(p.openid_server, u'')
+        self.assertEqual(p.openid_delegate, u'')
 
     def test_change_portfolio_entry(self):
         url_profile = reverse('user_profile', args=['daveb'])

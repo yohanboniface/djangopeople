@@ -14,7 +14,7 @@ from django.contrib.auth import views as auth_views
 from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.db.models import Q
-from django.http import Http404, HttpResponseForbidden
+from django.http import Http404, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
@@ -552,26 +552,27 @@ class EditPortfolioView(generic.CreateView):
 edit_portfolio = must_be_owner(EditPortfolioView.as_view())
 
 
-@must_be_owner
-def edit_account(request, username):
-    person = get_object_or_404(DjangoPerson, user__username = username)
-    if request.method == 'POST':
-        form = AccountForm(request.POST)
-        if form.is_valid():
-            person.openid_server = form.cleaned_data['openid_server']
-            person.openid_delegate = form.cleaned_data['openid_delegate']
-            person.save()
-            return redirect(reverse('user_profile', args=[username]))
-    else:
-        form = AccountForm(initial = {
-            'openid_server': person.openid_server,
-            'openid_delegate': person.openid_delegate,
-        })
-    return render(request, 'edit_account.html', {
-        'form': form,
-        'person': person,
-        'user': person.user,
-    })
+class EditAccountView(generic.FormView):
+    form_class = AccountForm
+    template_name = 'edit_account.html'
+
+    def get_initial(self):
+        initial = {}
+        person = get_object_or_404(DjangoPerson,
+                                   user__username=self.kwargs['username'])
+        initial['openid_server'] = person.openid_server
+        initial['openid_delegate'] = person.openid_delegate
+        return initial
+
+    def form_valid(self, form):
+        person = get_object_or_404(DjangoPerson,
+                                   user__username=self.kwargs['username'])
+        person.openid_server = form.cleaned_data['openid_server']
+        person.openid_delegate = form.cleaned_data['openid_delegate']
+        person.save()
+        return HttpResponseRedirect(reverse('user_profile',
+                                            args=[self.kwargs['username']]))
+edit_account = must_be_owner(EditAccountView.as_view())
 
 
 @must_be_owner

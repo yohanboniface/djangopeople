@@ -76,7 +76,7 @@ urlpatterns = patterns('',
     url(r'^(?P<username>[a-z0-9]{3,})/password/$',
         views.edit_password, name='edit_password'),
 
-    url(r'^([a-z0-9]{3,})/account/$',
+    url(r'^(?P<username>[a-z0-9]{3,})/account/$',
         views.edit_account, name='edit_account'),
 
     url(r'^(?P<username>[a-z0-9]{3,})/portfolio/$',

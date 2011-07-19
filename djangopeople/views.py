@@ -575,17 +575,22 @@ class EditAccountView(generic.FormView):
 edit_account = must_be_owner(EditAccountView.as_view())
 
 
-@must_be_owner
-def edit_skills(request, username):
-    person = get_object_or_404(DjangoPerson, user__username = username)
-    if not request.POST.get('skills'):
-        return render(request, 'edit_skills.html', {
-            'form': SkillsForm(initial={
-                'skills': edit_string_for_tags(person.skilltags)
-            }),
-        })
-    person.skilltags = request.POST.get('skills', '')
-    return redirect(reverse('user_profile', args=[username]))
+class EditSkillsView(generic.FormView):
+    form_class = SkillsForm
+    template_name = 'edit_skills.html'
+
+    def get_initial(self):
+        initial = {}
+        person = get_object_or_404(DjangoPerson,
+                                   user__username=self.kwargs['username'])
+        initial['skills'] = edit_string_for_tags(person.skilltags)
+
+    def form_valid(self, form):
+        person = get_object_or_404(DjangoPerson,
+                                   user__username=self.kwargs['username'])
+        form.save(person)
+        return HttpResponseRedirect(reverse('user_profile', args=[self.kwargs['username']]))
+edit_skills = must_be_owner(EditSkillsView.as_view())
 
 
 @must_be_owner

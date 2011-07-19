@@ -14,7 +14,7 @@ from django.contrib.auth import views as auth_views
 from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.db.models import Q
-from django.http import Http404, HttpResponseForbidden, HttpResponseRedirect
+from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
@@ -576,8 +576,10 @@ class EditAccountView(generic.FormView, PersonMixin):
         self.person.openid_server = form.cleaned_data['openid_server']
         self.person.openid_delegate = form.cleaned_data['openid_delegate']
         self.person.save()
-        return HttpResponseRedirect(reverse('user_profile',
-                                            args=[self.kwargs['username']]))
+        return super(EditAccountView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse('user_profile', args=[self.kwargs['username']])
 edit_account = must_be_owner(EditAccountView.as_view())
 
 
@@ -594,8 +596,11 @@ class EditSkillsView(generic.FormView, PersonMixin):
         initial['skills'] = edit_string_for_tags(self.person.skilltags)
 
     def form_valid(self, form):
-        form.save(self.person)
-        return HttpResponseRedirect(reverse('user_profile', args=[self.kwargs['username']]))
+        form.save(self.person)        
+        return super(EditSkillsView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse('user_profile', args=[self.kwargs['username']])
 edit_skills = must_be_owner(EditSkillsView.as_view())
 
 

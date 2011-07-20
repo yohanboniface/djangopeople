@@ -3,6 +3,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.db.models import ObjectDoesNotExist
 from django.forms.forms import BoundField
+from django.forms.widgets import PasswordInput
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
@@ -394,3 +395,20 @@ class LostPasswordForm(forms.Form):
             settings.RECOVERY_EMAIL_FROM, [person.user.email],
             fail_silently=False
         )
+
+
+class PasswordForm(forms.Form):
+    password1 = forms.CharField(label='Password', widget=PasswordInput)
+    password2 = forms.CharField(label='Password (again)', widget=PasswordInput)
+
+    def clean(self):
+        password1 = self.cleaned_data.get('password1')
+        password2 = self.cleaned_data.get('password2')
+        if password1 == password2:
+            return self.cleaned_data
+        else:
+            raise forms.ValidationError('The passwords did not match.') 
+    
+    def save(self, user):
+        user.set_password(self.cleaned_data['password1'])
+        user.save()

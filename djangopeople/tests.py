@@ -613,6 +613,85 @@ class EditViewTest(TestCase):
                                          'url" rel="nofollow"><cite>chocolate '
                                          'shop </cite></a></li>')
 
+    def test_edit_password_permission(self):
+        '''
+        logged in user can only edit his own password
+        '''
+        url_edit_password = reverse('edit_password', args=['daveb'])
+
+        # user can edit his own password
+        response = self.client.get(url_edit_password)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post(url_edit_password)
+        self.assertEqual(response.status_code, 200)
+
+        # user can't edit passwords of other users
+        url_edit_password = reverse('edit_password', args=['satchmo'])
+        response = self.client.get(url_edit_password)
+        self.assertEqual(response.status_code, 403)
+        response = self.client.post(url_edit_password)
+        self.assertEqual(response.status_code, 403)
+
+    def test_edit_password(self):
+        '''
+        test editing passwords
+        '''
+        url_edit_password = reverse('edit_password', args=['daveb'])
+        url_profile = reverse('user_profile', args=['daveb'])
+
+        response = self.client.get(url_edit_password)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'edit_password.html')
+        
+        u = User.objects.get(username='daveb')
+        self.assertTrue(u.check_password('123456'))
+
+        response = self.client.post(url_edit_password, {'password1': 'foo',
+                                                        'password2': 'foo'})
+
+        self.assertRedirects(response, url_profile)
+        u = User.objects.get(username='daveb')
+        self.assertTrue(u.check_password('foo'))
+
+    def test_edit_password_form_error_fields_required(self):
+        '''
+        test form error messages when form fields are empty
+        '''
+        url_edit_password = reverse('edit_password', args=['daveb'])
+
+        response = self.client.post(url_edit_password, {'password1': 'foo1'})
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'password2', 'This field is required.')
+
+        response = self.client.post(url_edit_password, {'password2': 'foo1'})
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'password1', 'This field is required.')
+
+        response = self.client.post(url_edit_password, {})
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'password1', 'This field is required.')
+        self.assertFormError(response, 'form', 'password2', 'This field is required.')
+
+    def test_edit_password_form_error_different_passwords(self):
+        '''
+        test form error message when user submits two different
+        passwords
+        '''
+        url_edit_password = reverse('edit_password', args=['daveb'])
+
+        u = User.objects.get(username='daveb')
+        self.assertTrue(u.check_password('123456'))
+
+        # two passwords aren't the same
+        response = self.client.post(url_edit_password, {'password1': 'foo1',
+                                                        'password2': 'foo'})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', None, 'The passwords did not match.')
+
+        u = User.objects.get(username='daveb')
+        self.assertTrue(u.check_password('123456'))
+        
 
 class DjangoPeopleUnitTest(TestCase):
     fixtures = ['test_data']

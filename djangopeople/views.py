@@ -25,7 +25,8 @@ from djangopeople.constants import (MACHINETAGS_FROM_FIELDS,
                                     IMPROVIDERS_DICT, SERVICES_DICT)
 from djangopeople.forms import (SkillsForm, SignupForm, PhotoUploadForm,
                                 PortfolioForm, BioForm, LocationForm,
-                                FindingForm, AccountForm, LostPasswordForm)
+                                FindingForm, AccountForm, LostPasswordForm,
+                                PasswordForm)
 from djangopeople.models import (DjangoPerson, Country, User, Region,
                                  PortfolioSite)
 
@@ -590,17 +591,18 @@ class EditSkillsView(PersonMixin, generic.FormView):
 edit_skills = must_be_owner(EditSkillsView.as_view())
 
 
-@must_be_owner
-def edit_password(request, username):
-    user = get_object_or_404(User, username = username)
-    p1 = request.POST.get('password1', '')
-    p2 = request.POST.get('password2', '')
-    if p1 and p2 and p1 == p2:
-        user.set_password(p1)
-        user.save()
-        return redirect(reverse('user_profile', args=[username]))
-    else:
-        return render(request, 'edit_password.html', {})
+class EditPassword(generic.FormView):
+    form_class = PasswordForm
+    template_name = 'edit_password.html'
+
+    def form_valid(self, form):
+        user = get_object_or_404(User, username=self.kwargs['username'])
+        form.save(user)
+        return super(EditPassword, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse('user_profile', args=[self.kwargs['username']])
+edit_password = must_be_owner(EditPassword.as_view())
 
 
 @must_be_owner

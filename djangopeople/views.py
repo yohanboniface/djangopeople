@@ -524,17 +524,20 @@ def edit_finding(request, username):
     })
 
 
-class PersonMixin(generic.View):
+class PersonMixin(object):
     def dispatch(self, request, *args, **kwargs):
         self.person = get_object_or_404(DjangoPerson,
                                  user__username=kwargs['username'])
         return super(PersonMixin, self).dispatch(request, *args, **kwargs)
-        
 
-class EditPortfolioView(generic.CreateView, PersonMixin):
+    def get_success_url(self):
+        return reverse('user_profile', args=[self.kwargs['username']])
+
+
+class EditPortfolioView(PersonMixin, generic.CreateView):
     form_class = PortfolioForm
     template_name = 'edit_portfolio.html'
-    
+
     def get_initial(self):
         initial = {}
         num = 1
@@ -549,20 +552,19 @@ class EditPortfolioView(generic.CreateView, PersonMixin):
         kwargs = super(EditPortfolioView, self).get_form_kwargs()
         kwargs.update({'person': self.person})
         return kwargs
-
-    def get_success_url(self):
-        return reverse('user_profile', args=[self.kwargs['username']])
 edit_portfolio = must_be_owner(EditPortfolioView.as_view())
 
 
-class EditAccountView(generic.FormView, PersonMixin):
+class EditAccountView(PersonMixin, generic.FormView):
     form_class = AccountForm
     template_name = 'edit_account.html'
-    
+
     def get_initial(self):
-        initial = {}
-        initial['openid_server'] = self.person.openid_server
-        initial['openid_delegate'] = self.person.openid_delegate
+        initial = super(EditAccountView, self).get_initial()
+        initial.update({
+            'openid_server': self.person.openid_server,
+            'openid_delegate': self.person.openid_delegate,
+        })
         return initial
 
     def form_valid(self, form):
@@ -570,26 +572,21 @@ class EditAccountView(generic.FormView, PersonMixin):
         self.person.openid_delegate = form.cleaned_data['openid_delegate']
         self.person.save()
         return super(EditAccountView, self).form_valid(form)
-
-    def get_success_url(self):
-        return reverse('user_profile', args=[self.kwargs['username']])
 edit_account = must_be_owner(EditAccountView.as_view())
 
 
-class EditSkillsView(generic.FormView, PersonMixin):
+class EditSkillsView(PersonMixin, generic.FormView):
     form_class = SkillsForm
     template_name = 'edit_skills.html'
 
     def get_initial(self):
-        initial = {}
+        initial = super(EditSkillsView, self).get_initial()
         initial['skills'] = edit_string_for_tags(self.person.skilltags)
+        return initial
 
     def form_valid(self, form):
-        form.save(self.person)        
+        form.save(self.person)
         return super(EditSkillsView, self).form_valid(form)
-
-    def get_success_url(self):
-        return reverse('user_profile', args=[self.kwargs['username']])
 edit_skills = must_be_owner(EditSkillsView.as_view())
 
 

@@ -1,0 +1,7 @@
+<div class="fieldWrapper">
+    {% if field.errors %}{{ field.errors }}{% endif %}
+    <label for="{{ field.auto_id }}">{{ field.label }}
+            <p class="help">{{ field.field.help_text|safe }}</p>
+    </label>
+    {{ field }}{{ field.widget }}
+</div>

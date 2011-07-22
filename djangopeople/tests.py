@@ -646,12 +646,29 @@ class EditViewTest(TestCase):
         u = User.objects.get(username='daveb')
         self.assertTrue(u.check_password('123456'))
 
-        response = self.client.post(url_edit_password, {'password1': 'foo',
-                                                        'password2': 'foo'})
+        response = self.client.post(url_edit_password,
+                                    {'current_password': '123456',
+                                     'password1': 'foo',
+                                     'password2': 'foo'})
 
         self.assertRedirects(response, url_profile)
         u = User.objects.get(username='daveb')
         self.assertTrue(u.check_password('foo'))
+
+    
+    def test_edit_password_form_current_password_error(self):
+        '''
+        test form error messages when current password is invalid
+        '''
+        url_edit_password = reverse('edit_password', args=['daveb'])
+
+        response = self.client.post(url_edit_password,
+                                    {'current_password': 'invalid pw',
+                                     'password1': 'foo1',
+                                     'password2': 'foo'})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'current_password', 'Please submit your current password.')
 
     def test_edit_password_form_error_fields_required(self):
         '''

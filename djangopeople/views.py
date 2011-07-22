@@ -595,9 +595,14 @@ class EditPassword(generic.FormView):
     form_class = PasswordForm
     template_name = 'edit_password.html'
 
-    def form_valid(self, form):
+    def get_form_kwargs(self):
+        kwargs = super(EditPassword, self).get_form_kwargs()
         user = get_object_or_404(User, username=self.kwargs['username'])
-        form.save(user)
+        kwargs.update({'user': user})
+        return kwargs
+
+    def form_valid(self, form):
+        form.save()
         return super(EditPassword, self).form_valid(form)
 
     def get_success_url(self):

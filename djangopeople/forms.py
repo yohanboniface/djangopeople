@@ -398,9 +398,21 @@ class LostPasswordForm(forms.Form):
 
 
 class PasswordForm(forms.Form):
-    password1 = forms.CharField(label='Password', widget=PasswordInput)
-    password2 = forms.CharField(label='Password (again)', widget=PasswordInput)
+    current_password = forms.CharField(label='Current Password', widget=PasswordInput)
+    password1 = forms.CharField(label='New Password', widget=PasswordInput)
+    password2 = forms.CharField(label='New Password (again)', widget=PasswordInput)
 
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        return super(PasswordForm, self).__init__(*args, **kwargs)
+        
+    def clean_current_password(self):
+        if not self.user.check_password(self.cleaned_data['current_password']):
+            raise forms.ValidationError('Please submit your current password.')
+        else:
+            return self.cleaned_data['current_password']
+        
     def clean(self):
         password1 = self.cleaned_data.get('password1')
         password2 = self.cleaned_data.get('password2')
@@ -409,6 +421,6 @@ class PasswordForm(forms.Form):
         else:
             raise forms.ValidationError('The passwords did not match.') 
     
-    def save(self, user):
-        user.set_password(self.cleaned_data['password1'])
-        user.save()
+    def save(self):
+        self.user.set_password(self.cleaned_data['password1'])
+        self.user.save()

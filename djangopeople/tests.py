@@ -1,4 +1,5 @@
 from datetime import datetime
+import os
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -364,6 +365,16 @@ class EditViewTest(TestCase):
     def setUp(self):
         super(EditViewTest, self).setUp()
         self.client.login(username='daveb', password='123456')
+        self.profile_img_path = settings.MEDIA_ROOT+'/profiles/0ea0e7ca0c58cd9bd692cb44231c16de.gif'
+        # make sure the profile upload folder exists
+        profile_upload_dir = settings.MEDIA_ROOT+'/profiles/'
+        if not os.path.exists(profile_upload_dir):
+            os.makedirs(profile_upload_dir)
+
+    def tearDown(self):
+        # remove uploaded profile picture
+        if os.path.exists(self.profile_img_path):
+            os.remove(self.profile_img_path)
 
     def test_edit_skill_permission(self):
         '''
@@ -613,6 +624,31 @@ class EditViewTest(TestCase):
                                          'url" rel="nofollow"><cite>chocolate '
                                          'shop </cite></a></li>')
 
+    def test_upload_profile_photo(self):
+        # test to add a profile photo
+        url_upload_profile_photo = reverse('upload_profile_photo', args=['daveb'])
+        response = self.client.get(url_upload_profile_photo)
+        self.assertContains(response, '<h2>Add a profile photo</h2>')
+
+        # upload empty file
+        response = self.client.post(url_upload_profile_photo,
+            {'photo': open('/dev/null')})
+        self.assertContains(response, '<ul class="errorlist">'
+            '<li>The submitted file is empty.</li></ul>')
+
+        # upload invalid file
+        response = self.client.post(url_upload_profile_photo,
+            {'photo': open(settings.OUR_ROOT+'/djangopeople/fixtures/test_data.json')})
+        self.assertContains(response, '<ul class="errorlist"><li>Upload a valid image. The'
+            ' file you uploaded was either not an image or a corrupted image.</li></ul>')
+
+        # upload file 
+        response = self.client.post(url_upload_profile_photo,
+            {'photo': open(settings.OUR_ROOT+'/djangopeople/fixtures/pony.gif')})
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals('http://testserver'+reverse('upload_done', args=['daveb']),
+            response._headers['location'][1])
+        self.assertTrue(os.path.exists(self.profile_img_path))
 
 class DjangoPeopleUnitTest(TestCase):
     fixtures = ['test_data']

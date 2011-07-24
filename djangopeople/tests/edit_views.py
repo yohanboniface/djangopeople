@@ -104,33 +104,34 @@ class EditViewTest(TestCase):
         self.assertEqual(p.openid_delegate, u'')
         
         response = self.client.post(url_edit_account,
-                                    {'openid_server': 'example.com',
-                                     'openid_delegate': 'fooBar.com'})
+                                    {'openid_server': 'http://example.com',
+                                     'openid_delegate': 'http://google.com'})
 
         self.assertRedirects(response, url_profile)
 
         p = DjangoPerson.objects.get(user__username='daveb')
         self.assertEqual(p.openid_server, 'http://example.com/')
-        self.assertEqual(p.openid_delegate, 'http://fooBar.com/')
+        self.assertEqual(p.openid_delegate, 'http://google.com/')
 
         # test display openid change form (with initial data)
         response = self.client.get(url_edit_account)
-        self.assertContains(response, '<input type="text" name="openid_server" '
+        self.assertContains(response, '<input id="id_openid_server" '
+                                      'type="text" name="openid_server" '
                                       'value="http://example.com/" '
-                                      'id="id_openid_server" />')
-        self.assertContains(response, '<input type="text" '
-                                      'name="openid_delegate" '
-                                      'value="http://fooBar.com/" '
-                                      'id="id_openid_delegate" />')
+                                      'maxlength="255" />')
+        self.assertContains(response, '<input id="id_openid_delegate" '
+                                      'type="text" name="openid_delegate" '
+                                      'value="http://google.com/" '
+                                      'maxlength="255" />')
 
         # test change openid settings
         response = self.client.post(url_edit_account,
-                                    {'openid_server': 'google.com',
-                                     'openid_delegate': 'foo.com'})
+                                    {'openid_server': 'http://test.com',
+                                     'openid_delegate': 'http://yahoo.com'})
 
         p = DjangoPerson.objects.get(user__username='daveb')
-        self.assertEqual(p.openid_server, 'http://google.com/')
-        self.assertEqual(p.openid_delegate, 'http://foo.com/')
+        self.assertEqual(p.openid_server, 'http://test.com/')
+        self.assertEqual(p.openid_delegate, 'http://yahoo.com/')
         
     def test_edit_account_form_error(self):
         '''

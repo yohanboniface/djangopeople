@@ -610,21 +610,14 @@ class EditPassword(generic.FormView):
 edit_password = must_be_owner(EditPassword.as_view())
 
 
-@must_be_owner
-def edit_bio(request, username):
-    person = get_object_or_404(DjangoPerson, user__username = username)
-    if request.method == 'POST':
-        form = BioForm(request.POST)
-        if form.is_valid():
-            person.bio = form.cleaned_data['bio']
-            person.save()
-            return redirect(reverse('user_profile', args=[username]))
-    else:
-        form = BioForm(initial = {'bio': person.bio})
+class EditBioView(PersonMixin, generic.UpdateView):
+    form_class = BioForm
+    template_name = 'edit_bio.html'
 
-    return render(request, 'edit_bio.html', {
-        'form': form,
-    })
+    def get_object(self):
+        return self.person
+
+edit_bio = must_be_owner(EditBioView.as_view())
 
 
 @must_be_owner

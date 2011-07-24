@@ -357,3 +357,57 @@ class EditViewTest(TestCase):
 
         u = User.objects.get(username='daveb')
         self.assertTrue(u.check_password('123456'))
+
+    def test_edit_bio_permission(self):
+        '''
+        logged in user can only edit his own bio
+        '''
+        url = reverse('edit_bio', args=['daveb'])
+
+        # user can edit his own password
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 302)
+
+        # user can't edit passwords of other users
+        url = reverse('edit_bio', args=['satchmo'])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_edit_bio(self):
+        '''
+        test changing the bio
+        '''
+        url_edit_bio = reverse('edit_bio', args=['daveb'])
+        url_profile = reverse('user_profile', args=['daveb'])
+
+        response = self.client.get(url_edit_bio)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'edit_bio.html')
+        
+        p = DjangoPerson.objects.get(user__username='daveb')
+        self.assertEqual(p.bio, 'ad')
+
+        bio_string = 'I do a lot of Django stuff'
+        response = self.client.post(url_edit_bio,
+                                    {'bio': bio_string}, follow=True)
+
+        self.assertRedirects(response, url_profile)
+        self.assertContains(response, bio_string)
+        self.assertContains(response, 'edit bio')
+        p = DjangoPerson.objects.get(user__username='daveb')
+        self.assertEqual(p.bio, bio_string)
+
+    def test_delete_bio(self):
+        url_edit_bio = reverse('edit_bio', args=['daveb'])
+        url_profile = reverse('user_profile', args=['daveb'])
+        response = self.client.post(url_edit_bio,
+                                    {'bio': ''}, follow=True)
+
+        self.assertRedirects(response, url_profile)
+        self.assertContains(response, 'Create your bio')
+        p = DjangoPerson.objects.get(user__username='daveb')
+        self.assertEqual(p.bio, '')

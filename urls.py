@@ -70,7 +70,7 @@ urlpatterns = patterns('',
     url(r'^([a-z]{2})/(\w+)/$', views.region, name='country_region'),
 
     url(r'^(?P<username>[a-z0-9]{3,})/$', views.profile, name='user_profile'),
-    url(r'^([a-z0-9]{3,})/bio/$', views.edit_bio, name='edit_bio'),
+    url(r'^(?P<username>[a-z0-9]{3,})/bio/$', views.edit_bio, name='edit_bio'),
     url(r'^(?P<username>[a-z0-9]{3,})/skills/$', views.edit_skills, name='edit_skills'),
 
     url(r'^(?P<username>[a-z0-9]{3,})/password/$',

@@ -212,8 +212,10 @@ class SkillsForm(forms.Form):
         person.skilltags = self.cleaned_data['skills']
 
 
-class BioForm(forms.Form):
-    bio = forms.CharField(widget=forms.Textarea, required=False)
+class BioForm(forms.ModelForm):
+    class Meta:
+        model = DjangoPerson
+        fields = ('bio',)
 
 class AccountForm(forms.Form):
     openid_server = forms.URLField(required=False)

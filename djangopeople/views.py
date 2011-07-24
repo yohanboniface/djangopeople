@@ -580,19 +580,12 @@ class EditSkillsView(PersonMixin, generic.FormView):
 edit_skills = must_be_owner(EditSkillsView.as_view())
 
 
-class EditPassword(generic.FormView):
+class EditPassword(generic.UpdateView):
     form_class = PasswordForm
     template_name = 'edit_password.html'
 
-    def get_form_kwargs(self):
-        kwargs = super(EditPassword, self).get_form_kwargs()
-        user = get_object_or_404(User, username=self.kwargs['username'])
-        kwargs.update({'user': user})
-        return kwargs
-
-    def form_valid(self, form):
-        form.save()
-        return super(EditPassword, self).form_valid(form)
+    def get_object(self):
+        return get_object_or_404(User, username=self.kwargs['username'])
 
     def get_success_url(self):
         return reverse('user_profile', args=[self.kwargs['username']])

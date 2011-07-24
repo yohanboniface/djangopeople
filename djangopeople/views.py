@@ -538,24 +538,9 @@ class PersonMixin(object):
         return reverse('user_profile', args=[self.kwargs['username']])
 
 
-class EditPortfolioView(PersonMixin, generic.CreateView):
+class EditPortfolioView(PersonMixin, generic.UpdateView):
     form_class = PortfolioForm
     template_name = 'edit_portfolio.html'
-
-    def get_initial(self):
-        initial = {}
-        num = 1
-        for site in self.person.portfoliosite_set.all():
-            initial['title_%d' % num] = site.title
-            initial['url_%d' % num] = site.url
-            num += 1
-        initial['num'] = num
-        return initial
-
-    def get_form_kwargs(self):
-        kwargs = super(EditPortfolioView, self).get_form_kwargs()
-        kwargs.update({'person': self.person})
-        return kwargs
 edit_portfolio = must_be_owner(EditPortfolioView.as_view())
 
 

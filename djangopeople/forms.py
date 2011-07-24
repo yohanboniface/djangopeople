@@ -326,15 +326,22 @@ class FindingForm(forms.Form):
             raise forms.ValidationError('That e-mail is already in use')
         return email
 
-class PortfolioForm(forms.Form):
+class PortfolioForm(forms.ModelForm):
+
+    class Meta:
+        model = DjangoPerson
+        fields = ()
+    
     def __init__(self, *args, **kwargs):
         # Dynamically add the fields for IM providers / external services
-        assert 'person' in kwargs, 'person is a required keyword argument'
-        self.person = kwargs.pop('person')
-        self.instance = kwargs.pop('instance')
         super(PortfolioForm, self).__init__(*args, **kwargs)
         self.portfolio_fields = []
-        num = self.initial['num']
+        self.initial = {}
+        num = 1
+        for site in kwargs['instance'].portfoliosite_set.all():
+            self.initial['title_%d' % num] = site.title
+            self.initial['url_%d' % num] = site.url
+            num += 1
 
         # Add fields
         for i in range(1, num + 3):
@@ -357,13 +364,13 @@ class PortfolioForm(forms.Form):
         for key in [k for k in self.fields if k.startswith('url_')]:
             setattr(self, 'clean_%s' % key, make_validator(key, self))
 
-    def save(self, *args, **kwargs):
-        self.person.portfoliosite_set.all().delete()
+    def save(self):
+        self.instance.portfoliosite_set.all().delete()
         for key in [k for k in self.cleaned_data.keys() if k.startswith('title_')]:
             title = self.cleaned_data[key]
             url = self.cleaned_data[key.replace('title_', 'url_')]
             if title.strip() and url.strip():
-                self.person.portfoliosite_set.create(title=title, url=url)
+                self.instance.portfoliosite_set.create(title=title, url=url)
 
 
 def make_validator(key, form):

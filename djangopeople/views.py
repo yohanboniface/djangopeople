@@ -616,43 +616,16 @@ class EditBioView(PersonMixin, generic.UpdateView):
 
     def get_object(self):
         return self.person
-
 edit_bio = must_be_owner(EditBioView.as_view())
 
 
-@must_be_owner
-def edit_location(request, username):
-    person = get_object_or_404(DjangoPerson, user__username = username)
-    if request.method == 'POST':
-        form = LocationForm(request.POST)
-        if form.is_valid():
-            region = None
-            if form.cleaned_data['region']:
-                region = Region.objects.get(
-                    country__iso_code = form.cleaned_data['country'],
-                    code = form.cleaned_data['region']
-                )
-            person.country = Country.objects.get(
-                iso_code = form.cleaned_data['country']
-            )
-            person.region = region
-            person.latitude = form.cleaned_data['latitude']
-            person.longitude = form.cleaned_data['longitude']
-            person.location_description = \
-                form.cleaned_data['location_description']
-            person.save()
-            return redirect(reverse('user_profile', args=[username]))
-    else:
-        initial_data = {
-            'latitude': person.latitude,
-            'longitude': person.longitude,
-            'location_description': person.location_description,
-            'country': person.country.iso_code
-        }
-        form = LocationForm(initial=initial_data)
-    return render(request, 'edit_location.html', {
-        'form': form,
-    })
+class EditLocationView(PersonMixin, generic.UpdateView):
+    form_class = LocationForm
+    template_name = 'edit_location.html'
+    
+    def get_object(self):
+        return self.person
+edit_location = must_be_owner(EditLocationView.as_view())
 
 
 class SkillCloudView(generic.TemplateView):

@@ -40,6 +40,7 @@ def not_in_the_atlantic(self):
     if self.cleaned_data.get('latitude', '') and self.cleaned_data.get('longitude', ''):
         lat = self.cleaned_data['latitude']
         lon = self.cleaned_data['longitude']
+        
         if 43 < lat < 45 and -39 < lon < -33:
             raise forms.ValidationError("Drag and zoom the map until the crosshair matches your location")
     return self.cleaned_data['location_description']
@@ -221,15 +222,15 @@ class AccountForm(forms.Form):
     openid_server = forms.URLField(required=False)
     openid_delegate = forms.URLField(required=False)
 
-class LocationForm(forms.Form):
-    country = forms.ChoiceField(choices = [('', '')] + [
-        (c.iso_code, c.name) for c in Country.objects.all()
-    ])
+class LocationForm(forms.ModelForm):
     latitude = forms.FloatField(min_value=-90, max_value=90)
     longitude = forms.FloatField(min_value=-180, max_value=180)
     location_description = forms.CharField(max_length=50)
 
-    region = GroupedChoiceField(required=False, choices=region_choices())
+    class Meta:
+        model = DjangoPerson
+        fields = ('country', 'latitude', 'longitude', 'location_description',
+                  'region')
 
     def clean_region(self):
         # If a region is selected, ensure it matches the selected country

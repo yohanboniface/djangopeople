@@ -82,7 +82,7 @@ urlpatterns = patterns('',
     url(r'^(?P<username>[a-z0-9]{3,})/portfolio/$',
         views.edit_portfolio, name='edit_portfolio'),
 
-    url(r'^([a-z0-9]{3,})/location/$',
+    url(r'^(?P<username>[a-z0-9]{3,})/location/$',
         views.edit_location, name='edit_location'),
 
     url(r'^([a-z0-9]{3,})/finding/$',

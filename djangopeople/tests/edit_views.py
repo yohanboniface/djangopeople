@@ -411,3 +411,142 @@ class EditViewTest(TestCase):
         self.assertContains(response, 'Create your bio')
         p = DjangoPerson.objects.get(user__username='daveb')
         self.assertEqual(p.bio, '')
+
+        
+    def test_edit_location_permission(self):
+        '''
+        logged in user can only edit his own location
+        '''
+        url = reverse('edit_location', args=['daveb'])
+
+        # user can edit his own password
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 200)
+
+        # user can't edit passwords of other users
+        url = reverse('edit_location', args=['satchmo'])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_edit_location(self):
+        '''
+        test changing the loaction
+        '''
+        longitude = 14.9853515625
+        latitude = 50.035973672195468
+        location_description = 'Vienna, Austria'
+        country = 12 # id of Austria
+        
+        url_edit_location = reverse('edit_location', args=['daveb'])
+        url_profile = reverse('user_profile', args=['daveb'])
+
+        response = self.client.get(url_profile)
+
+        self.assertContains(response, 'Austria')
+        self.assertContains(response, 'person_latitude = %d'%latitude)
+        self.assertContains(response, 'person_longitude = %d'%longitude)
+
+        p = DjangoPerson.objects.get(user__username='daveb')
+        self.assertEqual(p.latitude, latitude)
+        self.assertEqual(p.longitude, longitude)
+        self.assertEqual(p.location_description, location_description)
+        self.assertEqual(p.country.pk, country)
+        
+        response = self.client.get(url_edit_location)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'edit_location.html')
+        
+        new_longitude = 153.023071289
+        new_latitude = -27.5411533739
+        new_location_description = 'Brisbane'
+        new_country = 13 # id of Australia
+
+        location_dict = {'longitude': new_longitude,
+                         'latitude': new_latitude,
+                         'location_description': new_location_description,
+                         'country': new_country}
+        response = self.client.post(url_edit_location, data=location_dict,
+                                    follow=True)
+
+        self.assertRedirects(response, url_profile)
+        self.assertNotContains(response, 'Austria')
+        self.assertNotContains(response, 'person_latitude = %d'%latitude)
+        self.assertNotContains(response, 'person_longitude = %d'%longitude)
+        self.assertContains(response, 'Australia')
+        self.assertContains(response, 'person_latitude = %d'%new_latitude)
+        self.assertContains(response, 'person_longitude = %d'%new_longitude)
+        
+        p = DjangoPerson.objects.get(user__username='daveb')
+        self.assertEqual(p.latitude, new_latitude)
+        self.assertEqual(p.longitude, new_longitude)
+        self.assertEqual(p.location_description, new_location_description)
+        self.assertEqual(p.country.pk, new_country)
+
+    def test_edit_location_form_error_fields_required(self):
+        url_edit_location = reverse('edit_location', args=['daveb'])
+
+        new_longitude = 153.023071289
+        new_latitude = -27.5411533739
+        new_location_description = 'Brisbane'
+        new_country = 13 # id of Australia
+        
+        location_dict = {'longitude': new_longitude,
+                         'latitude': new_latitude,
+                         'location_description': new_location_description,
+                         'country': new_country}
+
+        response = self.client.post(url_edit_location, data=location_dict)
+
+        self.assertEqual(response.status_code, 302)
+
+        # remove longitutde
+        location_dict.pop('longitude')
+        response = self.client.post(url_edit_location, data=location_dict)
+        self.assertFormError(response, 'form', 'longitude', 'This field is required.')
+
+        # remove latitude
+        location_dict.pop('latitude')
+        response = self.client.post(url_edit_location, data=location_dict)
+        self.assertFormError(response, 'form', 'longitude', 'This field is required.')
+        self.assertFormError(response, 'form', 'latitude', 'This field is required.')
+
+        # remove location_description
+        location_dict.pop('location_description')
+        response = self.client.post(url_edit_location, data=location_dict)
+        self.assertFormError(response, 'form', 'longitude', 'This field is required.')
+        self.assertFormError(response, 'form', 'latitude', 'This field is required.')
+        self.assertFormError(response, 'form', 'location_description', 'This field is required.')
+
+        # remove country
+        location_dict.pop('country')
+        response = self.client.post(url_edit_location, data=location_dict)
+        self.assertFormError(response, 'form', 'longitude', 'This field is required.')
+        self.assertFormError(response, 'form', 'latitude', 'This field is required.')
+        self.assertFormError(response, 'form', 'location_description', 'This field is required.')
+        self.assertFormError(response, 'form', 'country', 'This field is required.')
+        
+    def test_edit_location_not_in_the_atlantic(self):
+        '''
+        test form error message when 43 < lat < 45 and -39 < lon < -33
+        '''
+
+        url_edit_location = reverse('edit_location', args=['daveb'])
+        
+        new_longitude = -35
+        new_latitude = 44
+        new_location_description = 'Brisbane'
+        new_country = 13 # id of Australia
+        
+        location_dict = {'longitude': new_longitude,
+                         'latitude': new_latitude,
+                         'location_description': new_location_description,
+                         'country': new_country}
+        response = self.client.post(url_edit_location, data=location_dict)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'location_description', 'Drag and zoom the map until the crosshair matches your location')
+

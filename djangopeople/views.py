@@ -531,6 +531,9 @@ class PersonMixin(object):
                                  user__username=kwargs['username'])
         return super(PersonMixin, self).dispatch(request, *args, **kwargs)
 
+    def get_object(self):
+        return self.person
+
     def get_success_url(self):
         return reverse('user_profile', args=[self.kwargs['username']])
 
@@ -559,9 +562,6 @@ edit_portfolio = must_be_owner(EditPortfolioView.as_view())
 class EditAccountView(PersonMixin, generic.UpdateView):
     form_class = AccountForm
     template_name = 'edit_account.html'
-
-    def get_object(self):
-        return self.person
 edit_account = must_be_owner(EditAccountView.as_view())
 
 
@@ -595,18 +595,12 @@ edit_password = must_be_owner(EditPassword.as_view())
 class EditBioView(PersonMixin, generic.UpdateView):
     form_class = BioForm
     template_name = 'edit_bio.html'
-
-    def get_object(self):
-        return self.person
 edit_bio = must_be_owner(EditBioView.as_view())
 
 
 class EditLocationView(PersonMixin, generic.UpdateView):
     form_class = LocationForm
     template_name = 'edit_location.html'
-    
-    def get_object(self):
-        return self.person
 edit_location = must_be_owner(EditLocationView.as_view())
 
 

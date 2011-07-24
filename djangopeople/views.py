@@ -556,23 +556,12 @@ class EditPortfolioView(PersonMixin, generic.CreateView):
 edit_portfolio = must_be_owner(EditPortfolioView.as_view())
 
 
-class EditAccountView(PersonMixin, generic.FormView):
+class EditAccountView(PersonMixin, generic.UpdateView):
     form_class = AccountForm
     template_name = 'edit_account.html'
 
-    def get_initial(self):
-        initial = super(EditAccountView, self).get_initial()
-        initial.update({
-            'openid_server': self.person.openid_server,
-            'openid_delegate': self.person.openid_delegate,
-        })
-        return initial
-
-    def form_valid(self, form):
-        self.person.openid_server = form.cleaned_data['openid_server']
-        self.person.openid_delegate = form.cleaned_data['openid_delegate']
-        self.person.save()
-        return super(EditAccountView, self).form_valid(form)
+    def get_object(self):
+        return self.person
 edit_account = must_be_owner(EditAccountView.as_view())
 
 

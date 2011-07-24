@@ -218,9 +218,10 @@ class BioForm(forms.ModelForm):
         model = DjangoPerson
         fields = ('bio',)
 
-class AccountForm(forms.Form):
-    openid_server = forms.URLField(required=False)
-    openid_delegate = forms.URLField(required=False)
+class AccountForm(forms.ModelForm):
+    class Meta:
+        model = DjangoPerson
+        fields = ('openid_server', 'openid_delegate')
 
 class LocationForm(forms.ModelForm):
     latitude = forms.FloatField(min_value=-90, max_value=90)

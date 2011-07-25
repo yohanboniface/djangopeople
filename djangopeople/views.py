@@ -525,43 +525,30 @@ def edit_finding(request, username):
     })
 
 
-class PersonMixin(object):
-    def dispatch(self, request, *args, **kwargs):
-        self.person = get_object_or_404(DjangoPerson,
-                                 user__username=kwargs['username'])
-        return super(PersonMixin, self).dispatch(request, *args, **kwargs)
-
+class DjangoPersonEditViewBase(generic.UpdateView):
     def get_object(self):
-        return self.person
+        return get_object_or_404(DjangoPerson,
+                                 user__username=self.kwargs['username'])
 
     def get_success_url(self):
         return reverse('user_profile', args=[self.kwargs['username']])
 
 
-class EditPortfolioView(PersonMixin, generic.UpdateView):
+class EditPortfolioView(DjangoPersonEditViewBase):
     form_class = PortfolioForm
     template_name = 'edit_portfolio.html'
 edit_portfolio = must_be_owner(EditPortfolioView.as_view())
 
 
-class EditAccountView(PersonMixin, generic.UpdateView):
+class EditAccountView(DjangoPersonEditViewBase):
     form_class = AccountForm
     template_name = 'edit_account.html'
 edit_account = must_be_owner(EditAccountView.as_view())
 
 
-class EditSkillsView(PersonMixin, generic.FormView):
+class EditSkillsView(DjangoPersonEditViewBase):
     form_class = SkillsForm
     template_name = 'edit_skills.html'
-
-    def get_initial(self):
-        initial = super(EditSkillsView, self).get_initial()
-        initial['skills'] = edit_string_for_tags(self.person.skilltags)
-        return initial
-
-    def form_valid(self, form):
-        form.save(self.person)
-        return super(EditSkillsView, self).form_valid(form)
 edit_skills = must_be_owner(EditSkillsView.as_view())
 
 
@@ -577,13 +564,13 @@ class EditPassword(generic.UpdateView):
 edit_password = must_be_owner(EditPassword.as_view())
 
 
-class EditBioView(PersonMixin, generic.UpdateView):
+class EditBioView(DjangoPersonEditViewBase):
     form_class = BioForm
     template_name = 'edit_bio.html'
 edit_bio = must_be_owner(EditBioView.as_view())
 
 
-class EditLocationView(PersonMixin, generic.UpdateView):
+class EditLocationView(DjangoPersonEditViewBase):
     form_class = LocationForm
     template_name = 'edit_location.html'
 edit_location = must_be_owner(EditLocationView.as_view())

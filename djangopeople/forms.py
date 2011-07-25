@@ -8,6 +8,7 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
 from tagging.forms import TagField
+from tagging.utils import edit_string_for_tags
 
 from djangopeople import utils
 from djangopeople.constants import SERVICES, IMPROVIDERS
@@ -206,11 +207,20 @@ class SignupForm(forms.Form):
 class PhotoUploadForm(forms.Form):
     photo = forms.ImageField()
 
-class SkillsForm(forms.Form):
+
+class SkillsForm(forms.ModelForm):
     skills = TagField(label='Change skills', required=False)
 
-    def save(self, person):
-        person.skilltags = self.cleaned_data['skills']
+    class Meta:
+        model = DjangoPerson
+        fields = ()
+
+    def __init__(self, *args, **kwargs):
+        super(SkillsForm, self).__init__(*args, **kwargs)
+        self.initial = {'skills': edit_string_for_tags(self.instance.skilltags)}
+        
+    def save(self):
+        self.instance.skilltags = self.cleaned_data['skills']
 
 
 class BioForm(forms.ModelForm):

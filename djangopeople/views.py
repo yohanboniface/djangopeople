@@ -458,11 +458,10 @@ class ProfileView(generic.DetailView):
         # Should we show the 'Finding X' section at all?
         show_finding = (services or privacy['show_email'] or
                         (privacy['show_im'] and ims))
+
         context.update({
             'is_owner': self.request.user.username == self.kwargs['username'],
-            'skills_form': SkillsForm(initial={
-                'skills': edit_string_for_tags(self.object.skilltags)
-            }),
+            'skills_form': SkillsForm(instance=self.object),
             'mtags': mtags,
             'ims': ims,
             'services': services,

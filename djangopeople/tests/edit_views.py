@@ -464,7 +464,7 @@ class EditViewTest(TestCase):
         new_longitude = 153.023071289
         new_latitude = -27.5411533739
         new_location_description = 'Brisbane'
-        new_country = 13 # id of Australia
+        new_country = 'AU' # iso code of Australia
 
         location_dict = {'longitude': new_longitude,
                          'latitude': new_latitude,
@@ -485,7 +485,7 @@ class EditViewTest(TestCase):
         self.assertEqual(p.latitude, new_latitude)
         self.assertEqual(p.longitude, new_longitude)
         self.assertEqual(p.location_description, new_location_description)
-        self.assertEqual(p.country.pk, new_country)
+        self.assertEqual(p.country.iso_code, new_country)
 
     def test_edit_location_form_error_fields_required(self):
         url_edit_location = reverse('edit_location', args=['daveb'])
@@ -493,7 +493,7 @@ class EditViewTest(TestCase):
         new_longitude = 153.023071289
         new_latitude = -27.5411533739
         new_location_description = 'Brisbane'
-        new_country = 13 # id of Australia
+        new_country = 'AU' # iso code of Australia
         
         location_dict = {'longitude': new_longitude,
                          'latitude': new_latitude,
@@ -529,7 +529,24 @@ class EditViewTest(TestCase):
         self.assertFormError(response, 'form', 'latitude', 'This field is required.')
         self.assertFormError(response, 'form', 'location_description', 'This field is required.')
         self.assertFormError(response, 'form', 'country', 'This field is required.')
+
+    def test_edit_loctaion_form_error_invalid_iso_code(self):
+        url_edit_location = reverse('edit_location', args=['daveb'])
+
+        new_longitude = 153.023071289
+        new_latitude = -27.5411533739
+        new_location_description = 'Brisbane'
+        new_country = 'XXX' # invalid iso code
         
+        location_dict = {'longitude': new_longitude,
+                         'latitude': new_latitude,
+                         'location_description': new_location_description,
+                         'country': new_country}
+
+        response = self.client.post(url_edit_location, data=location_dict)
+
+        self.assertFormError(response, 'form', 'country', 'Select a valid choice. XXX is not one of the available choices.')
+
     def test_edit_location_not_in_the_atlantic(self):
         '''
         test form error message when 43 < lat < 45 and -39 < lon < -33
@@ -550,4 +567,5 @@ class EditViewTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertFormError(response, 'form', 'location_description', 'Drag and zoom the map until the crosshair matches your location')
+
 

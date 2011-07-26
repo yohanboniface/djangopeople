@@ -234,6 +234,9 @@ class AccountForm(forms.ModelForm):
         fields = ('openid_server', 'openid_delegate')
 
 class LocationForm(forms.ModelForm):
+    country = forms.ChoiceField(choices = [('', '')] + [
+        (c.iso_code, c.name) for c in Country.objects.all()
+    ])
     latitude = forms.FloatField(min_value=-90, max_value=90)
     longitude = forms.FloatField(min_value=-180, max_value=180)
     location_description = forms.CharField(max_length=50)
@@ -243,6 +246,14 @@ class LocationForm(forms.ModelForm):
         fields = ('country', 'latitude', 'longitude', 'location_description',
                   'region')
 
+    def clean_country(self):
+        try:
+            country = Country.objects.get(iso_code=self.cleaned_data['country'])
+            return country
+        except Country.DoesNotExist:
+            raise forms.ValidationError(
+                    'The ISO code of the country you selected is invalid.'
+                )
     def clean_region(self):
         # If a region is selected, ensure it matches the selected country
         if self.cleaned_data['region']:

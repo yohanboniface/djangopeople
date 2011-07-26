@@ -4,7 +4,7 @@ from django.test import TestCase
 
 from tagging.utils import edit_string_for_tags
 
-from djangopeople.models import (DjangoPerson, Country)
+from djangopeople.models import DjangoPerson, Country
 
 
 class EditViewTest(TestCase):

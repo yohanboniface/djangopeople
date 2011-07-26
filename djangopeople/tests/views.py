@@ -66,6 +66,16 @@ class DjangoPeopleTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue('<h1>About Django People</h1>' in response.content)
 
+    def test_login_redirect(self):
+        url = reverse('login')
+
+        data = {'username': 'daveb',
+                'password': '123456',
+                'next': reverse('redirect_to_logged_in_user_profile')}
+        
+        response = self.client.post(url, data, follow=True)
+        self.assertRedirects(response, reverse('user_profile', args=['daveb']))
+
     def test_recover_account(self):
         url = reverse('recover')
         response = self.client.get(url)

@@ -113,6 +113,17 @@ def login(request):
     return auth_views.login(request, template_name='login.html')
 
 
+class ProfileRedirectView(generic.RedirectView):
+    '''
+    redirect to the profile page of the logged in user
+    used to redirect to the profile page of the user after login
+    '''
+
+    def get_redirect_url(self):
+        return reverse('user_profile', kwargs={'username': self.request.user})
+redirect_to_logged_in_user_profile = ProfileRedirectView.as_view()
+
+
 def logout(request):
     auth.logout(request)
     request.session['openids'] = []

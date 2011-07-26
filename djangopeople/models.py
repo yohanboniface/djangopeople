@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.conf import settings
 from django.core.urlresolvers import reverse
 from machinetags.models import MachineTaggedItem, add_machinetag
 from django.contrib.contenttypes import generic

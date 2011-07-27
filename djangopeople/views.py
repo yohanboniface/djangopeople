@@ -14,8 +14,7 @@ from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.db.models import Q, F
 from django.http import Http404, HttpResponseForbidden
-from django.shortcuts import get_object_or_404, render_to_response, redirect
-from django.template import RequestContext
+from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.translation import ugettext_lazy as _
 from django.views import generic
 
@@ -42,12 +41,6 @@ from django.views.generic.list_detail import object_list
 
 
 NOTALPHA_RE = re.compile('[^a-zA-Z0-9]')
-
-
-def render(request, template, context_dict=None):
-    return render_to_response(
-        template, context_dict or {}, context_instance=RequestContext(request)
-    )
 
 
 @utils.simple_decorator

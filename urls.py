@@ -1,5 +1,3 @@
-import os
-
 from django.conf.urls.defaults import patterns, url, include
 from django.conf import settings
 from django.conf.urls.static import static
@@ -7,10 +5,7 @@ from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.shortcuts import redirect
 
-from tagging.views import tagged_object_list
-
 from djangopeople import views, api #, clustering
-from djangopeople.models import DjangoPerson
 
 
 def perm_redirect(url):

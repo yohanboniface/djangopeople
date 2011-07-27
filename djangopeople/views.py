@@ -10,7 +10,6 @@ from PIL import Image
 
 from django.conf import settings
 from django.contrib import auth
-from django.contrib.auth import views as auth_views
 from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.db.models import Q, F
@@ -109,10 +108,6 @@ class RecentView(generic.TemplateView):
         })
         return ctx
 recent = RecentView.as_view()
-
-
-def login(request):
-    return auth_views.login(request, template_name='login.html')
 
 
 class ProfileRedirectView(generic.RedirectView):

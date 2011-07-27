@@ -359,10 +359,14 @@ def upload_profile_photo(request, username):
     })
 
 
-@must_be_owner
-def upload_done(request, username):
+class UploadDone(generic.RedirectView):
     "Using a double redirect to try and stop back button from re-uploading"
-    return redirect(reverse('user_profile', args=[username]))
+    permanent = False
+
+    def get_redirect_url(self, username):
+        user =  self.request.user
+        return reverse('user_profile', args=[user.username])
+upload_done = must_be_owner(UploadDone.as_view())
 
 
 class CountryView(generic.DetailView):

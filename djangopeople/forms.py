@@ -1,7 +1,6 @@
 from django import forms
 from django.conf import settings
 from django.core.mail import send_mail
-from django.db.models import ObjectDoesNotExist
 from django.forms.forms import BoundField
 from django.forms.widgets import PasswordInput
 from django.template.loader import render_to_string

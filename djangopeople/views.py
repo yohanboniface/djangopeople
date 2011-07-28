@@ -494,14 +494,12 @@ class EditFindingView(DjangoPersonEditViewBase):
         mtags = tagdict(self.object.machinetags.all())
         initial = {
             'email': self.object.user.email,
-            'blog': mtags['profile']['blog'],
-            'looking_for_work': mtags['profile']['looking_for_work'],
         }
-
         # Fill in other initial fields from machinetags
         for fieldname, (namespace, predicate) in \
                 MACHINETAGS_FROM_FIELDS.items():
             initial[fieldname] = mtags[namespace][predicate]
+        return initial
 edit_finding = must_be_owner(EditFindingView.as_view())
 
 

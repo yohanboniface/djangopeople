@@ -32,6 +32,17 @@ class EditViewTest(TestCase):
         response = self.client.post(url)
         self.assertEqual(response.status_code, 403)
 
+    def test_edit_finding_initial_data(self):
+        url_edit_finding = reverse('edit_finding', args=['daveb'])
+        p = DjangoPerson.objects.get(user__username='daveb')
+        mtags = tagdict(p.machinetags.all())
+
+        response = self.client.get(url_edit_finding)
+
+        self.assertContains(response, mtags['profile']['looking_for_work'])
+        self.assertContains(response, mtags['im']['django'])
+        self.assertContains(response, p.user.email)
+        
     def test_edit_finding_email(self):
         url_edit_finding = reverse('edit_finding', args=['daveb'])
         url_profile = reverse('user_profile', args=['daveb'])
@@ -58,7 +69,8 @@ class EditViewTest(TestCase):
         url_profile = reverse('user_profile', args=['daveb'])
 
         new_email = 'foo@bar.com'
-        data = {'looking_for_work': 'freelance',
+        looking_for_work = 'freelance'
+        data = {'looking_for_work': looking_for_work,
                 'email': new_email,
                 'privacy_search': 'public',
                 'privacy_email': 'private',
@@ -75,6 +87,10 @@ class EditViewTest(TestCase):
         p = DjangoPerson.objects.get(user__username='daveb')
         mtags = tagdict(p.machinetags.all())
         self.assertEqual(mtags['profile']['looking_for_work'], 'freelance')
+
+        # check initial value
+        response = self.client.get(url_edit_finding)
+        self.assertContains(response, looking_for_work)
 
     def test_edit_finding_im(self):
         url_edit_finding = reverse('edit_finding', args=['daveb'])
@@ -100,14 +116,17 @@ class EditViewTest(TestCase):
         mtags = tagdict(p.machinetags.all())
         self.assertEqual(mtags['im']['jabber'], im_jabber)
 
+        # check initial value
+        response = self.client.get(url_edit_finding)
+        self.assertContains(response, im_jabber)
+
     def test_edit_finding_services(self):
         url_edit_finding = reverse('edit_finding', args=['daveb'])
         url_profile = reverse('user_profile', args=['daveb'])
 
-        new_email = 'foo@bar.com'
         service_twitter = 'https://twitter.com/davebbar'
         data = {'service_twitter': service_twitter,
-                'email': new_email,
+                'email': 'foo@bar.com',
                 'privacy_search': 'public',
                 'privacy_email': 'private',
                 'privacy_im': 'private',
@@ -123,6 +142,11 @@ class EditViewTest(TestCase):
         p = DjangoPerson.objects.get(user__username='daveb')
         mtags = tagdict(p.machinetags.all())
         self.assertEqual(mtags['services']['twitter'], service_twitter)
+
+        # check initial value
+        response = self.client.get(url_edit_finding)
+        self.assertContains(response, service_twitter)
+        
 
     def test_edit_finding_form_error_email_validation(self):
         url_edit_finding = reverse('edit_finding', args=['daveb'])

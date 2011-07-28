@@ -13,7 +13,7 @@ from django.test.client import RequestFactory
 from django_openidauth.models import associate_openid
 from django_openidconsumer.util import OpenID
 
-from djangopeople.models import (Country, DjangoPerson)
+from djangopeople.models import Country, DjangoPerson
 from djangopeople.views import signup, openid_whatnext
 
 

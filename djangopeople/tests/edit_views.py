@@ -6,7 +6,7 @@ from django.conf import settings
 from tagging.utils import edit_string_for_tags
 import os
 
-from djangopeople.models import (DjangoPerson, Country)
+from djangopeople.models import DjangoPerson, Country
 
 
 class EditViewTest(TestCase):

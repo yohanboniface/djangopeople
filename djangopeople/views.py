@@ -244,17 +244,6 @@ class SignupView(generic.FormView):
                 value = form.cleaned_data[fieldname].strip()
                 person.add_machinetag(namespace, predicate, value)
 
-        # Stash their blog and looking_for_work
-        if form.cleaned_data['blog']:
-            person.add_machinetag(
-                'profile', 'blog', form.cleaned_data['blog']
-            )
-        if form.cleaned_data['looking_for_work']:
-            person.add_machinetag(
-                'profile', 'looking_for_work',
-                form.cleaned_data['looking_for_work']
-            )
-
         # Finally, set their skill tags
         person.skilltags = form.cleaned_data['skilltags']
 

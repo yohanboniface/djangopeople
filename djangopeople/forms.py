@@ -355,17 +355,6 @@ class FindingForm(forms.ModelForm):
         user.email = self.cleaned_data['email']
         user.save()
 
-        self.instance.machinetags.filter(namespace='profile').delete()
-        if self.cleaned_data['blog']:
-            self.instance.add_machinetag(
-                'profile', 'blog', self.cleaned_data['blog']
-            )
-        if self.cleaned_data['looking_for_work']:
-            self.instance.add_machinetag(
-                'profile', 'looking_for_work',
-                self.cleaned_data['looking_for_work']
-            )
-
         for fieldname, (namespace, predicate) in \
             MACHINETAGS_FROM_FIELDS.items():
             self.instance.machinetags.filter(

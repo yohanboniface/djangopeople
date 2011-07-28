@@ -83,7 +83,7 @@ urlpatterns = patterns('',
     url(r'^(?P<username>[a-z0-9]{3,})/location/$',
         views.edit_location, name='edit_location'),
 
-    url(r'^([a-z0-9]{3,})/finding/$',
+    url(r'^(?P<username>[a-z0-9]{3,})/finding/$',
         views.edit_finding, name='edit_finding'),
 
     url(r'^([a-z0-9]{3,})/upload/$',

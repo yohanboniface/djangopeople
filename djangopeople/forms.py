@@ -1,7 +1,6 @@
 from django import forms
 from django.conf import settings
 from django.core.mail import send_mail
-from django.db.models import ObjectDoesNotExist
 from django.forms.forms import BoundField
 from django.forms.widgets import PasswordInput
 from django.template.loader import render_to_string
@@ -11,7 +10,7 @@ from tagging.forms import TagField
 from tagging.utils import edit_string_for_tags
 
 from djangopeople import utils
-from djangopeople.constants import SERVICES, IMPROVIDERS
+from djangopeople.constants import SERVICES, IMPROVIDERS, MACHINETAGS_FROM_FIELDS
 from djangopeople.groupedselect import GroupedChoiceField
 from djangopeople.models import (DjangoPerson, Country, Region, User,
                                  RESERVED_USERNAMES)
@@ -41,7 +40,7 @@ def not_in_the_atlantic(self):
     if self.cleaned_data.get('latitude', '') and self.cleaned_data.get('longitude', ''):
         lat = self.cleaned_data['latitude']
         lon = self.cleaned_data['longitude']
-        
+
         if 43 < lat < 45 and -39 < lon < -33:
             raise forms.ValidationError("Drag and zoom the map until the crosshair matches your location")
     return self.cleaned_data['location_description']
@@ -166,7 +165,8 @@ class SignupForm(forms.Form):
         username = self.cleaned_data['username'].lower()
 
         # No reserved usernames, or anything that looks like a 4 digit year 
-        if username in RESERVED_USERNAMES or (len(username) == 4 and username.isdigit()):
+        if username in RESERVED_USERNAMES or (len(username) == 4 and
+                                              username.isdigit()):
             raise forms.ValidationError(already_taken)
 
         try:
@@ -196,13 +196,14 @@ class SignupForm(forms.Form):
                     code = self.cleaned_data['region'],
                     country__iso_code = self.cleaned_data['country']
                 )
-            except ObjectDoesNotExist:
+            except Region.DoesNotExist:
                 raise forms.ValidationError(
                     'The region you selected does not match the country'
                 )
         return self.cleaned_data['region']
 
     clean_location_description = not_in_the_atlantic
+
 
 class PhotoUploadForm(forms.Form):
     photo = forms.ImageField()
@@ -218,7 +219,7 @@ class SkillsForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(SkillsForm, self).__init__(*args, **kwargs)
         self.initial = {'skills': edit_string_for_tags(self.instance.skilltags)}
-        
+
     def save(self):
         self.instance.skilltags = self.cleaned_data['skills']
 
@@ -228,15 +229,18 @@ class BioForm(forms.ModelForm):
         model = DjangoPerson
         fields = ('bio',)
 
+
 class AccountForm(forms.ModelForm):
     class Meta:
         model = DjangoPerson
         fields = ('openid_server', 'openid_delegate')
 
+
 class LocationForm(forms.ModelForm):
     country = forms.ChoiceField(choices = [('', '')] + [
         (c.iso_code, c.name) for c in Country.objects.all()
     ])
+    region = GroupedChoiceField(required=False, choices=region_choices())
     latitude = forms.FloatField(min_value=-90, max_value=90)
     longitude = forms.FloatField(min_value=-180, max_value=180)
     location_description = forms.CharField(max_length=50)
@@ -254,6 +258,7 @@ class LocationForm(forms.ModelForm):
             raise forms.ValidationError(
                     'The ISO code of the country you selected is invalid.'
                 )
+
     def clean_region(self):
         # If a region is selected, ensure it matches the selected country
         if self.cleaned_data['region']:
@@ -262,19 +267,23 @@ class LocationForm(forms.ModelForm):
                     code = self.cleaned_data['region'],
                     country__iso_code = self.cleaned_data['country']
                 )
-            except ObjectDoesNotExist:
+            except Region.DoesNotExist:
                 raise forms.ValidationError(
                     'The region you selected does not match the country'
                 )
-        return self.cleaned_data['region']
+            return self.cleaned_data['region']
 
     clean_location_description = not_in_the_atlantic
 
-class FindingForm(forms.Form):
+class FindingForm(forms.ModelForm):
+
+    class Meta:
+        model = DjangoPerson
+        fields = ()
+
     def __init__(self, *args, **kwargs):
-        # Dynamically add the fields for IM providers / external services
-        self.person = kwargs.pop('person') # So we can validate e-mail later
         super(FindingForm, self).__init__(*args, **kwargs)
+        # Dynamically add the fields for IM providers / external services
         self.service_fields = []
         for shortname, name, icon in SERVICES:
             field = forms.URLField(
@@ -343,9 +352,24 @@ class FindingForm(forms.Form):
         email = self.cleaned_data['email']
         if User.objects.filter(
             email = email
-        ).exclude(djangoperson = self.person).count() > 0:
+        ).exclude(djangoperson = self.instance).count() > 0:
             raise forms.ValidationError('That e-mail is already in use')
         return email
+
+    def save(self):
+        user = self.instance.user
+        user.email = self.cleaned_data['email']
+        user.save()
+
+        for fieldname, (namespace, predicate) in \
+            MACHINETAGS_FROM_FIELDS.items():
+            self.instance.machinetags.filter(
+                namespace=namespace, predicate=predicate
+            ).delete()
+            if fieldname in self.cleaned_data and \
+                   self.cleaned_data[fieldname].strip():
+                value = self.cleaned_data[fieldname].strip()
+                self.instance.add_machinetag(namespace, predicate, value)
 
 class PortfolioForm(forms.ModelForm):
 

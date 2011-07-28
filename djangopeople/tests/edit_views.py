@@ -6,6 +6,8 @@ from tagging.utils import edit_string_for_tags
 
 from djangopeople.models import DjangoPerson, Country
 
+from machinetags.utils import tagdict
+
 
 class EditViewTest(TestCase):
     fixtures = ['test_data']
@@ -13,6 +15,222 @@ class EditViewTest(TestCase):
     def setUp(self):
         super(EditViewTest, self).setUp()
         self.client.login(username='daveb', password='123456')
+
+    def test_edit_finding_permissions(self):
+        '''
+        logged in user can only edit his own skills
+        '''
+        url = reverse('edit_finding', args=['daveb'])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 200)
+
+        url = reverse('edit_finding', args=['satchmo'])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_edit_finding_initial_data(self):
+        url_edit_finding = reverse('edit_finding', args=['daveb'])
+        p = DjangoPerson.objects.get(user__username='daveb')
+        mtags = tagdict(p.machinetags.all())
+
+        response = self.client.get(url_edit_finding)
+
+        self.assertContains(response, mtags['profile']['looking_for_work'])
+        self.assertContains(response, mtags['im']['django'])
+        self.assertContains(response, p.user.email)
+
+    def test_edit_finding_email(self):
+        url_edit_finding = reverse('edit_finding', args=['daveb'])
+        url_profile = reverse('user_profile', args=['daveb'])
+
+        new_email = 'foo@bar.com'
+        data = {'email': new_email,
+                'privacy_search': 'public',
+                'privacy_email': 'private',
+                'privacy_im': 'private',
+                'privacy_irctrack': 'public'}
+
+        u = User.objects.get(username='daveb')
+        self.assertNotEqual(u.email, new_email)
+
+        response = self.client.post(url_edit_finding, data, follow=True)
+        self.assertRedirects(response, url_profile)
+        self.assertContains(response, new_email)
+
+        u = User.objects.get(username='daveb')
+        self.assertEqual(u.email, new_email)
+
+    def test_edit_finding_looking_for_work(self):
+        url_edit_finding = reverse('edit_finding', args=['daveb'])
+        url_profile = reverse('user_profile', args=['daveb'])
+
+        new_email = 'foo@bar.com'
+        looking_for_work = 'freelance'
+        data = {'looking_for_work': looking_for_work,
+                'email': new_email,
+                'privacy_search': 'public',
+                'privacy_email': 'private',
+                'privacy_im': 'private',
+                'privacy_irctrack': 'public'}
+
+        p = DjangoPerson.objects.get(user__username='daveb')
+        mtags = tagdict(p.machinetags.all())
+        self.assertEqual(mtags['profile']['looking_for_work'], 'full-time')
+
+        response = self.client.post(url_edit_finding, data, follow=True)
+        self.assertRedirects(response, url_profile)
+
+        p = DjangoPerson.objects.get(user__username='daveb')
+        mtags = tagdict(p.machinetags.all())
+        self.assertEqual(mtags['profile']['looking_for_work'], 'freelance')
+
+        # check initial value
+        response = self.client.get(url_edit_finding)
+        self.assertContains(response, looking_for_work)
+
+    def test_edit_finding_im(self):
+        url_edit_finding = reverse('edit_finding', args=['daveb'])
+        url_profile = reverse('user_profile', args=['daveb'])
+
+        new_email = 'foo@bar.com'
+        im_jabber = 'daveb@jabber.org'
+        data = {'im_jabber': im_jabber,
+                'email': new_email,
+                'privacy_search': 'public',
+                'privacy_email': 'private',
+                'privacy_im': 'private',
+                'privacy_irctrack': 'public'}
+
+        p = DjangoPerson.objects.get(user__username='daveb')
+        mtags = tagdict(p.machinetags.all())
+        self.assertEqual(mtags['im']['jabber'], '')
+
+        response = self.client.post(url_edit_finding, data, follow=True)
+        self.assertRedirects(response, url_profile)
+
+        p = DjangoPerson.objects.get(user__username='daveb')
+        mtags = tagdict(p.machinetags.all())
+        self.assertEqual(mtags['im']['jabber'], im_jabber)
+
+        # check initial value
+        response = self.client.get(url_edit_finding)
+        self.assertContains(response, im_jabber)
+
+    def test_edit_finding_services(self):
+        url_edit_finding = reverse('edit_finding', args=['daveb'])
+        url_profile = reverse('user_profile', args=['daveb'])
+
+        service_twitter = 'https://twitter.com/davebbar'
+        data = {'service_twitter': service_twitter,
+                'email': 'foo@bar.com',
+                'privacy_search': 'public',
+                'privacy_email': 'private',
+                'privacy_im': 'private',
+                'privacy_irctrack': 'public'}
+
+        p = DjangoPerson.objects.get(user__username='daveb')
+        mtags = tagdict(p.machinetags.all())
+        self.assertEqual(mtags['services']['twitter'], '')
+
+        response = self.client.post(url_edit_finding, data, follow=True)
+        self.assertRedirects(response, url_profile)
+
+        p = DjangoPerson.objects.get(user__username='daveb')
+        mtags = tagdict(p.machinetags.all())
+        self.assertEqual(mtags['services']['twitter'], service_twitter)
+
+        # check initial value
+        response = self.client.get(url_edit_finding)
+        self.assertContains(response, service_twitter)
+
+    def test_edit_finding_form_error_email_validation(self):
+        url_edit_finding = reverse('edit_finding', args=['daveb'])
+
+        u = User.objects.get(username='daveb')
+        old_email = u.email
+        other_user = User.objects.get(username='satchmo')
+
+        # set new email for daveb to existing email of user satchmo
+        data = {'email': other_user.email, # 
+                'privacy_search': 'public',
+                'privacy_email': 'private',
+                'privacy_im': 'private',
+                'privacy_irctrack': 'public'}
+
+        u = User.objects.get(username='daveb')
+        self.assertEqual(u.email, old_email)
+
+        response = self.client.post(url_edit_finding, data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'email', 'That e-mail is already in use')
+
+        u = User.objects.get(username='daveb')
+        self.assertEqual(u.email, old_email)
+
+    def test_edit_finding_form_error_fields_required(self):
+        url_edit_finding = reverse('edit_finding', args=['daveb'])
+        url_profile = reverse('user_profile', args=['daveb'])
+
+        data = {'email': 'foo@bar.com',
+                'privacy_search': 'public',
+                'privacy_email': 'private',
+                'privacy_im': 'private',
+                'privacy_irctrack': 'public'}
+
+        response = self.client.post(url_edit_finding, data, follow=True)
+        self.assertRedirects(response, url_profile)
+
+        data.pop('email')
+        response = self.client.post(url_edit_finding, data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'email',
+                             'This field is required.')
+
+        data.pop('privacy_search')
+        response = self.client.post(url_edit_finding, data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'email',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'privacy_search',
+                             'This field is required.')
+
+        data.pop('privacy_email')
+        response = self.client.post(url_edit_finding, data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'email',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'privacy_search',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'privacy_email',
+                             'This field is required.')
+
+        data.pop('privacy_im')
+        response = self.client.post(url_edit_finding, data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'email',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'privacy_search',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'privacy_email',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'privacy_im',
+                             'This field is required.')
+
+        data.pop('privacy_irctrack')
+        response = self.client.post(url_edit_finding, data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'email',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'privacy_search',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'privacy_email',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'privacy_irctrack',
+                             'This field is required.')
 
     def test_edit_skill_permission(self):
         '''
@@ -35,13 +253,13 @@ class EditViewTest(TestCase):
         test adding skills
         '''
         url_edit_skills = reverse('edit_skills', args=['daveb'])
-        
+
         p = DjangoPerson.objects.get(user__username='daveb')
         self.assertEqual(len(p.skilltags), 3)
         self.assertTrue('jazz' in edit_string_for_tags(p.skilltags))
         self.assertTrue('linux' in edit_string_for_tags(p.skilltags))
         self.assertTrue('python' in edit_string_for_tags(p.skilltags))
-        
+
         skills = '%s django'%(edit_string_for_tags(p.skilltags))
         self.client.post(url_edit_skills, {'skills': skills})
 
@@ -57,7 +275,7 @@ class EditViewTest(TestCase):
         test deleting skills
         '''
         url_edit_skills = reverse('edit_skills', args=['daveb'])
-        
+
         p = DjangoPerson.objects.get(user__username='daveb')
         self.assertEqual(len(p.skilltags), 3)
         self.assertTrue('jazz' in edit_string_for_tags(p.skilltags))
@@ -72,7 +290,7 @@ class EditViewTest(TestCase):
         self.assertTrue('linux' in edit_string_for_tags(p.skilltags))
         self.assertTrue('python' in edit_string_for_tags(p.skilltags))
         self.assertFalse('jazz' in edit_string_for_tags(p.skilltags))
-        
+
         # delete all skills
         response = self.client.post(url_edit_skills, {'skills': ''})
         p = DjangoPerson.objects.get(user__username='daveb')
@@ -102,7 +320,7 @@ class EditViewTest(TestCase):
         p = DjangoPerson.objects.get(user__username='daveb')
         self.assertEqual(p.openid_server, u'')
         self.assertEqual(p.openid_delegate, u'')
-        
+
         response = self.client.post(url_edit_account,
                                     {'openid_server': 'http://example.com',
                                      'openid_delegate': 'http://google.com'})
@@ -132,16 +350,15 @@ class EditViewTest(TestCase):
         p = DjangoPerson.objects.get(user__username='daveb')
         self.assertEqual(p.openid_server, 'http://test.com/')
         self.assertEqual(p.openid_delegate, 'http://yahoo.com/')
-        
+
     def test_edit_account_form_error(self):
         '''
         check AccountForm error messages
         '''
-        
         p = DjangoPerson.objects.get(user__username='daveb')
         self.assertEqual(p.openid_server, u'')
         self.assertEqual(p.openid_delegate, u'')
-        
+
         url_edit_account = reverse('edit_account', args=['daveb'])
         response = self.client.post(url_edit_account,
                                     {'openid_server': 'example',
@@ -153,7 +370,7 @@ class EditViewTest(TestCase):
                              'Enter a valid URL.')
         self.assertFormError(response, 'form', 'openid_delegate',
                              'Enter a valid URL.')
-        
+
         p = DjangoPerson.objects.get(user__username='daveb')
         self.assertEqual(p.openid_server, u'')
         self.assertEqual(p.openid_delegate, u'')
@@ -292,7 +509,7 @@ class EditViewTest(TestCase):
         response = self.client.get(url_edit_password)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'edit_password.html')
-        
+
         u = User.objects.get(username='daveb')
         self.assertTrue(u.check_password('123456'))
 
@@ -305,7 +522,6 @@ class EditViewTest(TestCase):
         u = User.objects.get(username='daveb')
         self.assertTrue(u.check_password('foo'))
 
-    
     def test_edit_password_form_current_password_error(self):
         '''
         test form error messages when current password is invalid
@@ -388,7 +604,7 @@ class EditViewTest(TestCase):
         response = self.client.get(url_edit_bio)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'edit_bio.html')
-        
+
         p = DjangoPerson.objects.get(user__username='daveb')
         self.assertEqual(p.bio, 'ad')
 
@@ -413,7 +629,6 @@ class EditViewTest(TestCase):
         p = DjangoPerson.objects.get(user__username='daveb')
         self.assertEqual(p.bio, '')
 
-        
     def test_edit_location_permission(self):
         '''
         logged in user can only edit his own location
@@ -435,13 +650,13 @@ class EditViewTest(TestCase):
 
     def test_edit_location(self):
         '''
-        test changing the loaction
+        test changing the location
         '''
         longitude = 14.9853515625
         latitude = 50.035973672195468
         location_description = 'Vienna, Austria'
         country = 12 # id of Austria
-        
+
         url_edit_location = reverse('edit_location', args=['daveb'])
         url_profile = reverse('user_profile', args=['daveb'])
 
@@ -456,11 +671,11 @@ class EditViewTest(TestCase):
         self.assertEqual(p.longitude, longitude)
         self.assertEqual(p.location_description, location_description)
         self.assertEqual(p.country.pk, country)
-        
+
         response = self.client.get(url_edit_location)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'edit_location.html')
-        
+
         new_longitude = 153.023071289
         new_latitude = -27.5411533739
         new_location_description = 'Brisbane'
@@ -469,7 +684,15 @@ class EditViewTest(TestCase):
         location_dict = {'longitude': new_longitude,
                          'latitude': new_latitude,
                          'location_description': new_location_description,
-                         'country': new_country}
+                         'country': new_country,
+                         'region': 'AL'}
+        response = self.client.post(url_edit_location, location_dict)
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'region',
+                             ('The region you selected does not match the '
+                              'country'))
+        del location_dict['region']
+
         response = self.client.post(url_edit_location, data=location_dict,
                                     follow=True)
 
@@ -480,7 +703,7 @@ class EditViewTest(TestCase):
         self.assertContains(response, 'Australia')
         self.assertContains(response, 'person_latitude = %d'%new_latitude)
         self.assertContains(response, 'person_longitude = %d'%new_longitude)
-        
+
         p = DjangoPerson.objects.get(user__username='daveb')
         self.assertEqual(p.latitude, new_latitude)
         self.assertEqual(p.longitude, new_longitude)
@@ -494,7 +717,7 @@ class EditViewTest(TestCase):
         new_latitude = -27.5411533739
         new_location_description = 'Brisbane'
         new_country = 'AU' # iso code of Australia
-        
+
         location_dict = {'longitude': new_longitude,
                          'latitude': new_latitude,
                          'location_description': new_location_description,
@@ -537,7 +760,7 @@ class EditViewTest(TestCase):
         new_latitude = -27.5411533739
         new_location_description = 'Brisbane'
         new_country = 'XXX' # invalid iso code
-        
+
         location_dict = {'longitude': new_longitude,
                          'latitude': new_latitude,
                          'location_description': new_location_description,
@@ -553,12 +776,12 @@ class EditViewTest(TestCase):
         '''
 
         url_edit_location = reverse('edit_location', args=['daveb'])
-        
+
         new_longitude = -35
         new_latitude = 44
         new_location_description = 'Brisbane'
         new_country = 13 # id of Australia
-        
+
         location_dict = {'longitude': new_longitude,
                          'latitude': new_latitude,
                          'location_description': new_location_description,
@@ -566,6 +789,6 @@ class EditViewTest(TestCase):
         response = self.client.post(url_edit_location, data=location_dict)
 
         self.assertEqual(response.status_code, 200)
-        self.assertFormError(response, 'form', 'location_description', 'Drag and zoom the map until the crosshair matches your location')
-
-
+        self.assertFormError(response, 'form', 'location_description',
+                             ('Drag and zoom the map until the crosshair '
+                              'matches your location'))

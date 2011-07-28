@@ -136,6 +136,15 @@ class DjangoPeopleTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.count(), 3)
 
+        data['region'] = 'AL'
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(User.objects.count(), 3)
+        self.assertFormError(response, 'form', 'region',
+                             ('The region you selected does not match the '
+                              'country'))
+        del data['region']
+
         data['password2'] = 'secret'
         response = self.client.post(url, data, follow=True)
         self.assertEqual(response.status_code, 200)

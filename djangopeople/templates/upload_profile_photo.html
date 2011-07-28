@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block header%}
-<h2>Add a profile photo</h2>
+<h2>{% if person.photo %}Upload a new profile photo{% else %}Add a profile photo{% endif %}</h2>
 {% endblock %}
 
 {% block content %}

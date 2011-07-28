@@ -1,3 +1,4 @@
+
 import datetime
 import hashlib
 import operator
@@ -476,42 +477,23 @@ class ProfileView(generic.DetailView):
 profile = ProfileView.as_view()
 
 
-@must_be_owner
-def edit_finding(request, username):
-    person = get_object_or_404(DjangoPerson, user__username=username)
-    if request.method == 'POST':
-        form = FindingForm(request.POST, person=person)
-        if form.is_valid():
-            user = person.user
-            user.email = form.cleaned_data['email']
-            user.save()
+class DjangoPersonEditViewBase(generic.UpdateView):
+    def get_object(self):
+        return get_object_or_404(DjangoPerson,
+                                 user__username=self.kwargs['username'])
 
-            person.machinetags.filter(namespace='profile').delete()
-            if form.cleaned_data['blog']:
-                person.add_machinetag(
-                    'profile', 'blog', form.cleaned_data['blog']
-                )
-            if form.cleaned_data['looking_for_work']:
-                person.add_machinetag(
-                    'profile', 'looking_for_work',
-                    form.cleaned_data['looking_for_work']
-                )
+    def get_success_url(self):
+        return reverse('user_profile', args=[self.kwargs['username']])
 
-            for fieldname, (namespace, predicate) in \
-                MACHINETAGS_FROM_FIELDS.items():
-                person.machinetags.filter(
-                    namespace=namespace, predicate=predicate
-                ).delete()
-                if fieldname in form.cleaned_data and \
-                    form.cleaned_data[fieldname].strip():
-                    value = form.cleaned_data[fieldname].strip()
-                    person.add_machinetag(namespace, predicate, value)
 
-            return redirect(reverse('user_profile', args=[username]))
-    else:
-        mtags = tagdict(person.machinetags.all())
+class EditFindingView(DjangoPersonEditViewBase):
+    form_class = FindingForm
+    template_name = 'edit_finding.html'
+
+    def get_initial(self):
+        mtags = tagdict(self.object.machinetags.all())
         initial = {
-            'email': person.user.email,
+            'email': self.object.user.email,
             'blog': mtags['profile']['blog'],
             'looking_for_work': mtags['profile']['looking_for_work'],
         }
@@ -520,21 +502,7 @@ def edit_finding(request, username):
         for fieldname, (namespace, predicate) in \
                 MACHINETAGS_FROM_FIELDS.items():
             initial[fieldname] = mtags[namespace][predicate]
-
-        form = FindingForm(initial=initial, person=person)
-    return render(request, 'edit_finding.html', {
-        'form': form,
-        'person': person,
-    })
-
-
-class DjangoPersonEditViewBase(generic.UpdateView):
-    def get_object(self):
-        return get_object_or_404(DjangoPerson,
-                                 user__username=self.kwargs['username'])
-
-    def get_success_url(self):
-        return reverse('user_profile', args=[self.kwargs['username']])
+edit_finding = must_be_owner(EditFindingView.as_view())
 
 
 class EditPortfolioView(DjangoPersonEditViewBase):

@@ -6,10 +6,10 @@ from django.contrib.contenttypes import generic
 from geopy import distance
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
-from djangopeople.storage import HashFileSystemStorage
+from storages.backends.hashpath import HashPathStorage
 
 
-fs = HashFileSystemStorage()
+fs = HashPathStorage()
 
 import tagging
 

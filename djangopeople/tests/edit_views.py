@@ -24,8 +24,10 @@ class EditViewTest(TestCase):
         img_content = open(os.path.join(settings.OUR_ROOT,
                                         'djangopeople/fixtures/pony.gif'),
                                   'rb').read()
-        self.hashed_upload_img_file_name = hashlib.sha1(img_content)\
-                                           .hexdigest() + '.gif'
+        sha1sum = hashlib.sha1(img_content).hexdigest()
+        self.hashed_upload_img_file_name = os.path.join(sha1sum[:1],
+                                                        sha1sum[1:2], sha1sum)
+                                           
         
         # make sure the profile upload folder exists
         self.profile_img_path = os.path.join(settings.MEDIA_ROOT, 'profiles')
@@ -899,5 +901,5 @@ class EditViewTest(TestCase):
         p = DjangoPerson.objects.get(user__username='daveb')
         image_path = os.path.join(settings.MEDIA_ROOT, 'profiles',
                                   self.hashed_upload_img_file_name)
-        self.assertEqual(p.photo.path, image_path)
-        self.assertTrue(os.path.exists(image_path))
+        self.assertEqual(p.photo.path, image_path+'_1')
+        self.assertTrue(os.path.exists(image_path+'_1'))

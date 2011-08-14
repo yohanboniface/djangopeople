@@ -214,17 +214,6 @@ class PhotoUploadForm(forms.ModelForm):
         model = DjangoPerson
         fields = ('photo',)
 
-    def save(self):
-        image_content = self.cleaned_data['photo'].file.read()
-        format = Image.open(StringIO(image_content)).format
-        format = format.lower().replace('jpeg', 'jpg')
-        filename = hashlib.md5(image_content).hexdigest() + '.' + format
-        # Save the image
-        path = os.path.join(settings.MEDIA_ROOT, 'profiles', filename)
-        open(path, 'w').write(image_content)
-
-        self.instance.photo = 'profiles/' + filename
-        self.instance.save()
 
 class SkillsForm(forms.ModelForm):
     skills = TagField(label='Change skills', required=False)

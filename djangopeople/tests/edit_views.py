@@ -901,5 +901,5 @@ class EditViewTest(TestCase):
         p = DjangoPerson.objects.get(user__username='daveb')
         image_path = os.path.join(settings.MEDIA_ROOT, 'profiles',
                                   self.hashed_upload_img_file_name)
-        self.assertEqual(p.photo.path, image_path+'_1')
-        self.assertTrue(os.path.exists(image_path+'_1'))
+        self.assertEqual(p.photo.path, image_path)
+        self.assertTrue(os.path.exists(image_path))

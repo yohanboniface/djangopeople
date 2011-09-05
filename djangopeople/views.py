@@ -1,15 +1,8 @@
-
 import datetime
-import hashlib
 import operator
-import os
 import re
 import smtplib
 
-from cStringIO import StringIO
-from PIL import Image
-
-from django.conf import settings
 from django.contrib import auth
 from django.core.urlresolvers import reverse
 from django.db import transaction

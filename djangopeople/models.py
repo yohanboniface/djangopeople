@@ -115,8 +115,10 @@ class DjangoPerson(models.Model):
     add_machinetag = add_machinetag
 
     # OpenID delegation
-    openid_server = models.URLField(max_length=255, blank=True)
-    openid_delegate = models.URLField(max_length=255, blank=True)
+    openid_server = models.URLField(max_length=255, blank=True,
+                                    verify_exists=False)
+    openid_delegate = models.URLField(max_length=255, blank=True,
+                                      verify_exists=False)
 
     # Last active on IRC
     last_active_on_irc = models.DateTimeField(blank=True, null=True)

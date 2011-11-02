@@ -72,7 +72,7 @@ class DjangoPeopleTest(TestCase):
         data = {'username': 'daveb',
                 'password': '123456',
                 'next': reverse('redirect_to_logged_in_user_profile')}
-        
+
         response = self.client.post(url, data, follow=True)
         self.assertRedirects(response, reverse('user_profile', args=['daveb']))
 
@@ -374,3 +374,13 @@ class DjangoPeopleTest(TestCase):
 
         response = self.client.post(url, data)
         self.assertContains(response, 'TRACKED')
+
+    def test_tagline(self):
+        """Tagline shows up on the homepage, not elsewhere"""
+        url = reverse('index')
+        response = self.client.get(url)
+        self.assertContains(response, 'Discover users of the')
+
+        url = reverse('login')
+        response = self.client.get(url)
+        self.assertNotContains(response, 'Discover users of the')

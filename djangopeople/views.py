@@ -62,6 +62,7 @@ class IndexView(generic.TemplateView):
             'people_list_limited': people[:4],
             'total_people': DjangoPerson.objects.count(),
             'countries': Country.objects.top_countries(),
+            'home': True,
         })
         return ctx
 index = IndexView.as_view()

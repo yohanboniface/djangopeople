@@ -15,10 +15,6 @@ from djangopeople.groupedselect import GroupedChoiceField
 from djangopeople.models import (DjangoPerson, Country, Region, User,
                                  RESERVED_USERNAMES)
 
-from cStringIO import StringIO
-from PIL import Image
-import hashlib
-import os
 
 def region_choices():
     # For use with GroupedChoiceField
@@ -26,7 +22,7 @@ def region_choices():
     groups = [(False, (('', '---'),))]
     current_country = False
     current_group = []
-    
+
     for region in regions:
         if region.country.name != current_country:
             if current_group:
@@ -37,7 +33,7 @@ def region_choices():
     if current_group:
         groups.append((current_country, current_group))
         current_group = []
-    
+
     return groups
 
 def not_in_the_atlantic(self):
@@ -144,7 +140,7 @@ class SignupForm(forms.Form):
 
     skilltags = TagField(required=False)
 
-    # Upload a photo is a separate page, because if validation fails we 
+    # Upload a photo is a separate page, because if validation fails we
     # don't want to tell them to upload it all over again
     #   photo = forms.ImageField(required=False)
 
@@ -168,13 +164,13 @@ class SignupForm(forms.Form):
         already_taken = 'That username is unavailable'
         username = self.cleaned_data['username'].lower()
 
-        # No reserved usernames, or anything that looks like a 4 digit year 
+        # No reserved usernames, or anything that looks like a 4 digit year
         if username in RESERVED_USERNAMES or (len(username) == 4 and
                                               username.isdigit()):
             raise forms.ValidationError(already_taken)
 
         try:
-            user = User.objects.get(username = username)
+            User.objects.get(username=username)
         except User.DoesNotExist:
             pass
         else:
@@ -185,7 +181,7 @@ class SignupForm(forms.Form):
     def clean_email(self):
         email = self.cleaned_data['email']
         try:
-            user = User.objects.get(email = email)
+            User.objects.get(email=email)
         except User.DoesNotExist:
             pass
         else:
@@ -196,9 +192,9 @@ class SignupForm(forms.Form):
         # If a region is selected, ensure it matches the selected country
         if self.cleaned_data['region']:
             try:
-                region = Region.objects.get(
-                    code = self.cleaned_data['region'],
-                    country__iso_code = self.cleaned_data['country']
+                Region.objects.get(
+                    code=self.cleaned_data['region'],
+                    country__iso_code=self.cleaned_data['country'],
                 )
             except Region.DoesNotExist:
                 raise forms.ValidationError(
@@ -269,9 +265,9 @@ class LocationForm(forms.ModelForm):
         # If a region is selected, ensure it matches the selected country
         if self.cleaned_data['region']:
             try:
-                region = Region.objects.get(
-                    code = self.cleaned_data['region'],
-                    country__iso_code = self.cleaned_data['country']
+                Region.objects.get(
+                    code=self.cleaned_data['region'],
+                    country__iso_code=self.cleaned_data['country']
                 )
             except Region.DoesNotExist:
                 raise forms.ValidationError(
@@ -382,7 +378,7 @@ class PortfolioForm(forms.ModelForm):
     class Meta:
         model = DjangoPerson
         fields = ()
-    
+
     def __init__(self, *args, **kwargs):
         # Dynamically add the fields for IM providers / external services
         super(PortfolioForm, self).__init__(*args, **kwargs)
@@ -473,15 +469,15 @@ class PasswordForm(forms.ModelForm):
             raise forms.ValidationError('Please submit your current password.')
         else:
             return self.cleaned_data['current_password']
-        
+
     def clean(self):
         password1 = self.cleaned_data.get('password1')
         password2 = self.cleaned_data.get('password2')
         if password1 == password2:
             return self.cleaned_data
         else:
-            raise forms.ValidationError('The passwords did not match.') 
-    
+            raise forms.ValidationError('The passwords did not match.')
+
     def save(self):
         self.instance.set_password(self.cleaned_data['password1'])
         self.instance.save()

@@ -3,6 +3,7 @@ from django.forms.util import flatatt
 from django.utils.encoding import smart_unicode
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext as _
 # From http://www.djangosnippets.org/snippets/200/
 
 # widget for select with optional opt groups
@@ -10,7 +11,7 @@ from django.utils.safestring import mark_safe
 # not sure if it's better but it doesn't force all options to be grouped
 
 # Example:
-# groceries = ((False, (('milk','milk'), (-1,'eggs'))), ('fruit', ((0,'apple'), (1,'orange'))), ('', (('yum','beer'), )),) 
+# groceries = ((False, (('milk','milk'), (-1,'eggs'))), ('fruit', ((0,'apple'), (1,'orange'))), ('', (('yum','beer'), )),)
 # grocery_list = GroupedChoiceField(choices=groceries)
 
 # Renders:
@@ -64,5 +65,8 @@ class GroupedChoiceField(forms.ChoiceField):
         for group_label, group in self.choices:
             valid_values += [str(k) for k, v in group]
         if value not in valid_values:
-            raise ValidationError(gettext(u'Select a valid choice. That choice is not one of the available choices.'))
+            raise forms.ValidationError(
+                _(u'Select a valid choice. That choice is not one of the '
+                  'available choices.')
+            )
         return value

@@ -27,8 +27,8 @@ class EditViewTest(TestCase):
         sha1sum = hashlib.sha1(img_content).hexdigest()
         self.hashed_upload_img_file_name = os.path.join(sha1sum[:1],
                                                         sha1sum[1:2], sha1sum)
-                                           
-        
+
+
         # make sure the profile upload folder exists
         self.profile_img_path = os.path.join(settings.MEDIA_ROOT, 'profiles')
         if not os.path.exists(self.profile_img_path):
@@ -178,7 +178,7 @@ class EditViewTest(TestCase):
         other_user = User.objects.get(username='satchmo')
 
         # set new email for daveb to existing email of user satchmo
-        data = {'email': other_user.email, # 
+        data = {'email': other_user.email, #
                 'privacy_search': 'public',
                 'privacy_email': 'private',
                 'privacy_im': 'private',
@@ -315,7 +315,7 @@ class EditViewTest(TestCase):
         self.assertFalse('jazz' in edit_string_for_tags(p.skilltags))
 
         # delete all skills
-        response = self.client.post(url_edit_skills, {'skills': ''})
+        self.client.post(url_edit_skills, {'skills': ''})
         p = DjangoPerson.objects.get(user__username='daveb')
 
         self.assertEqual(len(p.skilltags), 0)
@@ -676,7 +676,7 @@ class EditViewTest(TestCase):
         test changing the location
         '''
         longitude = 14.9853515625
-        latitude = 50.035973672195468
+        latitude = 50.0359736721955
         location_description = 'Vienna, Austria'
         country = 12 # id of Austria
 
@@ -848,7 +848,7 @@ class EditViewTest(TestCase):
                                            args=['daveb'])
         response = self.client.get(url_upload_profile_photo)
         self.assertContains(response, '<h2>Add a profile photo</h2>')
-        
+
         # upload a photo
         response = self.client.post(url_upload_profile_photo,
             {'photo': open(upload_file_path)})
@@ -875,7 +875,7 @@ class EditViewTest(TestCase):
         url_upload_profile_photo = reverse('upload_profile_photo', args=['daveb'])
         response = self.client.get(url_upload_profile_photo)
         self.assertContains(response, '<h2>Add a profile photo</h2>')
-        
+
         # upload a photo
         response = self.client.post(url_upload_profile_photo,
             {'photo': open(upload_file_path)})
@@ -889,7 +889,7 @@ class EditViewTest(TestCase):
                                   self.hashed_upload_img_file_name)
         self.assertEqual(p.photo.path, image_path)
         self.assertTrue(os.path.exists(image_path))
-        
+
         # upload a same photo again
         response = self.client.post(url_upload_profile_photo,
             {'photo': open(upload_file_path)})

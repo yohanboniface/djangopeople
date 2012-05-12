@@ -1,12 +1,12 @@
-
 from clusterlizard.clusterer import Clusterer
 
-from django.http import HttpResponse
-from djangopeople.models import *
 from django.db.models import Q
+from django.http import HttpResponse
 
-import simplejson
 import math
+import simplejson
+
+from .models import DjangoPerson, ClusteredPoint
 
 
 def latlong_to_mercator(lat, long):
@@ -31,8 +31,8 @@ def input_generator():
     for person in DjangoPerson.objects.all():
         mx, my = latlong_to_mercator(person.latitude, person.longitude)
         yield (mx, my, person.id)
-    
-    
+
+
 def save_clusters(clusters, zoom):
     """
     The output function provided to ClusterLizard should be a
@@ -55,7 +55,7 @@ def progress(done, left, took, zoom, eta):
     You can also pass in an optional progress callback.
     """
     print "Iter %s (%s clusters) [%.3f secs] [zoom: %s] [ETA %s]" % (done, left, took, zoom, eta)
-    
+
 
 def as_json(request, x2, y1, x1, y2, z):
     """
@@ -64,12 +64,12 @@ def as_json(request, x2, y1, x1, y2, z):
     x1, y1, x2, y2 = map(float, (x1, y1, x2, y2))
     if y1 > y2:
         y1, y2 = y2, y1
-    
+
     if x1 < x2: # View not crossing the date line
         query = ClusteredPoint.objects.filter(latitude__gt=y1, latitude__lt=y2, longitude__gt=x1, longitude__lt=x2, zoom=z)
     else: # View crossing the date line
         query = ClusteredPoint.objects.filter(Q(longitude__lt=x1) | Q(longitude__gt=x2, latitude__gt=y1, latitude__lt=y2), zoom=z)
-    
+
     points = []
     for cluster in query:
         if cluster.djangoperson:
@@ -77,7 +77,7 @@ def as_json(request, x2, y1, x1, y2, z):
         else:
             points.append((cluster.longitude, cluster.latitude, cluster.number, None))
     return HttpResponse(simplejson.dumps(points))
-    
+
 
 
 def run():

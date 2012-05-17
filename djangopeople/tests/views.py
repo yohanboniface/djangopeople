@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.conf import settings
+from django.contrib.auth.middleware import AuthenticationMiddleware
 from django.contrib.auth.models import User
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.core import mail
@@ -24,7 +25,7 @@ def prepare_request(request, openid=True):
     """
     if openid:
         request.openid = OpenID('http://foo.example.com/', 1302206357)
-    for m in (CommonMiddleware, SessionMiddleware):
+    for m in (CommonMiddleware, SessionMiddleware, AuthenticationMiddleware):
         m().process_request(request)
     return request
 

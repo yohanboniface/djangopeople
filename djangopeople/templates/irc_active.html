@@ -1,6 +1,6 @@
 {% extends "maps.html" %}
 {% load url from future %}
-{% load thumbnail staticfiles %}
+{% load staticfiles gravatar %}
 
 {% block title %}Active on IRC in the past hour{% endblock %}
 
@@ -22,7 +22,7 @@
         <ul class="detailsList split">
         {% for person in people_list %}
         <li class="vcard">
-            <img src="{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}{% static "djangopeople/img/person_small_blank.png" %}{% endif %}" alt="{{ person }}" class="main photo">
+            <img src="{% gravatar person.user.email 40 %}" alt="{{ person }}" class="main photo">
             <h3><a href="{{ person.get_absolute_url }}" class="url fn n"><span class="given-name">{{ person.user.first_name }}</span> <span class="family-name">{{ person.user.last_name }}</span></a></h3>
             <p class="meta adr"><a href="{% url 'country_detail' person.country.iso_code|lower %}" class="nobg"><img src="{{ STATIC_URL }}djangopeople/img/flags/{{ person.country.iso_code|lower }}.gif" alt="{{ person.country }}" class="country-name" title="{{ person.country }}"></a> <span class="region">{{ person.location_description }}</span><br><strong>{{ person.irc_nick }}</strong>, active {{ person.last_active_on_irc|timesince }} ago</p>
         </li>

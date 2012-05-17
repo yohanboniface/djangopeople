@@ -6,7 +6,7 @@
 {% block js %}
 {% endblock %}
 
-{% block header %}{% load thumbnail %}
+{% block header %}
         <h1>Skills</h1>
         {% if country %}
         <p class="meta"><img src="{{ STATIC_URL }}djangopeople/img/flags/{{ country.iso_code|lower }}.gif" title="{{ country }}" class="flag"></a> {{ country }}</p>

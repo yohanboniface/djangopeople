@@ -5,7 +5,7 @@
 {% block js %}
 {% endblock %}
 
-{% block header %}{% load thumbnail %}
+{% block header %}
         <h1>Sites in {{ country }}</h1>
         <p class="meta"><img src="{{ STATIC_URL }}djangopeople/img/flags/{{ country.iso_code|lower }}.gif" title="{{ country }}" class="flag"></a> {{ country }}</p>
 {% endblock %}

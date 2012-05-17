@@ -6,7 +6,7 @@
 
 {% block nav_li_class_profile %}{% if is_owner %} class="current"{% endif %}{% endblock %}
 
-{% block js %}{% load thumbnail %}
+{% block js %}{% load gravatar %}
 {% if person.openid_server %}<link rel="openid.server" href="{{ person.openid_server }}">{% endif %}
 {% if person.openid_delegate %}<link rel="openid.delegate" href="{{ person.openid_delegate }}">{% endif %}
 {% if privacy.hide_from_search %}<meta name="ROBOTS" content="NOINDEX, FOLLOW">{% endif %}
@@ -15,7 +15,7 @@
 var nearby_people = [
     // latitude, longitude, name, username, location description, flag, isocode
     {% for p in person.get_nearest %}
-    [{{ p.latitude }}, {{ p.longitude }}, "{{ p|escapejs }}", "{{ p.user.username|escapejs }}", "{{ p.location_description|escapejs }}", "{% if p.photo %}{% thumbnail p.photo 40x40 crop %}{% else %}{% static "djangopeople/img/person_small_blank.png" %}{% endif %}", "{{ p.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
+    [{{ p.latitude }}, {{ p.longitude }}, "{{ p|escapejs }}", "{{ p.user.username|escapejs }}", "{{ p.location_description|escapejs }}", "{% gravatar p.user.email 40 %}", "{{ p.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
     {% endfor %}
 ];
 
@@ -43,7 +43,7 @@ div.bio a.edit {
 {% block bodymeta %} class="vcard hresume"{% endblock %}
 
 {% block header %}
-        {% if person.photo %}<img src="{% thumbnail person.photo 83x83 crop %}" alt="{{ person }}" class="main photo">{% endif %}
+        <img src="{% gravatar person.user.email 83 %}" alt="{{ person }}" class="main photo">
 
         <h1 class="fn n">
 			<span class="given-name">{{ person.user.first_name }}</span>
@@ -127,9 +127,9 @@ div.bio a.edit {
             <ul class="detailsList">
                 {% for person in people %}
                 <li>
-                    <img src="{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}{% static "djangopeople/img/person_small_blank.png" %}{% endif %}" alt="{{ person }}" class="main">
+                    <img src="{% gravatar person.user.email 40 %}" alt="{{ person }}" class="main">
                     <h3><a href="{{ person.get_absolute_url }}">{{ person }}</a></h3>
-                    <p class="meta"><a href="{% url 'country_detail' person.country.iso_code|lower %}" class="nobg"><img src="{{ STATIC_URL }}djangopeople/img/flags/{{ person.country.iso_code|lower }}.gif" alt="{{ person.country }}" title="{{ person.country }}"></a>  {{ person.location_description }}<br>{{ person.distance_in_miles|floatformat:0 }} mile{{ person.distance_in_miles|floatformat:0|pluralize }} away</p>
+                    <p class="meta"><a href="{% url "country_detail" person.country.iso_code|lower %}" class="nobg"><img src="{{ STATIC_URL }}djangopeople/img/flags/{{ person.country.iso_code|lower }}.gif" alt="{{ person.country }}" title="{{ person.country }}"></a>  {{ person.location_description }}<br>{{ person.distance_in_miles|floatformat:0 }} mile{{ person.distance_in_miles|floatformat:0|pluralize }} away</p>
                 </li>
                 {% endfor %}
             </ul>

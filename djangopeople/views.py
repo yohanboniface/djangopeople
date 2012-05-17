@@ -350,6 +350,7 @@ def region(request, country_code, region_code):
     )
     return render(request, 'country.html', {
         'country': region,
+        'people_list': region.djangoperson_set.all(),
     })
 
 

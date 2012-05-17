@@ -1,7 +1,6 @@
 people.db
 _thumbs
 media
-static
 settings.py
 *.pyc
 .DS_Store

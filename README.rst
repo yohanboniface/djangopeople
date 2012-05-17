@@ -1,3 +1,5 @@
+.. image:: https://secure.travis-ci.org/brutasse/djangopeople.png
+
 This is an attempt to bring djangopeople.net back online and up to date. Very
 much a work in progress, the plan is to:
 

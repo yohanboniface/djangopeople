@@ -6,4 +6,4 @@ install:
   - pip install -r requirements.txt --use-mirrors
 script:
   - psql -c 'CREATE DATABASE djangopeople;' -U postgres
-  - python manage.py test --settings=test_settings
+  - PYTHONPATH=. django-admin.py test --settings=test_settings

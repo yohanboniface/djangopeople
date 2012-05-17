@@ -99,6 +99,5 @@ INSTALLED_APPS = (
     'django_openidauth',
     'djangopeople',
     'machinetags',
-    'sorl.thumbnail',
     'tagging',
 )

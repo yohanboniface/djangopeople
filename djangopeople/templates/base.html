@@ -32,8 +32,6 @@
             {% else %}
             <!-- logged in -->
             <li>You are logged in as <strong>{{ user }}</strong></li>
-            {% if not user.get_profile.photo %}<li><a href="{% url 'upload_profile_photo' user.username %}">upload photo</a></li>
-            {% endif %}
             <li{% block nav_li_class_profile %}{% endblock %}><a href="{% url 'user_profile' user.username %}">your profile</a></li>
             <li{% block nav_li_class_account %}{% endblock %}><a href="{% url 'edit_account' user.username %}">your account</a></li>
             <li><a href="{% url 'logout' %}">log out</a></li>

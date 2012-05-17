@@ -48,8 +48,6 @@ div.bio a.edit {
         <h1 class="fn n">
 			<span class="given-name">{{ person.user.first_name }}</span>
 			<span class="family-name">{{ person.user.last_name }}</span>
-			{% if is_owner %}
-				<a href="{% url 'upload_profile_photo' person.user.username %}" class="meta" id="uploadNewPhoto">(upload new photo)</a>{% endif %}
 		</h1>
         <p class="meta adr">
 			<a href="{% url 'country_detail' person.country.iso_code|lower %}" class="nobg">

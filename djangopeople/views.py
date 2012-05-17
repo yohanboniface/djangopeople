@@ -15,7 +15,7 @@ from django.views import generic
 from djangopeople import utils
 from djangopeople.constants import (MACHINETAGS_FROM_FIELDS,
                                     IMPROVIDERS_DICT, SERVICES_DICT)
-from djangopeople.forms import (SkillsForm, SignupForm, PhotoUploadForm,
+from djangopeople.forms import (SkillsForm, SignupForm,
                                 PortfolioForm, BioForm, LocationForm,
                                 FindingForm, AccountForm, LostPasswordForm,
                                 PasswordForm)
@@ -501,25 +501,6 @@ class EditLocationView(DjangoPersonEditViewBase):
         })
         return initial
 edit_location = must_be_owner(EditLocationView.as_view())
-
-
-class UploadProfilePhoto(DjangoPersonEditViewBase):
-    form_class = PhotoUploadForm
-    template_name = 'upload_profile_photo.html'
-
-    def get_success_url(self):
-        return reverse('upload_done', args=[self.kwargs['username']])
-upload_profile_photo = must_be_owner(UploadProfilePhoto.as_view())
-
-
-class UploadDone(generic.RedirectView):
-    "Using a double redirect to try and stop back button from re-uploading"
-    permanent = False
-
-    def get_redirect_url(self, username):
-        user =  self.request.user
-        return reverse('user_profile', args=[user.username])
-upload_done = must_be_owner(UploadDone.as_view())
 
 
 class SkillCloudView(generic.TemplateView):

@@ -223,12 +223,6 @@ class SignupForm(PopulateChoices, forms.Form):
     clean_location_description = not_in_the_atlantic
 
 
-class PhotoUploadForm(forms.ModelForm):
-    class Meta:
-        model = DjangoPerson
-        fields = ('photo',)
-
-
 class SkillsForm(forms.ModelForm):
     skills = TagField(label='Change skills', required=False)
 

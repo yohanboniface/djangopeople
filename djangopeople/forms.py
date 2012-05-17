@@ -10,7 +10,8 @@ from tagging.forms import TagField
 from tagging.utils import edit_string_for_tags
 
 from djangopeople import utils
-from djangopeople.constants import SERVICES, IMPROVIDERS, MACHINETAGS_FROM_FIELDS
+from djangopeople.constants import (SERVICES, IMPROVIDERS,
+                                    MACHINETAGS_FROM_FIELDS)
 from djangopeople.groupedselect import GroupedChoiceField
 from djangopeople.models import (DjangoPerson, Country, Region, User,
                                  RESERVED_USERNAMES)
@@ -36,16 +37,35 @@ def region_choices():
 
     return groups
 
+
 def not_in_the_atlantic(self):
-    if self.cleaned_data.get('latitude', '') and self.cleaned_data.get('longitude', ''):
+    if (self.cleaned_data.get('latitude', '') and
+        self.cleaned_data.get('longitude', '')):
         lat = self.cleaned_data['latitude']
         lon = self.cleaned_data['longitude']
 
         if 43 < lat < 45 and -39 < lon < -33:
-            raise forms.ValidationError("Drag and zoom the map until the crosshair matches your location")
+            raise forms.ValidationError(
+                "Drag and zoom the map until the crosshair matches your "
+                "location")
     return self.cleaned_data['location_description']
 
-class SignupForm(forms.Form):
+
+class PopulateChoices(object):
+    """
+    Populates some fields' choices at instanciation time.
+    """
+    def __init__(self, *args, **kwargs):
+        super(PopulateChoices, self).__init__(*args, **kwargs)
+        if 'country' in self.fields:
+            self.fields['country'].choices = [('', '')] + [
+                (c.iso_code, c.name) for c in Country.objects.all()
+            ]
+        if 'region' in self.fields:
+            self.fields['region'].choices = region_choices()
+
+
+class SignupForm(PopulateChoices, forms.Form):
     def __init__(self, *args, **kwargs):
         # Dynamically add the fields for IM providers / external services
         if 'openid' in kwargs:
@@ -95,14 +115,12 @@ class SignupForm(forms.Form):
     bio = forms.CharField(widget=forms.Textarea, required=False)
     blog = forms.URLField(required=False)
 
-    country = forms.ChoiceField(choices = [('', '')] + [
-        (c.iso_code, c.name) for c in Country.objects.all()
-    ])
+    country = forms.ChoiceField()
     latitude = forms.FloatField(min_value=-90, max_value=90)
     longitude = forms.FloatField(min_value=-180, max_value=180)
     location_description = forms.CharField(max_length=50)
 
-    region = GroupedChoiceField(required=False, choices=region_choices())
+    region = GroupedChoiceField(required=False)
 
     privacy_search = forms.ChoiceField(
         choices = (
@@ -238,11 +256,9 @@ class AccountForm(forms.ModelForm):
         fields = ('openid_server', 'openid_delegate')
 
 
-class LocationForm(forms.ModelForm):
-    country = forms.ChoiceField(choices = [('', '')] + [
-        (c.iso_code, c.name) for c in Country.objects.all()
-    ])
-    region = GroupedChoiceField(required=False, choices=region_choices())
+class LocationForm(PopulateChoices, forms.ModelForm):
+    country = forms.ChoiceField()
+    region = GroupedChoiceField(required=False)
     latitude = forms.FloatField(min_value=-90, max_value=90)
     longitude = forms.FloatField(min_value=-180, max_value=180)
     location_description = forms.CharField(max_length=50)

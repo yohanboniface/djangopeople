@@ -2,6 +2,9 @@
 import os
 OUR_ROOT = os.path.realpath(os.path.dirname(__file__))
 
+TEST_RUNNER = 'runner.DiscoveryRunner'
+TEST_DISCOVERY_ROOT = OUR_ROOT
+
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 

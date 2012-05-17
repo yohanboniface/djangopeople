@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 
 {% block title %}About |{% endblock %}
 
@@ -24,7 +25,7 @@
 
 <p>Deployment is <a href="http://code.google.com/p/modwsgi/">mod_wsgi</a> running on <a href="http://httpd.apache.org/">Apache 2</a> behind an <a href="http://nginx.net/">nginx</a> proxy. The site is hosted on a <a href="http://www.linode.com/">Linode.com</a> virtual machine.</p>
 
-<p><a href="http://www.djangoproject.com/"><img src="http://media.djangoproject.com/img/badges/djangojoint107x25.gif" border="0" alt="A Django joint." title="A Django joint."></a></p>
+<p><a href="http://www.djangoproject.com/"><img src="{% static "djangopeople/img/djangojoint.gif" %}" border="0" alt="A Django joint." title="A Django joint."></a></p>
 
 </div>
 {% endblock %}

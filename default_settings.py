@@ -95,6 +95,7 @@ INSTALLED_APPS = (
     'django_openidconsumer',
     'django_openidauth',
     'raven.contrib.django',
+    'djangosecure',
     'djangopeople',
     'machinetags',
     'tagging',

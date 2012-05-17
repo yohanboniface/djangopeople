@@ -1,37 +1,37 @@
 [
   {
-    "pk": 1, 
-    "model": "auth.user", 
+    "pk": 1,
+    "model": "auth.user",
     "fields": {
-      "username": "admin", 
-      "first_name": "super", 
-      "last_name": "admin", 
-      "is_active": true, 
-      "is_superuser": true, 
-      "is_staff": true, 
-      "last_login": "2011-07-14 14:45:13", 
-      "groups": [], 
-      "user_permissions": [], 
-      "password": "sha1$4c2cd$0a67924b8f443f903f8ee3bc92afc0116c8dac11", 
-      "email": "admin@djangopeople.net", 
+      "username": "admin",
+      "first_name": "super",
+      "last_name": "admin",
+      "is_active": true,
+      "is_superuser": true,
+      "is_staff": true,
+      "last_login": "2011-07-14 14:45:13",
+      "groups": [],
+      "user_permissions": [],
+      "password": "sha1$4c2cd$0a67924b8f443f903f8ee3bc92afc0116c8dac11",
+      "email": "admin@djangopeople.net",
       "date_joined": "2011-07-14 14:26:25"
     }
-  }, 
+  },
   {
-    "pk": 2, 
-    "model": "auth.user", 
+    "pk": 2,
+    "model": "auth.user",
     "fields": {
       "username": "daveb",
-      "first_name": "Dave", 
-      "last_name": "Brubeck", 
-      "is_active": true, 
-      "is_superuser": false, 
-      "is_staff": false, 
-      "last_login": "2011-07-14 15:31:33", 
-      "groups": [], 
-      "user_permissions": [], 
+      "first_name": "Dave",
+      "last_name": "Brubeck",
+      "is_active": true,
+      "is_superuser": false,
+      "is_staff": false,
+      "last_login": "2011-07-14 15:31:33",
+      "groups": [],
+      "user_permissions": [],
       "password": "sha1$2979c$8d4dc2a443dbdd8832f8f7b2a48a6abe1daf90aa",
-      "email": "dave@example.org", 
+      "email": "dave@example.org",
       "date_joined": "2011-07-14 15:31:33"
     }
   },
@@ -54,20 +54,20 @@
     }
   },
   {
-    "pk": 1, 
-    "model": "djangopeople.djangoperson", 
+    "pk": 1,
+    "model": "djangopeople.djangoperson",
     "fields": {
-      "last_active_on_irc": null, 
-      "bio": "ad", 
-      "profile_views": 1, 
+      "last_active_on_irc": null,
+      "bio": "ad",
+      "profile_views": 1,
       "country": 12,
-      "region": null, 
-      "longitude": 14.9853515625, 
-      "location_description": "Vienna, Austria", 
-      "user": 2, 
+      "region": null,
+      "longitude": 14.9853515625,
+      "location_description": "Vienna, Austria",
+      "user": 2,
       "photo": null,
-      "latitude": 50.035973672195468, 
-      "openid_server": "", 
+      "latitude": 50.035973672195468,
+      "openid_server": "",
       "openid_delegate": ""
     }
   },
@@ -116,7 +116,7 @@
     "fields": {
       "tag": 1,
       "object_id": 1,
-      "content_type": 15
+      "content_type": ["djangopeople", "djangoperson"]
     }
   },
   {
@@ -125,7 +125,7 @@
     "fields": {
       "tag": 2,
       "object_id": 1,
-      "content_type": 15
+      "content_type": ["djangopeople", "djangoperson"]
     }
   },
   {
@@ -134,7 +134,7 @@
     "fields": {
       "tag": 3,
       "object_id": 1,
-      "content_type": 15
+      "content_type": ["djangopeople", "djangoperson"]
     }
   },
   {
@@ -143,7 +143,7 @@
     "fields": {
       "predicate": "looking_for_work",
       "namespace": "profile",
-      "content_type": 15,
+      "content_type": ["djangopeople", "djangoperson"],
       "value": "full-time",
       "object_id": 1
     }
@@ -154,18 +154,9 @@
     "fields": {
       "predicate": "django",
       "namespace": "im",
-      "content_type": 15,
+      "content_type": ["djangopeople", "djangoperson"],
       "value": "davieboy",
       "object_id": 1
-    }
-  },
-  {
-    "pk": 15,
-    "model": "contenttypes.contenttype",
-    "fields": {
-      "model": "djangoperson",
-      "name": "django person",
-      "app_label": "djangopeople"
     }
   },
   {

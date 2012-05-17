@@ -6,6 +6,8 @@ DATABASES = {
     'default': dj_database_url.config(),
 }
 
+SECRET_KEY = os.environ['SECRET_KEY']
+
 STATICFILES_STORAGE = 's3storage.S3HashedFilesStorage'
 
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY', '')

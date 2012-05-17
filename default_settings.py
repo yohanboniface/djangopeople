@@ -58,9 +58,6 @@ STATICFILES_STORAGE = ('django.contrib.staticfiles.storage.'
 MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
 
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = 'SECRET-KEY-GOES-HERE'
-
 # Password used by the IRC bot for the API
 API_PASSWORD = 'API-PASSWORD-GOES-HERE'
 

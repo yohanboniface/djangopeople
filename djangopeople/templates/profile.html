@@ -1,5 +1,6 @@
 {% extends "maps.html" %}
 {% load url from future %}
+{% load staticfiles %}
 
 {% block title%}{{ person }} |{% endblock %}
 
@@ -14,14 +15,14 @@
 var nearby_people = [
     // latitude, longitude, name, username, location description, flag, isocode
     {% for p in person.get_nearest %}
-    [{{ p.latitude }}, {{ p.longitude }}, "{{ p|escapejs }}", "{{ p.user.username|escapejs }}", "{{ p.location_description|escapejs }}", "{% if p.photo %}{% thumbnail p.photo 40x40 crop %}{% else %}{{ STATIC_URL }}djangopeople/img/person_small_blank.png{% endif %}", "{{ p.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
+    [{{ p.latitude }}, {{ p.longitude }}, "{{ p|escapejs }}", "{{ p.user.username|escapejs }}", "{{ p.location_description|escapejs }}", "{% if p.photo %}{% thumbnail p.photo 40x40 crop %}{% else %}{% static "djangopeople/img/person_small_blank.png" %}{% endif %}", "{{ p.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
     {% endfor %}
 ];
 
 var person_latitude = {{ person.latitude }};
 var person_longitude = {{ person.longitude }};
 </script>
-<script type="text/javascript" src="{{ STATIC_URL }}djangopeople/js/profile.js"></script>
+<script type="text/javascript" src="{% static "djangopeople/js/profile.js" %}"></script>
 <style type="text/css">
 #id_skills {
     width: 80%;
@@ -43,9 +44,9 @@ div.bio a.edit {
 
 {% block header %}
         {% if person.photo %}<img src="{% thumbnail person.photo 83x83 crop %}" alt="{{ person }}" class="main photo">{% endif %}
-        
+
         <h1 class="fn n">
-			<span class="given-name">{{ person.user.first_name }}</span> 
+			<span class="given-name">{{ person.user.first_name }}</span>
 			<span class="family-name">{{ person.user.last_name }}</span>
 			{% if is_owner %}
 				<a href="{% url 'upload_profile_photo' person.user.username %}" class="meta" id="uploadNewPhoto">(upload new photo)</a>{% endif %}
@@ -65,9 +66,9 @@ div.bio a.edit {
     {% block content %}
         <div class="primary">
            {% if is_owner or person.bio or person.skilltags or mtags.profile.looking_for_work %}
-            <div class="highlight">                
+            <div class="highlight">
                 {% if person.bio %}<div class="summary">{% filter linebreaks %}{{ person.bio|urlize }}{% if is_owner %} <a class="edit" href="{% url 'edit_bio' user.username %}">(edit bio)</a>{% endif %}{% endfilter %}</div>{% else %}{% if is_owner %}<p><a href="{% url 'edit_bio' user.username %}">Create your bio</a></p>{% endif %}{% endif %}
-                
+
                 <ul class="tags">{% for tag in person.skilltags %}
                     <li><a rel="tag" class="skill" href="{% url 'skill_detail' tag %}">{{ tag }}</a></li>
                 {% endfor %}
@@ -116,17 +117,17 @@ div.bio a.edit {
             </ul>
         {% else %}{% if is_owner %}<p><a href="{% url 'edit_portfolio' user.username %}">Add some sites</a> to your portfolio</p>{% endif %}
         {% endif %}
-        
+
         </div>
         <div class="secondary">
             {% with person.get_nearest as people %}
             {% if people %}
             <h2>People near {{ person.user.first_name }}</h2>
-            
+
             <ul class="detailsList">
                 {% for person in people %}
                 <li>
-                    <img src="{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}{{ STATIC_URL }}djangopeople/img/person_small_blank.png{% endif %}" alt="{{ person }}" class="main">
+                    <img src="{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}{% static "djangopeople/img/person_small_blank.png" %}{% endif %}" alt="{{ person }}" class="main">
                     <h3><a href="{{ person.get_absolute_url }}">{{ person }}</a></h3>
                     <p class="meta"><a href="{% url 'country_detail' person.country.iso_code|lower %}" class="nobg"><img src="{{ STATIC_URL }}djangopeople/img/flags/{{ person.country.iso_code|lower }}.gif" alt="{{ person.country }}" title="{{ person.country }}"></a>  {{ person.location_description }}<br>{{ person.distance_in_miles|floatformat:0 }} mile{{ person.distance_in_miles|floatformat:0|pluralize }} away</p>
                 </li>

@@ -1,14 +1,15 @@
 {% extends "maps.html" %}
 {% load url from future %}
+{% load staticfiles %}
 
 {% block title %}Sign up |{% endblock %}
 
 {% block nav_li_class_signup %} class="current"{% endblock %}>
 
 {% block js %}
-<script type="text/javascript" src="{{ STATIC_URL }}djangopeople/js/jquery.color.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}djangopeople/js/signup.js"></script>
-<link rel="stylesheet" href="{{ STATIC_URL }}djangopeople/css/flags.css" type="text/css">
+<script type="text/javascript" src="{% static "djangopeople/js/jquery.color.js" %}"></script>
+<script type="text/javascript" src="{% static "djangopeople/js/signup.js" %}"></script>
+<link rel="stylesheet" href="{% static "djangopeople/css/flags.css" %}" type="text/css">
 <style type="text/css">
 #id_location_description {
     width: 24em;
@@ -27,7 +28,7 @@
     {% else %}
     <p>Your new account will be associated with with your OpenID: <strong class="openid">{{ openid }}</strong> (<a href="{% url 'openid_signout' %}?next={% url 'signup' %}">don't associate</a>)</p>
     {% endif %}
-    <h2>1. Tell us who you are</h2>    
+    <h2>1. Tell us who you are</h2>
 
     <fieldset>
         <div class="fieldWrapper">
@@ -62,7 +63,7 @@
             {{ form.password2 }}
         </div>
         {% endif %}
-    
+
     </fieldset>
 {% endblock %}
 
@@ -106,7 +107,7 @@
             {{ form.region }}
         </div>
     </fieldset>
-    
+
     <h2>3. And a bit about you ...</h2>
 
     <fieldset>
@@ -169,7 +170,7 @@
             {{ form.privacy_irctrack }}
         </div>
     </fieldset>
-    
+
     <h2>5. Your skills and interests</h2>
     <fieldset>
         <p class="help">Tag yourself with your particular skills and interests, e.g. postgresql, nginx, css. Separate them with commas; spaces are allowed.</p>
@@ -184,7 +185,7 @@
             {{ form.looking_for_work }}
         </div>
     </fieldset>
-    
+
     <div class="buttonContainer"><input type="submit" value="Sign me up"></div>
     </form>
 </div>

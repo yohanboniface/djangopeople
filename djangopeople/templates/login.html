@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 {% load url from future %}
+{% load staticfiles %}
 
 {% block title %}Log in |{% endblock %}
 
 {% block nav_li_class_login %} class="current"{% endblock %}>
 
 {% block js %}
-<script type="text/javascript" src="{{ STATIC_URL }}djangopeople/js/jquery.color.js"></script>
+<script type="text/javascript" src="{% static "djangopeople/js/jquery.color.js" %}"></script>
 <script type="text/javascript">
 jQuery(function($) {
     $('p.invalid').css({
@@ -32,7 +33,7 @@ p.invalid {
     margin: 1em 0;
 }
 input.openid {
-  background: url({{ STATIC_URL }}djangopeople/img/openid-14x14.png) no-repeat; 
+  background: url('{% static "djangopeople/img/openid-14x14.png" %}') no-repeat;
   background-position: 0 50%;
   padding-left: 16px;
 }

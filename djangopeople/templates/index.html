@@ -1,9 +1,9 @@
 {% extends "maps.html" %}
 {% load url from future %}
-{% load thumbnail %}
+{% load thumbnail staticfiles %}
 
 {% block extrahead %}{{ block.super }}
-	<link rel="stylesheet" href="{{ STATIC_URL }}djangopeople/css/flags.css" type="text/css" media="all" charset="utf-8">
+	<link rel="stylesheet" href="{% static "djangopeople/css/flags.css" %}" type="text/css" media="all" charset="utf-8">
 {% endblock %}
 
 {% block nav_li_class_home %} class="current"{% endblock %}
@@ -35,17 +35,17 @@ window.onload = function() {
         <ul class="detailsList split">
             {% for person in people_list_limited %}
             <li>
-                <img src="{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}{{ STATIC_URL }}djangopeople/img/person_small_blank.png{% endif %}" alt="{{ person }}" class="main">
+                <img src="{% if person.photo %}{% thumbnail person.photo 40x40 crop %}{% else %}{% static "djangopeople/img/person_small_blank.png" %}{% endif %}" alt="{{ person }}" class="main">
                 <h3><a href="{{ person.get_absolute_url }}">{{ person.user.get_full_name }}</a></h3>
                 <p class="meta"><a href="{% url 'country_detail' person.country.iso_code|lower %}" class="nobg"><img src="{{ STATIC_URL }}djangopeople/img/flags/{{ person.country.iso_code|lower }}.gif" alt="{{ person.country }}" title="{{ person.country }}"></a> {{ person.location_description }}</p>
-                
+
             </li>
             {% endfor %}
         </ul>
         <ul class="detailsList split">
             {% for country in countries %}
             <li>
-                <a href="{% url 'country_detail' country.iso_code|lower %}" class="nobg"><img src="{{ STATIC_URL }}djangopeople/img/blank.png" class="flag iso-{{ country.iso_code|lower }}" alt="{{ country }}"></a> <a href="{% url 'country_detail' country.iso_code|lower %}"><strong>{{ country }}</strong></a> {{ country.num_people }} {% ifequal country.num_people 1 %}person{% else %}people{% endifequal %}
+                <a href="{% url 'country_detail' country.iso_code|lower %}" class="nobg"><img src="{% static "djangopeople/img/blank.png" %}" class="flag iso-{{ country.iso_code|lower }}" alt="{{ country }}"></a> <a href="{% url 'country_detail' country.iso_code|lower %}"><strong>{{ country }}</strong></a> {{ country.num_people }} {% ifequal country.num_people 1 %}person{% else %}people{% endifequal %}
             </li>
             {% endfor %}
         </ul>

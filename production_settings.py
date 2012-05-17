@@ -17,3 +17,11 @@ AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_BUCKET_NAME', '')
 STATIC_URL = 'https://s3.amazonaws.com/%s/' % AWS_STORAGE_BUCKET_NAME
 
 SENTRY_DSN = os.environ.get('SENTRY_DSN', '')
+
+# Run the site over SSL
+MIDDLEWARE_CLASSES = (
+    'sslify.middleware.SSLifyMiddleware',
+) + MIDDLEWARE_CLASSES
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SECURE = True

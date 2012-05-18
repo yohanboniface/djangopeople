@@ -6,7 +6,7 @@ class Nonce(models.Model):
     expires = models.IntegerField()
 
     def __unicode__(self):
-        return "Nonce: %s" % self.nonce
+        return u"Nonce: %s" % self.nonce
 
 
 class NewNonce(models.Model):
@@ -27,4 +27,4 @@ class Association(models.Model):
     assoc_type = models.TextField(max_length=64)
 
     def __unicode__(self):
-        return "Association: %s, %s" % (self.server_url, self.handle)
+        return u"Association: %s, %s" % (self.server_url, self.handle)

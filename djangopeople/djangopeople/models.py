@@ -71,7 +71,7 @@ class Country(models.Model):
         verbose_name_plural = 'Countries'
 
     def __unicode__(self):
-        return self.name
+        return u'%s' % self.name
 
     @property
     def flag_url(self):
@@ -95,7 +95,7 @@ class Region(models.Model):
         return reverse('country_region', args=[self.country.iso_code.lower(), self.code.lower()])
 
     def __unicode__(self):
-        return self.name
+        return u'%s' % self.name
 
     class Meta:
         ordering = ('name',)
@@ -186,7 +186,7 @@ class DjangoPerson(models.Model):
             return self.location_description
 
     def __unicode__(self):
-        return unicode(self.user.get_full_name())
+        return u'%s' % self.user.get_full_name()
 
     def get_absolute_url(self):
         return reverse('user_profile', args=[self.user.username])
@@ -220,7 +220,7 @@ class PortfolioSite(models.Model):
     contributor = models.ForeignKey(DjangoPerson)
 
     def __unicode__(self):
-        return '%s <%s>' % (self.title, self.url)
+        return u'%s <%s>' % (self.title, self.url)
 
 
 class CountrySite(models.Model):
@@ -230,7 +230,7 @@ class CountrySite(models.Model):
     country = models.ForeignKey(Country)
 
     def __unicode__(self):
-        return '%s <%s>' % (self.title, self.url)
+        return u'%s <%s>' % (self.title, self.url)
 
 #class ClusteredPoint(models.Model):
 #

@@ -21,7 +21,7 @@ class MachineTaggedItem(models.Model):
         value = self.value
         if ' ' in value or '"' in value:
             value = '"%s"' % value.replace('"', r'\"')
-        return '%s:%s=%s' % (self.namespace, self.predicate, value)
+        return u'%s:%s=%s' % (self.namespace, self.predicate, value)
 
 import re
 _part_re = re.compile('^[a-z][a-z0-9_]*$')

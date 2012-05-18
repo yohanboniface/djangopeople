@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.shortcuts import redirect
 
-from machinetags.models import MachineTaggedItem
+from ..machinetags.models import MachineTaggedItem
 
 
 def irc_lookup(request, irc_nick):

@@ -14,8 +14,8 @@ from django.template import RequestContext
 from django.utils.encoding import smart_unicode
 from django.utils.html import escape
 
-from django_openidconsumer.middleware import OpenIDMiddleware
-from django_openidconsumer.util import DjangoOpenIDStore, from_openid_response
+from .middleware import OpenIDMiddleware
+from .util import DjangoOpenIDStore, from_openid_response
 
 NEXT_URL_RE = re.compile('^/[-\w/]+$')
 

@@ -9,9 +9,9 @@ from django.conf import settings
 
 from tagging.utils import edit_string_for_tags
 
-from machinetags.utils import tagdict
+from ...machinetags.utils import tagdict
 
-from djangopeople.models import DjangoPerson, Country
+from ..models import DjangoPerson, Country
 
 
 class EditViewTest(TestCase):

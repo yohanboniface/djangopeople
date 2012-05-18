@@ -1,12 +1,11 @@
-from clusterlizard.clusterer import Clusterer
+import math
+import json
 
 from django.db.models import Q
 from django.http import HttpResponse
 
-import math
-import simplejson
-
 from .models import DjangoPerson, ClusteredPoint
+from ..clusterlizard.clusterer import Clusterer
 
 
 def latlong_to_mercator(lat, long):
@@ -76,7 +75,7 @@ def as_json(request, x2, y1, x1, y2, z):
             points.append((cluster.longitude, cluster.latitude, cluster.number, cluster.djangoperson.get_absolute_url()))
         else:
             points.append((cluster.longitude, cluster.latitude, cluster.number, None))
-    return HttpResponse(simplejson.dumps(points))
+    return HttpResponse(json.dumps(points))
 
 
 

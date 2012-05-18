@@ -5,15 +5,11 @@ from django.core.urlresolvers import reverse_lazy
 
 OUR_ROOT = os.path.realpath(os.path.dirname(__file__))
 
-TEST_RUNNER = 'runner.DiscoveryRunner'
-TEST_DISCOVERY_ROOT = OUR_ROOT
+TEST_RUNNER = 'djangopeople.runner.DiscoveryRunner'
+TEST_DISCOVERY_ROOT = os.path.join(OUR_ROOT, os.pardir)
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
-
-# Thumbnail settings
-THUMBNAIL_DEBUG = True
-THUMBNAIL_SUBDIR = '_thumbs'
 
 # OpenID settings
 OPENID_REDIRECT_NEXT = reverse_lazy('openid_whatnext')
@@ -71,16 +67,16 @@ TEMPLATE_LOADERS = (
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
-    'djangopeople.middleware.RemoveWWW',
+    'djangopeople.djangopeople.middleware.RemoveWWW',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django_openidconsumer.middleware.OpenIDMiddleware',
+    'djangopeople.django_openidconsumer.middleware.OpenIDMiddleware',
     'django.middleware.doc.XViewMiddleware',
-    'djangopeople.middleware.NoDoubleSlashes',
+    'djangopeople.djangopeople.middleware.NoDoubleSlashes',
 )
 
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF = 'djangopeople.urls'
 
 TEMPLATE_DIRS = ()
 
@@ -92,12 +88,12 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.humanize',
     'django.contrib.staticfiles',
-    'django_openidconsumer',
-    'django_openidauth',
+    'djangopeople.django_openidconsumer',
+    'djangopeople.django_openidauth',
     'raven.contrib.django',
     'djangosecure',
-    'djangopeople',
-    'machinetags',
+    'djangopeople.djangopeople',
+    'djangopeople.machinetags',
     'tagging',
 )
 

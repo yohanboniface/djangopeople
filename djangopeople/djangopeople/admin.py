@@ -1,6 +1,6 @@
 from django.contrib import admin
-from djangopeople.models import (Country, CountrySite, Region, DjangoPerson,
-                                 PortfolioSite)
+
+from .models import Country, CountrySite, Region, DjangoPerson, PortfolioSite
 
 
 class CountryAdmin(admin.ModelAdmin):

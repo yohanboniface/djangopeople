@@ -4,6 +4,7 @@ import operator
 import time
 
 import openid.store
+
 from openid.association import Association as OIDAssociation
 from openid.extensions import sreg, ax
 from openid.store.interface import OpenIDStore
@@ -11,7 +12,8 @@ from openid.yadis import xri
 
 from django.conf import settings
 from django.db.models.query import Q
-from django_openidconsumer.models import Association, NewNonce as Nonce
+
+from .models import Association, NewNonce as Nonce
 
 
 class OpenID(object):

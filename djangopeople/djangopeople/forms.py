@@ -9,12 +9,10 @@ from django.utils.translation import ugettext_lazy as _
 from tagging.forms import TagField
 from tagging.utils import edit_string_for_tags
 
-from djangopeople import utils
-from djangopeople.constants import (SERVICES, IMPROVIDERS,
-                                    MACHINETAGS_FROM_FIELDS)
-from djangopeople.groupedselect import GroupedChoiceField
-from djangopeople.models import (DjangoPerson, Country, Region, User,
-                                 RESERVED_USERNAMES)
+from . import utils
+from .constants import SERVICES, IMPROVIDERS, MACHINETAGS_FROM_FIELDS
+from .groupedselect import GroupedChoiceField
+from .models import DjangoPerson, Country, Region, User, RESERVED_USERNAMES
 
 
 def region_choices():

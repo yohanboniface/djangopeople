@@ -11,26 +11,22 @@ from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import ugettext_lazy as _
 from django.views import generic
-
-from djangopeople import utils
-from djangopeople.constants import (MACHINETAGS_FROM_FIELDS,
-                                    IMPROVIDERS_DICT, SERVICES_DICT)
-from djangopeople.forms import (SkillsForm, SignupForm,
-                                PortfolioForm, BioForm, LocationForm,
-                                FindingForm, AccountForm, LostPasswordForm,
-                                PasswordForm)
-from djangopeople.models import (DjangoPerson, Country, User, Region,
-                                 PortfolioSite)
-
-from django_openidauth.models import associate_openid, UserOpenID
+from django.views.generic.list_detail import object_list
 
 from tagging.models import Tag, TaggedItem
 from tagging.utils import calculate_cloud, get_tag
 
-from machinetags.utils import tagdict
-from machinetags.models import MachineTaggedItem
+from . import utils
+from .constants import (MACHINETAGS_FROM_FIELDS,
+                                    IMPROVIDERS_DICT, SERVICES_DICT)
+from .forms import (SkillsForm, SignupForm, PortfolioForm, BioForm,
+                    LocationForm, FindingForm, AccountForm, LostPasswordForm,
+                    PasswordForm)
+from .models import DjangoPerson, Country, User, Region, PortfolioSite
 
-from django.views.generic.list_detail import object_list
+from ..django_openidauth.models import associate_openid, UserOpenID
+from ..machinetags.utils import tagdict
+from ..machinetags.models import MachineTaggedItem
 
 NOTALPHA_RE = re.compile('[^a-zA-Z0-9]')
 

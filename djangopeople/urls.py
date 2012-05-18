@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.shortcuts import redirect
 
-from djangopeople import views, api  #, clustering
+from .djangopeople import views, api  #, clustering
 
 
 def perm_redirect(url):
@@ -27,14 +27,23 @@ urlpatterns = patterns('',
     url(r'^signup/$', views.signup, name='signup'),
 
     #openid stuff
-    url(r'^openid/$', 'django_openidconsumer.views.begin', {
+    url(r'^openid/$', 'djangopeople.django_openidconsumer.views.begin', {
         'sreg': 'email,nickname,fullname',
         'redirect_to': '/openid/complete/',
     }, name='openid_begin'),
-    url(r'^openid/complete/$', 'django_openidconsumer.views.complete', name='openid_complete'),
+    url(r'^openid/complete/$',
+        'djangopeople.django_openidconsumer.views.complete',
+        name='openid_complete'),
+
     url(r'^openid/whatnext/$', views.openid_whatnext, name='openid_whatnext'),
-    url(r'^openid/signout/$', 'django_openidconsumer.views.signout', name='openid_signout'),
-    url(r'^openid/associations/$', 'django_openidauth.views.associations', name='openid_associations'),
+
+    url(r'^openid/signout/$',
+        'djangopeople.django_openidconsumer.views.signout',
+        name='openid_signout'),
+
+    url(r'^openid/associations/$',
+        'djangopeople.django_openidauth.views.associations',
+        name='openid_associations'),
 
     url(r'^search/$', views.search, name='search'),
 

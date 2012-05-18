@@ -1,14 +1,16 @@
-from django.db import models
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
-from machinetags.models import MachineTaggedItem, add_machinetag
 from django.contrib.contenttypes import generic
-from geopy import distance
-from django.utils.safestring import mark_safe
+from django.core.urlresolvers import reverse
+from django.db import models
 from django.utils.html import escape
-
+from django.utils.safestring import mark_safe
 
 import tagging
+
+from geopy import distance
+
+from ..machinetags.models import MachineTaggedItem, add_machinetag
+
 
 RESERVED_USERNAMES = set((
     # Trailing spaces are essential in these strings, or split() will be buggy

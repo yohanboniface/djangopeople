@@ -1,4 +1,8 @@
+proj = djangopeople
+settings = --settings=$(proj).settings
+test_settings = --settings=$(proj).test_settings
+
 test:
-	django-admin.py test --settings=test_settings --failfast
+	django-admin.py test $(test_settings) --failfast --noinput
 run:
-	django-admin.py runserver --settings=settings
+	django-admin.py runserver $(settings)

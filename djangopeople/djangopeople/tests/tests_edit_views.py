@@ -690,8 +690,8 @@ class EditViewTest(TestCase):
         self.assertContains(response, 'person_longitude = %d'%longitude)
 
         p = DjangoPerson.objects.get(user__username='daveb')
-        self.assertEqual(p.latitude, latitude)
-        self.assertEqual(p.longitude, longitude)
+        self.assertTrue(abs(p.latitude - latitude) < 0.01)
+        self.assertTrue(abs(p.longitude - longitude) < 0.01)
         self.assertEqual(p.location_description, location_description)
         self.assertEqual(p.country.pk, country)
 
@@ -728,8 +728,8 @@ class EditViewTest(TestCase):
         self.assertContains(response, 'person_longitude = %d'%new_longitude)
 
         p = DjangoPerson.objects.get(user__username='daveb')
-        self.assertEqual(p.latitude, new_latitude)
-        self.assertEqual(p.longitude, new_longitude)
+        self.assertTrue(abs(p.latitude - new_latitude) < 0.01)
+        self.assertTrue(abs(p.longitude - new_longitude) < 0.01)
         self.assertEqual(p.location_description, new_location_description)
         self.assertEqual(p.country.iso_code, new_country)
 

@@ -37,7 +37,7 @@ window.onload = function() {
             <li>
                 <img src="{% gravatar person.user.email 40 %}" alt="{{ person }}" class="main">
                 <h3><a href="{{ person.get_absolute_url }}">{{ person.user.get_full_name }}</a></h3>
-                <p class="meta"><a href="{% url 'country_detail' person.country.iso_code|lower %}" class="nobg"><img src="{{ STATIC_URL }}djangopeople/img/flags/{{ person.country.iso_code|lower }}.gif" alt="{{ person.country }}" title="{{ person.country }}"></a> {{ person.location_description }}</p>
+								<p class="meta"><a href="{% url 'country_detail' person.country.iso_code|lower %}" class="nobg"><img src="{% static person.country.flag_url %}" alt="{{ person.country }}" title="{{ person.country }}"></a> {{ person.location_description }}</p>
 
             </li>
             {% endfor %}

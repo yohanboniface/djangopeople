@@ -73,6 +73,10 @@ class Country(models.Model):
     def __unicode__(self):
         return self.name
 
+    @property
+    def flag_url(self):
+        return 'djangopeople/img/flags/%s.gif' % self.iso_code.lower()
+
 
 class Region(models.Model):
     code = models.CharField(max_length=20)
@@ -95,6 +99,15 @@ class Region(models.Model):
 
     class Meta:
         ordering = ('name',)
+
+    @property
+    def flag_url(self):
+        return 'djangopeople/%s' % self.flag
+
+    @property
+    def small_flag_url(self):
+        return 'djangopeople/img/regions/%s/%s.png' % (self.country.iso_code.lower(),
+                                                       self.code.lower())
 
 
 class DjangoPerson(models.Model):

@@ -6,3 +6,5 @@ test:
 	django-admin.py test $(test_settings) --failfast --noinput
 run:
 	django-admin.py runserver $(settings)
+shell:
+	django-admin.py shell $(settings)

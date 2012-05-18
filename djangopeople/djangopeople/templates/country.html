@@ -1,7 +1,6 @@
 {% extends "maps.html" %}
 {% load url from future %}
 {% load static %}
-{% get_static_prefix as STATIC_URL %}
 
 {% block title %}{{ country }} |{% endblock %}
 
@@ -26,9 +25,9 @@ window.onload = function() {
 {% endblock %}
 
 {% block header %}
-        {% if country.iso_code or country.flag %}<img src="{% if country.iso_code %}{{ STATIC_URL }}djangopeople/img/flags/{{ country.iso_code|lower }}.gif{% else %}{{ STATIC_URL }}djangopeople/{{ country.flag }}{% endif %}" alt="{{ country }}" class="main">{% endif %}
+        {% if country.iso_code or country.flag %}<img src="{% static country.flag_url %}" alt="{{ country }}" class="main">{% endif %}
         <h1>{{ country }}</h1>
-        <p class="meta">{% if country.country %}<a href="{% url 'country_detail' country.country.iso_code|lower %}" class="nobg"><img src="{{ STATIC_URL }}djangopeople/img/flags/{{ country.country.iso_code|lower }}.gif" title="{{ country.country }}" alt="{{ country.country }}" class="flag"></a> {% endif %}{{ people_list.count }} Django {% ifequal people_list.count 1 %}person{% else %}people{% endifequal %}</p>
+        <p class="meta">{% if country.country %}<a href="{% url "country_detail" country.country.iso_code|lower %}" class="nobg"><img src="{% static country.country.flag_url %}" title="{{ country.country }}" alt="{{ country.country }}" class="flag"></a> {% endif %}{{ people_list.count }} Django {% ifequal people_list.count 1 %}person{% else %}people{% endifequal %}</p>
 {% endblock %}
 
 {% block map %}
@@ -58,7 +57,7 @@ window.onload = function() {
         <ul class="detailsList split">
             {% for region in regions %}
             <li>
-                {% if region.flag %}<a href="{% url "country_region" country.iso_code|lower region.code|lower %}" class="nobg"><img src="{{ STATIC_URL }}djangopeople/img/regions/{{ country.iso_code|lower }}/{{ region.code|lower }}.png" width="16" height="11" alt="{{ region }}" title="{{ region }}"></a> {% endif %}<a href="{% url 'country_region' country.iso_code|lower region.code|lower %}"><strong>{{ region }}</strong></a> {{ region.num_people }} {% ifequal region.num_people 1 %}person{% else %}people{% endifequal %}
+                {% if region.flag %}<a href="{% url "country_region" country.iso_code|lower region.code|lower %}" class="nobg"><img src="{% static region.small_flag_url %}" width="16" height="11" alt="{{ region }}" title="{{ region }}"></a> {% endif %}<a href="{% url 'country_region' country.iso_code|lower region.code|lower %}"><strong>{{ region }}</strong></a> {{ region.num_people }} {% ifequal region.num_people 1 %}person{% else %}people{% endifequal %}
             </li>
             {% endfor %}
         </ul>

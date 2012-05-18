@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 
 {% block title %}Sites in {{ country }} |{% endblock %}
 
@@ -7,7 +8,7 @@
 
 {% block header %}
         <h1>Sites in {{ country }}</h1>
-        <p class="meta"><img src="{{ STATIC_URL }}djangopeople/img/flags/{{ country.iso_code|lower }}.gif" title="{{ country }}" class="flag"></a> {{ country }}</p>
+        <p class="meta"><img src="{% static country.flag_url %}" title="{{ country }}" class="flag"></a> {{ country }}</p>
 {% endblock %}
 
 {% block map %}

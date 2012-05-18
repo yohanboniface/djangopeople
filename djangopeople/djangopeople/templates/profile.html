@@ -50,9 +50,9 @@ div.bio a.edit {
 			<span class="family-name">{{ person.user.last_name }}</span>
 		</h1>
         <p class="meta adr">
-			<a href="{% url 'country_detail' person.country.iso_code|lower %}" class="nobg">
-				<img src="{{ STATIC_URL }}djangopeople/img/flags/{{ person.country.iso_code|lower }}.gif" alt="{{ person.country }}" title="{{ person.country }}" class="flag country-name">
-			</a> <span class="region">{{ person.location_description_html }}</span>{% if is_owner %} <a href="{% url 'edit_location' person.user.username %}" class="changeloc">(change)</a>{% endif %}</p>
+            <a href="{% url 'country_detail' person.country.iso_code|lower %}" class="nobg">
+                <img src="{% static person.country.flag_url %}" alt="{{ person.country }}" title="{{ person.country }}" class="flag country-name">
+            </a> <span class="region">{{ person.location_description_html }}</span>{% if is_owner %} <a href="{% url 'edit_location' person.user.username %}" class="changeloc">(change)</a>{% endif %}</p>
 {% endblock %}
 
 {% block map %}
@@ -127,7 +127,7 @@ div.bio a.edit {
                 <li>
                     <img src="{% gravatar person.user.email 40 %}" alt="{{ person }}" class="main">
                     <h3><a href="{{ person.get_absolute_url }}">{{ person }}</a></h3>
-                    <p class="meta"><a href="{% url "country_detail" person.country.iso_code|lower %}" class="nobg"><img src="{{ STATIC_URL }}djangopeople/img/flags/{{ person.country.iso_code|lower }}.gif" alt="{{ person.country }}" title="{{ person.country }}"></a>  {{ person.location_description }}<br>{{ person.distance_in_miles|floatformat:0 }} mile{{ person.distance_in_miles|floatformat:0|pluralize }} away</p>
+                    <p class="meta"><a href="{% url "country_detail" person.country.iso_code|lower %}" class="nobg"><img src="{% static person.country.flag_url %}" alt="{{ person.country }}" title="{{ person.country }}"></a>  {{ person.location_description }}<br>{{ person.distance_in_miles|floatformat:0 }} mile{{ person.distance_in_miles|floatformat:0|pluralize }} away</p>
                 </li>
                 {% endfor %}
             </ul>

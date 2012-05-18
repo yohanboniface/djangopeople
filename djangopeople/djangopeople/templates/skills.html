@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load url from future %}
+{% load staticfiles %}
 
 {% block title %}Skills |{% endblock %}
 
@@ -9,7 +10,7 @@
 {% block header %}
         <h1>Skills</h1>
         {% if country %}
-        <p class="meta"><img src="{{ STATIC_URL }}djangopeople/img/flags/{{ country.iso_code|lower }}.gif" title="{{ country }}" class="flag"></a> {{ country }}</p>
+        <p class="meta"><img src="{% static country.flag_url %}" title="{{ country }}" class="flag"></a> {{ country }}</p>
         {% endif %}
 {% endblock %}
 

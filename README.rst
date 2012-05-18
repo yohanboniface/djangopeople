@@ -12,6 +12,18 @@ Hacking
     mkvirtualenv -p python2 djangopeople
     pip install -r requirements.txt
     add2virtualenv .
+
+Create ``djangopeople/settings.py`` and add::
+
+    from default_settings import *
+
+    DEBUG = True
+    DATABASES = {
+        # your DB config
+    }
+
+Then::
+
     make run
 
 The development server is now running on http://localhost:8000.

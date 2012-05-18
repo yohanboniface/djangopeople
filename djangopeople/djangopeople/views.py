@@ -11,7 +11,6 @@ from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import ugettext_lazy as _
 from django.views import generic
-from django.views.generic.list_detail import object_list
 
 from tagging.models import Tag, TaggedItem
 from tagging.utils import calculate_cloud, get_tag
@@ -534,30 +533,63 @@ class CountrySkillCloudView(generic.DetailView):
 country_skill_cloud = CountrySkillCloudView.as_view()
 
 
-def skill(request, tag):
-    return tagged_object_list(request,
-        model=DjangoPerson,
-        tag=tag,
-        related_tags=True,
-        related_tag_counts=True,
-        template_name='skill.html',
-        template_object_name='people',
-    )
+class TaggedObjectList(generic.ListView):
+    related_tags = False
+    related_tag_counts = True
+
+    def get_queryset(self):
+        self.tag_instance = get_tag(self.kwargs['tag'])
+        if self.tag_instance is None:
+            raise Http404(_('No Tag found matching "%s".') % self.kwargs['tag'])
+        queryset = TaggedItem.objects.get_by_model(self.model,
+                                                   self.tag_instance)
+        filter_args = self.get_extra_filter_args()
+        if filter_args:
+            queryset = queryset.filter(**filter_args)
+        return queryset
+
+    def get_extra_filter_args(self):
+        return {}
+
+    def get_context_data(self, **kwargs):
+        kwargs.update({
+            'tag': self.kwargs['tag'],
+        })
+        if self.related_tags:
+            kwargs['related_tags'] = Tag.objects.related_for_model(
+                self.tag_instance,
+                self.model,
+                counts=self.related_tag_counts
+            )
+        ctx = super(TaggedObjectList, self).get_context_data(**kwargs)
+        return ctx
 
 
-def country_skill(request, country_code, tag):
-    return tagged_object_list(request,
-        model=DjangoPerson,
-        tag=tag,
-        related_tags=True,
-        related_tag_counts=True,
-        extra_filter_args={'country__iso_code': country_code.upper()},
-        template_name='skill.html',
-        template_object_name='people',
-        extra_context={
-            'country': Country.objects.get(iso_code=country_code.upper()),
-        },
-    )
+class Skill(TaggedObjectList):
+    model = DjangoPerson
+    related_tags = True
+    template_name = 'skill.html'
+    context_object_name = 'people_list'
+skill = Skill.as_view()
+
+
+class CountrySkill(TaggedObjectList):
+    model = DjangoPerson
+    related_tags = True
+    template_name = 'skill.html'
+    context_object_name = 'people_list'
+
+    def get_context_data(self, **kwargs):
+        kwargs['country'] = Country.objects.get(
+            iso_code=self.kwargs['country_code'].upper()
+        )
+        return super(CountrySkill, self).get_context_data(**kwargs)
+
+    def get_extra_filter_args(self):
+        filters = super(CountrySkill, self).get_extra_filter_args()
+        filters['country__iso_code'] = self.kwargs['country_code'].upper()
+        return filters
+country_skill = CountrySkill.as_view()
 
 
 class CountryLookingForView(generic.ListView):
@@ -640,52 +672,3 @@ class IRCActiveView(generic.ListView):
         # Filter out the people who don't want to be tracked (inefficient)
         return [r for r in results if r.irc_tracking_allowed()]
 irc_active = IRCActiveView.as_view()
-
-
-# Custom variant of the generic view from django-tagging
-def tagged_object_list(request, model=None, tag=None, related_tags=False,
-        related_tag_counts=True, extra_filter_args=None, **kwargs):
-    """
-    A thin wrapper around
-    ``django.views.generic.list_detail.object_list`` which creates a
-    ``QuerySet`` containing instances of the given model tagged with
-    the given tag.
-
-    In addition to the context variables set up by ``object_list``, a
-    ``tag`` context variable will contain the ``Tag`` instance for the
-    tag.
-
-    If ``related_tags`` is ``True``, a ``related_tags`` context variable
-    will contain tags related to the given tag for the given model.
-    Additionally, if ``related_tag_counts`` is ``True``, each related
-    tag will have a ``count`` attribute indicating the number of items
-    which have it in addition to the given tag.
-    """
-    if model is None:
-        try:
-            model = kwargs['model']
-        except KeyError:
-            raise AttributeError(_('tagged_object_list must be called with '
-                                   'a model.'))
-
-    if tag is None:
-        try:
-            tag = kwargs['tag']
-        except KeyError:
-            raise AttributeError(_('tagged_object_list must be called with '
-                                   'a tag.'))
-
-    tag_instance = get_tag(tag)
-    if tag_instance is None:
-        raise Http404(_('No Tag found matching "%s".') % tag)
-    queryset = TaggedItem.objects.get_by_model(model, tag_instance)
-    if extra_filter_args:
-        queryset = queryset.filter(**extra_filter_args)
-    if 'extra_context' not in kwargs:
-        kwargs['extra_context'] = {}
-    kwargs['extra_context']['tag'] = tag_instance
-    if related_tags:
-        kwargs['extra_context']['related_tags'] = \
-            Tag.objects.related_for_model(tag_instance, model,
-                                          counts=related_tag_counts)
-    return object_list(request, queryset, **kwargs)

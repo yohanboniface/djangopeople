@@ -6,7 +6,7 @@
 
 {% block header %}
         <h1>{{ tag }}</h1>
-        <p class="meta">{% if country %}<a href="{% url 'country_detail' country.iso_code|lower %}" class="nobg"><img src="{% static country.flag_url %}" alt="{{ country }}" title="{{ country }}" class="flag"></a> {% endif %}{{ people_list.count }} Django {% ifequal people_list.count 1 %}Person{% else %}People{% endifequal %} mention this skill</p>
+        <p class="meta">{% if country %}<a href="{% url "country_detail" country.iso_code|lower %}" class="nobg"><img src="{% static country.flag_url %}" alt="{{ country }}" title="{{ country }}" class="flag"></a> {% endif %}{{ people_list.count }} Django {% ifequal people_list.count 1 %}Person{% else %}People{% endifequal %} mention this skill</p>
 {% endblock %}
 
 {% block map %}

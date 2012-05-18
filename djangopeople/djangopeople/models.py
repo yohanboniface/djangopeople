@@ -64,7 +64,7 @@ class Country(models.Model):
 
     def top_regions(self):
         # Returns populated regions in order of population
-        return self.region_set.order_by('-num_people')
+        return self.region_set.order_by('-num_people').select_related('country')
 
     class Meta:
         ordering = ('name',)

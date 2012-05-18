@@ -57,7 +57,7 @@ window.onload = function() {
         <ul class="detailsList split">
             {% for region in regions %}
             <li>
-                {% if region.flag %}<a href="{% url "country_region" country.iso_code|lower region.code|lower %}" class="nobg"><img src="{% static region.small_flag_url %}" width="16" height="11" alt="{{ region }}" title="{{ region }}"></a> {% endif %}<a href="{% url 'country_region' country.iso_code|lower region.code|lower %}"><strong>{{ region }}</strong></a> {{ region.num_people }} {% ifequal region.num_people 1 %}person{% else %}people{% endifequal %}
+                {% if region.flag %}<a href="{% url "country_region" country.iso_code|lower region.code|lower %}" class="nobg"><img src="{% static region.small_flag_url %}" width="16" height="11" alt="{{ region }}" title="{{ region }}"></a> {% endif %}<a href="{% url "country_region" country.iso_code|lower region.code|lower %}"><strong>{{ region }}</strong></a> {{ region.num_people }} {% ifequal region.num_people 1 %}person{% else %}people{% endifequal %}
             </li>
             {% endfor %}
         </ul>

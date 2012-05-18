@@ -310,7 +310,9 @@ class CountryView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super(CountryView, self).get_context_data(**kwargs)
         context.update({
-            'people_list': self.object.djangoperson_set.all(),
+            'people_list': self.object.djangoperson_set.select_related(
+                'country', 'user'
+            ),
             'regions': self.object.top_regions(),
         })
         return context
@@ -345,7 +347,8 @@ def region(request, country_code, region_code):
     )
     return render(request, 'country.html', {
         'country': region,
-        'people_list': region.djangoperson_set.all(),
+        'people_list': region.djangoperson_set.select_related('user',
+                                                              'country'),
     })
 
 
@@ -418,6 +421,7 @@ class ProfileView(generic.DetailView):
             'services': services,
             'privacy': privacy,
             'show_finding': show_finding,
+            'nearest_people': self.object.get_nearest(),
         })
         return context
 profile = ProfileView.as_view()
@@ -536,6 +540,7 @@ country_skill_cloud = CountrySkillCloudView.as_view()
 class TaggedObjectList(generic.ListView):
     related_tags = False
     related_tag_counts = True
+    select_related = False
 
     def get_queryset(self):
         self.tag_instance = get_tag(self.kwargs['tag'])
@@ -543,6 +548,8 @@ class TaggedObjectList(generic.ListView):
             raise Http404(_('No Tag found matching "%s".') % self.kwargs['tag'])
         queryset = TaggedItem.objects.get_by_model(self.model,
                                                    self.tag_instance)
+        if self.select_related:
+            queryset = queryset.select_related(*self.select_related)
         filter_args = self.get_extra_filter_args()
         if filter_args:
             queryset = queryset.filter(**filter_args)
@@ -570,6 +577,7 @@ class Skill(TaggedObjectList):
     related_tags = True
     template_name = 'skill.html'
     context_object_name = 'people_list'
+    select_related = ['user', 'country']
 skill = Skill.as_view()
 
 

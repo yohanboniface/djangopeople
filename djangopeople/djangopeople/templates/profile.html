@@ -14,7 +14,7 @@
 <script type="text/javascript">
 var nearby_people = [
     // latitude, longitude, name, username, location description, flag, isocode
-    {% for p in person.get_nearest %}
+    {% for p in nearest_people %}
     [{{ p.latitude }}, {{ p.longitude }}, "{{ p|escapejs }}", "{{ p.user.username|escapejs }}", "{{ p.location_description|escapejs }}", "{% gravatar p.user.email 40 %}", "{{ p.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
     {% endfor %}
 ];
@@ -105,25 +105,26 @@ div.bio a.edit {
             {% endif %}
             </div>
         {% endif %}
-        {% if person.portfoliosite_set.count %}
-            <h2>{{ person.user.first_name }}'s Django portfolio{% if is_owner %} <a class="edit" href="{% url 'edit_portfolio' user.username %}">(edit)</a>{% endif %}</h2>
+        {% with person.portfoliosite_set.all as portfolio_set %}
+        {% if portfolio_set %}
+            <h2>{{ person.user.first_name }}'s Django portfolio{% if is_owner %} <a class="edit" href="{% url "edit_portfolio" user.username %}">(edit)</a>{% endif %}</h2>
             <p class="help">Django projects {{ person.user.first_name }} has contributed to</p>
             <ul class="siteList">
-                {% for site in person.portfoliosite_set.all %}
+                {% for site in portfolio_set %}
                 <li><a href="{{ site.url }}" class="url" rel="nofollow"><cite>{{ site.title }}</cite></a></li>
                 {% endfor %}
             </ul>
-        {% else %}{% if is_owner %}<p><a href="{% url 'edit_portfolio' user.username %}">Add some sites</a> to your portfolio</p>{% endif %}
+        {% else %}{% if is_owner %}<p><a href="{% url "edit_portfolio" user.username %}">Add some sites</a> to your portfolio</p>{% endif %}
         {% endif %}
+        {% endwith %}
 
         </div>
         <div class="secondary">
-            {% with person.get_nearest as people %}
-            {% if people %}
+            {% if nearest_people %}
             <h2>People near {{ person.user.first_name }}</h2>
 
             <ul class="detailsList">
-                {% for person in people %}
+                {% for person in nearest_people %}
                 <li>
                     <img src="{% gravatar person.user.email 40 %}" alt="{{ person }}" class="main">
                     <h3><a href="{{ person.get_absolute_url }}">{{ person }}</a></h3>
@@ -132,6 +133,5 @@ div.bio a.edit {
                 {% endfor %}
             </ul>
             {% endif %}
-            {% endwith %}
         </div>
     {% endblock %}

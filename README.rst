@@ -2,7 +2,48 @@
 
 This is an attempt to bring djangopeople.net back online and up to date.
 
-* Migrate the geopy / lat-lng stuff to geodjango
+Hacking
+-------
+
+::
+
+    git clone git@github.com:brutasse/djangopeople.git
+    cd djangopeople
+    mkvirtualenv -p python2 djangopeople
+    pip install -r requirements.txt
+    add2virtualenv .
+    make run
+
+The development server is now running on http://localhost:8000.
+
+To run the tests::
+
+    make test
+
+Deploying on Heroku
+-------------------
+
+Set a bunch of environment variables:
+
+* ``AWS_ACCESS_KEY``
+* ``AWS_SECRET_KEY``
+* ``AWS_BUCKET_NAME``
+* ``DATABASE_URL``
+* ``SECRET_KEY``
+* ``SENTRY_DSN``
+* ``DJANGO_SETTINGS_MODULE`` (set it to ``djangopeople.production_settings``)
+
+First deploy::
+
+    git push heroku master
+    heroku run django-admin.py syncdb --noinput
+    heroku run django-admin.py collectstatic
+    heroku run django-admin.py fix_counts
+
+Subsequent deploys::
+
+    git push heroku master
+    heroku run django-admin.py collectstatic
 
 -------
 
@@ -18,7 +59,3 @@ This code was not originally intended for public consumption, so there are
 probably one or two eyebrow raising design decisions. In particular, the
 machine tags stuff for user profiles was an ambitious experiment which I
 wouldn't mind seeing the back of.
-
-404s:
-	je.gif
-	aq.gif

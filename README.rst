@@ -50,6 +50,7 @@ Set a bunch of environment variables:
 * ``SECRET_KEY``
 * ``SENTRY_DSN``
 * ``DJANGO_SETTINGS_MODULE`` (set it to ``djangopeople.production_settings``)
+* ``FROM_EMAIL``
 
 First deploy::
 

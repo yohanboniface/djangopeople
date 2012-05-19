@@ -18,6 +18,9 @@ AWS_QUERYSTRING_AUTH = False
 
 STATIC_URL = 'https://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
 
+EMAIL_BACKEND = 'django_ses.SESBackend'
+SERVER_EMAIL = DEFAULT_FROM_EMAIL = os.environ['FROM_EMAIL']
+
 SENTRY_DSN = os.environ.get('SENTRY_DSN', '')
 
 if 'CANONICAL_HOSTNAME' in os.environ:

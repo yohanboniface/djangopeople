@@ -1,6 +1,9 @@
 import re
 
+from django.conf import settings
+from django.core.exceptions import MiddlewareNotUsed
 from django.http import get_host
+from django.utils.http import urlquote
 from django.shortcuts import redirect
 
 multislash_re = re.compile('/{2,}')
@@ -30,3 +33,29 @@ class RemoveWWW(object):
             return redirect(newurl, permaent=True)
         else:
             return None
+
+
+class CanonicalDomainMiddleware(object):
+    """
+    Force-redirect to settings.CANONICAL_HOSTNAME if that's not the domain
+    being accessed. If the setting isn't set, do nothing.
+    """
+    def __init__(self):
+        try:
+            self.canonical_hostname = settings.CANONICAL_HOSTNAME
+        except AttributeError:
+            raise MiddlewareNotUsed("settings.CANONICAL_HOSTNAME is undefined")
+
+    def process_request(self, request):
+        if request.get_host() == self.canonical_hostname:
+            return
+
+        # Domains didn't match, so do some fixups.
+        new_url = [
+            'https' if request.is_secure() else 'http',
+            '://',
+            self.canonical_hostname,
+            urlquote(request.path),
+            '?%s' % request.GET.urlencode() if request.GET else ''
+        ]
+        return redirect(''.join(new_url), permanent=True)

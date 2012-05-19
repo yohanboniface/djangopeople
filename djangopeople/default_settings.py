@@ -63,6 +63,7 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'djangopeople.djangopeople.middleware.CanonicalDomainMiddleware',
     'django.middleware.common.CommonMiddleware',
     'djangopeople.djangopeople.middleware.RemoveWWW',
     'django.middleware.csrf.CsrfViewMiddleware',

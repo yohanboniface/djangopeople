@@ -20,6 +20,9 @@ STATIC_URL = 'https://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
 
 SENTRY_DSN = os.environ.get('SENTRY_DSN', '')
 
+if 'CANONICAL_HOSTNAME' in os.environ:
+    CANONICAL_HOSTNAME = os.environ['CANONICAL_HOSTNAME']
+
 # Run the site over SSL
 MIDDLEWARE_CLASSES = (
     'djangosecure.middleware.SecurityMiddleware',

@@ -1,6 +1,7 @@
 from default_settings import *
 
 import dj_database_url
+import urlparse
 
 DATABASES = {
     'default': dj_database_url.config(),
@@ -34,3 +35,18 @@ SECURE_FRAME_DENY = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+if 'REDISTOGO_URL' in os.environ:
+    urlparse.uses_netloc.append('redis')
+    redis_url = urlparse.urlparse(os.environ['REDISTOGO_URL'])
+    CACHES = {
+        'default': {
+            'BACKEND': 'redis_cache.RedisCache',
+            'LOCATION': '{0}:{1}'.format(redis_url.hostname, redis_url.port),
+            'OPTIONS': {
+                'DB': 0,
+                'PASSWORD': redis_url.password,
+            },
+            'VERSION': os.environ.get('CACHE_VERSION', 0),
+        },
+    }

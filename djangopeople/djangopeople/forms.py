@@ -116,37 +116,38 @@ class SignupForm(PopulateChoices, forms.Form):
     region = GroupedChoiceField(required=False)
 
     privacy_search = forms.ChoiceField(
-        choices = (
+        choices=(
             ('public',
              'Allow search engines to index my profile page (recommended)'),
             ('private', "Don't allow search engines to index my profile page"),
-        ), widget = forms.RadioSelect, initial='public'
+        ), widget=forms.RadioSelect, initial='public'
     )
     privacy_email = forms.ChoiceField(
-        choices = (
+        choices=(
             ('public', 'Anyone can see my e-mail address'),
             ('private', 'Only logged-in users can see my e-mail address'),
             ('never', 'No one can ever see my e-mail address'),
-        ), widget = forms.RadioSelect, initial='private'
+        ), widget=forms.RadioSelect, initial='private'
     )
     privacy_im = forms.ChoiceField(
-        choices = (
+        choices=(
             ('public', 'Anyone can see my IM details'),
             ('private', 'Only logged-in users can see my IM details'),
-        ), widget = forms.RadioSelect, initial='private'
+        ), widget=forms.RadioSelect, initial='private'
     )
     privacy_irctrack = forms.ChoiceField(
-        choices = (
-            ('public', 'Keep track of the last time I was seen on IRC (requires your IRC nick)'),
+        choices=(
+            ('public', ('Keep track of the last time I was seen on IRC '
+                        '(requires your IRC nick)')),
             ('private', "Don't record the last time I was seen on IRC"),
-        ), widget = forms.RadioSelect, initial='public'
+        ), widget=forms.RadioSelect, initial='public'
     )
     looking_for_work = forms.ChoiceField(
-        choices = (
+        choices=(
             ('', 'Not looking for work at the moment'),
             ('freelance', 'Looking for freelance work'),
             ('full-time', 'Looking for full-time work'),
-        ), required=False #, widget = forms.RadioSelect, initial=''
+        ), required=False
     )
 
     skilltags = TagField(required=False)
@@ -225,7 +226,9 @@ class SkillsForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(SkillsForm, self).__init__(*args, **kwargs)
-        self.initial = {'skills': edit_string_for_tags(self.instance.skilltags)}
+        self.initial = {
+            'skills': edit_string_for_tags(self.instance.skilltags),
+        }
 
     def save(self):
         self.instance.skilltags = self.cleaned_data['skills']
@@ -257,7 +260,9 @@ class LocationForm(PopulateChoices, forms.ModelForm):
 
     def clean_country(self):
         try:
-            country = Country.objects.get(iso_code=self.cleaned_data['country'])
+            country = Country.objects.get(
+                iso_code=self.cleaned_data['country'],
+            )
             return country
         except Country.DoesNotExist:
             raise forms.ValidationError(
@@ -280,8 +285,8 @@ class LocationForm(PopulateChoices, forms.ModelForm):
 
     clean_location_description = not_in_the_atlantic
 
-class FindingForm(forms.ModelForm):
 
+class FindingForm(forms.ModelForm):
     class Meta:
         model = DjangoPerson
         fields = ()
@@ -320,44 +325,45 @@ class FindingForm(forms.ModelForm):
     email = forms.EmailField()
     blog = forms.URLField(required=False)
     privacy_search = forms.ChoiceField(
-        choices = (
+        choices=(
             ('public',
              'Allow search engines to index my profile page (recommended)'),
             ('private', "Don't allow search engines to index my profile page"),
-        ), widget = forms.RadioSelect, initial='public'
+        ), widget=forms.RadioSelect, initial='public'
     )
     privacy_email = forms.ChoiceField(
-        choices = (
+        choices=(
             ('public', 'Anyone can see my e-mail address'),
             ('private', 'Only logged-in users can see my e-mail address'),
             ('never', 'No one can ever see my e-mail address'),
-        ), widget = forms.RadioSelect, initial='private'
+        ), widget=forms.RadioSelect, initial='private'
     )
     privacy_im = forms.ChoiceField(
-        choices = (
+        choices=(
             ('public', 'Anyone can see my IM details'),
             ('private', 'Only logged-in users can see my IM details'),
-        ), widget = forms.RadioSelect, initial='private'
+        ), widget=forms.RadioSelect, initial='private'
     )
     privacy_irctrack = forms.ChoiceField(
-        choices = (
-            ('public', 'Keep track of the last time I was seen on IRC (requires your IRC nick)'),
+        choices=(
+            ('public', ('Keep track of the last time I was seen on IRC '
+                        '(requires your IRC nick)')),
             ('private', "Don't record the last time I was seen on IRC"),
-        ), widget = forms.RadioSelect, initial='public'
+        ), widget=forms.RadioSelect, initial='public'
     )
     looking_for_work = forms.ChoiceField(
-        choices = (
+        choices=(
             ('', 'Not looking for work at the moment'),
             ('freelance', 'Looking for freelance work'),
             ('full-time', 'Looking for full-time work'),
-        ), required=False #, widget = forms.RadioSelect, initial=''
+        ), required=False
     )
 
     def clean_email(self):
         email = self.cleaned_data['email']
         if User.objects.filter(
-            email = email
-        ).exclude(djangoperson = self.instance).count() > 0:
+            email=email,
+        ).exclude(djangoperson=self.instance).count() > 0:
             raise forms.ValidationError('That e-mail is already in use')
         return email
 
@@ -376,8 +382,8 @@ class FindingForm(forms.ModelForm):
                 value = self.cleaned_data[fieldname].strip()
                 self.instance.add_machinetag(namespace, predicate, value)
 
-class PortfolioForm(forms.ModelForm):
 
+class PortfolioForm(forms.ModelForm):
     class Meta:
         model = DjangoPerson
         fields = ()
@@ -416,7 +422,9 @@ class PortfolioForm(forms.ModelForm):
 
     def save(self):
         self.instance.portfoliosite_set.all().delete()
-        for key in [k for k in self.cleaned_data.keys() if k.startswith('title_')]:
+        for key in [
+            k for k in self.cleaned_data.keys() if k.startswith('title_')
+        ]:
             title = self.cleaned_data[key]
             url = self.cleaned_data[key.replace('title_', 'url_')]
             if title.strip() and url.strip():
@@ -433,16 +441,20 @@ def make_validator(key, form):
 
 
 class PasswordForm(forms.ModelForm):
-    current_password = forms.CharField(label='Current Password', widget=PasswordInput)
+    current_password = forms.CharField(label='Current Password',
+                                       widget=PasswordInput)
     password1 = forms.CharField(label='New Password', widget=PasswordInput)
-    password2 = forms.CharField(label='New Password (again)', widget=PasswordInput)
+    password2 = forms.CharField(label='New Password (again)',
+                                widget=PasswordInput)
 
     class Meta:
         model = User
         fields = ()
 
     def clean_current_password(self):
-        if not self.instance.check_password(self.cleaned_data['current_password']):
+        if not self.instance.check_password(
+            self.cleaned_data['current_password'],
+        ):
             raise forms.ValidationError('Please submit your current password.')
         else:
             return self.cleaned_data['current_password']

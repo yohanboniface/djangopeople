@@ -64,7 +64,8 @@ class Country(models.Model):
 
     def top_regions(self):
         # Returns populated regions in order of population
-        return self.region_set.order_by('-num_people').select_related('country')
+        regions = self.region_set.order_by('-num_people')
+        return regions.select_related('country')
 
     class Meta:
         ordering = ('name',)
@@ -92,7 +93,8 @@ class Region(models.Model):
     num_people = models.IntegerField(default=0)
 
     def get_absolute_url(self):
-        return reverse('country_region', args=[self.country.iso_code.lower(), self.code.lower()])
+        return reverse('country_region', args=[self.country.iso_code.lower(),
+                                               self.code.lower()])
 
     def __unicode__(self):
         return u'%s' % self.name
@@ -106,8 +108,10 @@ class Region(models.Model):
 
     @property
     def small_flag_url(self):
-        return 'djangopeople/img/regions/%s/%s.png' % (self.country.iso_code.lower(),
-                                                       self.code.lower())
+        return 'djangopeople/img/regions/%s/%s.png' % (
+            self.country.iso_code.lower(),
+            self.code.lower(),
+        )
 
 
 class DjangoPerson(models.Model):
@@ -151,11 +155,14 @@ class DjangoPerson(models.Model):
         "Returns the nearest X people, but only within the same continent"
         # TODO: Add caching
 
-        people = list(self.country.djangoperson_set.select_related().exclude(pk=self.id))
+        people = list(self.country.djangoperson_set.select_related().exclude(
+            pk=self.id,
+        ))
         if len(people) <= num:
-            # Not enough in country; use people from the same continent instead
+            # Not enough in country
+            # use people from the same continent instead
             people = list(DjangoPerson.objects.filter(
-                country__continent = self.country.continent,
+                country__continent=self.country.continent,
             ).exclude(pk=self.id).select_related())
 
         # Sort and annotate people by distance
@@ -191,9 +198,11 @@ class DjangoPerson(models.Model):
     def get_absolute_url(self):
         return reverse('user_profile', args=[self.user.username])
 
-    def save(self, force_insert=False, force_update=False, **kwargs): # TODO: Put in transaction
+    # TODO: Put in transaction
+    def save(self, force_insert=False, force_update=False, **kwargs):
         # Update country and region counters
-        super(DjangoPerson, self).save(force_insert=False, force_update=False, **kwargs)
+        super(DjangoPerson, self).save(force_insert=False, force_update=False,
+                                       **kwargs)
         self.country.num_people = self.country.djangoperson_set.count()
         self.country.save()
         if self.region:
@@ -205,12 +214,12 @@ class DjangoPerson(models.Model):
 
     def irc_tracking_allowed(self):
         return not self.machinetags.filter(
-            namespace = 'privacy', predicate='irctrack', value='private'
+            namespace='privacy', predicate='irctrack', value='private',
         ).count()
 
 tagging.register(DjangoPerson,
-    tag_descriptor_attr = 'skilltags',
-    tagged_item_manager_attr = 'skilltagged'
+    tag_descriptor_attr='skilltags',
+    tagged_item_manager_attr='skilltagged',
 )
 
 
@@ -225,8 +234,8 @@ class PortfolioSite(models.Model):
 
 class CountrySite(models.Model):
     "Community sites for various countries"
-    title = models.CharField(max_length = 100)
-    url = models.URLField(max_length = 255)
+    title = models.CharField(max_length=100)
+    url = models.URLField(max_length=255)
     country = models.ForeignKey(Country)
 
     def __unicode__(self):
@@ -247,7 +256,8 @@ class CountrySite(models.Model):
 #    djangoperson = models.ForeignKey(DjangoPerson, blank=True, null=True)
 #
 #    def __unicode__(self):
-#        return "%s people at (%s,%s,z%s)" % (self.number, self.longitude, self.latitude, self.zoom)
+#        return "%s people at (%s,%s,z%s)" % (self.number, self.longitude,
+#                                             self.latitude, self.zoom)
 #
 #    class Admin:
 #        list_display = ("zoom", "latitude", "longitude", "number")

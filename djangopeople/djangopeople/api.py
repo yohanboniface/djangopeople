@@ -50,7 +50,7 @@ def irc_spotted(request, irc_nick):
 
     try:
         person = MachineTaggedItem.objects.get(
-            namespace = 'im', predicate = 'django', value = irc_nick
+            namespace='im', predicate='django', value=irc_nick
         ).content_object
     except MachineTaggedItem.DoesNotExist:
         return api_response('NO_MATCH')
@@ -67,6 +67,7 @@ def irc_spotted(request, irc_nick):
         return api_response('FIRST_TIME_SEEN')
     else:
         return api_response('TRACKED')
+
 
 def api_response(code):
     return HttpResponse(code, mimetype='text/plain')

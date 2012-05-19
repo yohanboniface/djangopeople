@@ -12,21 +12,22 @@ myr = my2 - my1
 surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
 context = cairo.Context(surface)
 
-def m_to_px(x, y):
-    return ((x-mx1)/mxr)*width, ((y-my1)/myr)*height
 
-context.set_source_rgba(1,1,1,1)
+def m_to_px(x, y):
+    return ((x - mx1) / mxr) * width, ((y - my1) / myr) * height
+
+context.set_source_rgba(1, 1, 1, 1)
 context.paint()
-    
+
 for row in open(sys.argv[1]):
     x, y, label = row.split(",")
     px, py = m_to_px(float(x), float(y))
     try:
-        r = int(label)/100 + 1
+        r = int(label) / 100 + 1
     except ValueError:
         r = 2
-    context.arc(px, py, r, 0, math.pi*2)
-    context.set_source_rgba(0,0.2,0.6,0.8)
+    context.arc(px, py, r, 0, math.pi * 2)
+    context.set_source_rgba(0, 0.2, 0.6, 0.8)
     context.fill()
 
 surface.write_to_png("output.png")

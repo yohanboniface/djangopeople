@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.shortcuts import redirect
 
-from .djangopeople import views, api  #, clustering
+from .djangopeople import views, api
 
 
 def perm_redirect(url):
@@ -69,7 +69,7 @@ urlpatterns = patterns('',
     url(r'^(?P<country_code>[a-z]{2})/skills/(?P<tag>.*)/$',
         views.country_skill, name='country_skill'),
 
-    url(r'^(?P<country_code>[a-z]{2})/looking-for/(?P<looking_for>freelance|full-time)/$',
+    url(r'^(?P<country_code>[a-z]{2})/looking-for/(?P<looking_for>freelance|full-time)/$',  # noqa
         views.country_looking_for, name='country_looking_for'),
 
     url(r'^(?P<country_code>[a-z]{2})/(?P<region_code>\w+)/$',

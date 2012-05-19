@@ -354,8 +354,6 @@ class CountrySitesView(generic.ListView):
 country_sites = CountrySitesView.as_view()
 
 
-
-
 class ProfileView(generic.DetailView):
     context_object_name = 'person'
     template_name = 'profile.html'
@@ -549,7 +547,9 @@ class TaggedObjectList(generic.ListView):
     def get_queryset(self):
         self.tag_instance = get_tag(self.kwargs['tag'])
         if self.tag_instance is None:
-            raise Http404(_('No Tag found matching "%s".') % self.kwargs['tag'])
+            raise Http404(
+                _('No Tag found matching "%s".') % self.kwargs['tag']
+            )
         queryset = TaggedItem.objects.get_by_model(self.model,
                                                    self.tag_instance)
         if self.select_related:

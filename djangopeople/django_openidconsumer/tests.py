@@ -22,7 +22,9 @@ class OpenIDTests(TestCase):
         data = {'openid_url': 'http://bruno.renie.fr'}
 
         auth = consumer.return_value.begin
-        auth.return_value.redirectURL.return_value = 'http://www.myopenid.com/server'
+        auth.return_value.redirectURL.return_value = (
+            'http://www.myopenid.com/server'
+        )
 
         response = self.client.post(url, data)
         auth.assert_called_with('http://bruno.renie.fr')

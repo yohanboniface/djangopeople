@@ -1,4 +1,4 @@
-from default_settings import *
+from default_settings import *  # noqa
 
 import dj_database_url
 import urlparse

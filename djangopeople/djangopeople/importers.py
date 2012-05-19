@@ -3,9 +3,10 @@ from django.conf import settings
 try:
     from xml.etree import cElementTree as ET
 except ImportError:
-    from elementtree import ElementTree as ET
+    from elementtree import ElementTree as ET  # noqa
 
 from .models import Country, Region
+
 
 def import_countries(fp):
     et = ET.parse(fp)
@@ -38,8 +39,11 @@ def import_countries(fp):
                 continue
             creation_args[db_field] = conv(country.find(xml).text)
 
-        Country.objects.get_or_create(iso_code = creation_args['iso_code'],
-            defaults = creation_args)
+        Country.objects.get_or_create(
+            iso_code=creation_args['iso_code'],
+            defaults=creation_args,
+        )
+
 
 def import_us_states():
     """
@@ -62,8 +66,8 @@ def import_us_states():
         points = segment.split()
         id = points.pop(0)
         points = map(float, points)
-        lats = points[::2] # Odd numbered indices
-        lons = points[1::2] # Even numbered indices
+        lats = points[::2]  # Odd numbered indices
+        lons = points[1::2]  # Even numbered indices
         segment_lookup[id] = (lats, lons)
 
     # Now find out which segments belong to which US State
@@ -81,10 +85,10 @@ def import_us_states():
         chunk_id = bits[0]
         statename = bits[2].replace('"', '').strip()
         if not statename:
-            continue # There's a blank one in there for some reason
+            continue  # There's a blank one in there for some reason
         statename_chunks.setdefault(statename, []).append(chunk_id)
 
-    usa = Country.objects.get(iso_code = 'US')
+    usa = Country.objects.get(iso_code='US')
 
     for statename in statename_chunks.keys():
         if statename not in REVERSE_STATE_CHOICES:
@@ -92,9 +96,9 @@ def import_us_states():
 
         statecode = REVERSE_STATE_CHOICES[statename]
         if Region.objects.filter(
-            country__iso_code = 'US', code = statecode
+            country__iso_code='US', code=statecode,
         ).count() > 0:
-            continue # This state already exists
+            continue  # This state already exists
 
         # Find all the latitude / longitude values for the state
         segment_ids = statename_chunks[statename]
@@ -118,12 +122,12 @@ def import_us_states():
 
         # And save the state
         Region.objects.create(
-            country = usa,
-            code = statecode,
-            name = statename,
-            bbox_south = bbox_south,
-            bbox_north = bbox_north,
-            bbox_west = bbox_west,
-            bbox_east = bbox_east,
-            flag = flag
+            country=usa,
+            code=statecode,
+            name=statename,
+            bbox_south=bbox_south,
+            bbox_north=bbox_north,
+            bbox_west=bbox_west,
+            bbox_east=bbox_east,
+            flag=flag,
         )

@@ -28,7 +28,6 @@ class EditViewTest(TestCase):
         self.hashed_upload_img_file_name = os.path.join(sha1sum[:1],
                                                         sha1sum[1:2], sha1sum)
 
-
         # make sure the profile upload folder exists
         self.profile_img_path = os.path.join(settings.MEDIA_ROOT, 'profiles')
         if not os.path.exists(self.profile_img_path):
@@ -178,7 +177,7 @@ class EditViewTest(TestCase):
         other_user = User.objects.get(username='satchmo')
 
         # set new email for daveb to existing email of user satchmo
-        data = {'email': other_user.email, #
+        data = {'email': other_user.email,
                 'privacy_search': 'public',
                 'privacy_email': 'private',
                 'privacy_im': 'private',
@@ -189,7 +188,8 @@ class EditViewTest(TestCase):
 
         response = self.client.post(url_edit_finding, data, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertFormError(response, 'form', 'email', 'That e-mail is already in use')
+        self.assertFormError(response, 'form', 'email',
+                             'That e-mail is already in use')
 
         u = User.objects.get(username='daveb')
         self.assertEqual(u.email, old_email)
@@ -283,7 +283,7 @@ class EditViewTest(TestCase):
         self.assertTrue('linux' in edit_string_for_tags(p.skilltags))
         self.assertTrue('python' in edit_string_for_tags(p.skilltags))
 
-        skills = '%s django'%(edit_string_for_tags(p.skilltags))
+        skills = '%s django' % (edit_string_for_tags(p.skilltags))
         self.client.post(url_edit_skills, {'skills': skills})
 
         p = DjangoPerson.objects.get(user__username='daveb')
@@ -557,7 +557,8 @@ class EditViewTest(TestCase):
                                      'password2': 'foo'})
 
         self.assertEqual(response.status_code, 200)
-        self.assertFormError(response, 'form', 'current_password', 'Please submit your current password.')
+        self.assertFormError(response, 'form', 'current_password',
+                             'Please submit your current password.')
 
     def test_edit_password_form_error_fields_required(self):
         '''
@@ -567,16 +568,20 @@ class EditViewTest(TestCase):
 
         response = self.client.post(url_edit_password, {'password1': 'foo1'})
         self.assertEqual(response.status_code, 200)
-        self.assertFormError(response, 'form', 'password2', 'This field is required.')
+        self.assertFormError(response, 'form', 'password2',
+                             'This field is required.')
 
         response = self.client.post(url_edit_password, {'password2': 'foo1'})
         self.assertEqual(response.status_code, 200)
-        self.assertFormError(response, 'form', 'password1', 'This field is required.')
+        self.assertFormError(response, 'form', 'password1',
+                             'This field is required.')
 
         response = self.client.post(url_edit_password, {})
         self.assertEqual(response.status_code, 200)
-        self.assertFormError(response, 'form', 'password1', 'This field is required.')
-        self.assertFormError(response, 'form', 'password2', 'This field is required.')
+        self.assertFormError(response, 'form', 'password1',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'password2',
+                             'This field is required.')
 
     def test_edit_password_form_error_different_passwords(self):
         '''
@@ -593,7 +598,8 @@ class EditViewTest(TestCase):
                                                         'password2': 'foo'})
 
         self.assertEqual(response.status_code, 200)
-        self.assertFormError(response, 'form', None, 'The passwords did not match.')
+        self.assertFormError(response, 'form', None,
+                             'The passwords did not match.')
 
         u = User.objects.get(username='daveb')
         self.assertTrue(u.check_password('123456'))
@@ -678,7 +684,7 @@ class EditViewTest(TestCase):
         longitude = 14.9853515625
         latitude = 50.0359736721955
         location_description = 'Vienna, Austria'
-        country = 12 # id of Austria
+        country = 12  # id of Austria
 
         url_edit_location = reverse('edit_location', args=['daveb'])
         url_profile = reverse('user_profile', args=['daveb'])
@@ -686,8 +692,8 @@ class EditViewTest(TestCase):
         response = self.client.get(url_profile)
 
         self.assertContains(response, 'Austria')
-        self.assertContains(response, 'person_latitude = %d'%latitude)
-        self.assertContains(response, 'person_longitude = %d'%longitude)
+        self.assertContains(response, 'person_latitude = %d' % latitude)
+        self.assertContains(response, 'person_longitude = %d' % longitude)
 
         p = DjangoPerson.objects.get(user__username='daveb')
         self.assertTrue(abs(p.latitude - latitude) < 0.01)
@@ -702,7 +708,7 @@ class EditViewTest(TestCase):
         new_longitude = 153.023071289
         new_latitude = -27.5411533739
         new_location_description = 'Brisbane'
-        new_country = 'AU' # iso code of Australia
+        new_country = 'AU'  # iso code of Australia
 
         location_dict = {'longitude': new_longitude,
                          'latitude': new_latitude,
@@ -721,11 +727,11 @@ class EditViewTest(TestCase):
 
         self.assertRedirects(response, url_profile)
         self.assertNotContains(response, 'Austria')
-        self.assertNotContains(response, 'person_latitude = %d'%latitude)
-        self.assertNotContains(response, 'person_longitude = %d'%longitude)
+        self.assertNotContains(response, 'person_latitude = %d' % latitude)
+        self.assertNotContains(response, 'person_longitude = %d' % longitude)
         self.assertContains(response, 'Australia')
-        self.assertContains(response, 'person_latitude = %d'%new_latitude)
-        self.assertContains(response, 'person_longitude = %d'%new_longitude)
+        self.assertContains(response, 'person_latitude = %d' % new_latitude)
+        self.assertContains(response, 'person_longitude = %d' % new_longitude)
 
         p = DjangoPerson.objects.get(user__username='daveb')
         self.assertTrue(abs(p.latitude - new_latitude) < 0.01)
@@ -739,7 +745,7 @@ class EditViewTest(TestCase):
         new_longitude = 153.023071289
         new_latitude = -27.5411533739
         new_location_description = 'Brisbane'
-        new_country = 'AU' # iso code of Australia
+        new_country = 'AU'  # iso code of Australia
 
         location_dict = {'longitude': new_longitude,
                          'latitude': new_latitude,
@@ -753,28 +759,38 @@ class EditViewTest(TestCase):
         # remove longitutde
         location_dict.pop('longitude')
         response = self.client.post(url_edit_location, data=location_dict)
-        self.assertFormError(response, 'form', 'longitude', 'This field is required.')
+        self.assertFormError(response, 'form', 'longitude',
+                             'This field is required.')
 
         # remove latitude
         location_dict.pop('latitude')
         response = self.client.post(url_edit_location, data=location_dict)
-        self.assertFormError(response, 'form', 'longitude', 'This field is required.')
-        self.assertFormError(response, 'form', 'latitude', 'This field is required.')
+        self.assertFormError(response, 'form', 'longitude',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'latitude',
+                             'This field is required.')
 
         # remove location_description
         location_dict.pop('location_description')
         response = self.client.post(url_edit_location, data=location_dict)
-        self.assertFormError(response, 'form', 'longitude', 'This field is required.')
-        self.assertFormError(response, 'form', 'latitude', 'This field is required.')
-        self.assertFormError(response, 'form', 'location_description', 'This field is required.')
+        self.assertFormError(response, 'form', 'longitude',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'latitude',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'location_description',
+                             'This field is required.')
 
         # remove country
         location_dict.pop('country')
         response = self.client.post(url_edit_location, data=location_dict)
-        self.assertFormError(response, 'form', 'longitude', 'This field is required.')
-        self.assertFormError(response, 'form', 'latitude', 'This field is required.')
-        self.assertFormError(response, 'form', 'location_description', 'This field is required.')
-        self.assertFormError(response, 'form', 'country', 'This field is required.')
+        self.assertFormError(response, 'form', 'longitude',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'latitude',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'location_description',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'country',
+                             'This field is required.')
 
     def test_edit_loctaion_form_error_invalid_iso_code(self):
         url_edit_location = reverse('edit_location', args=['daveb'])
@@ -782,7 +798,7 @@ class EditViewTest(TestCase):
         new_longitude = 153.023071289
         new_latitude = -27.5411533739
         new_location_description = 'Brisbane'
-        new_country = 'XXX' # invalid iso code
+        new_country = 'XXX'  # invalid iso code
 
         location_dict = {'longitude': new_longitude,
                          'latitude': new_latitude,
@@ -791,7 +807,10 @@ class EditViewTest(TestCase):
 
         response = self.client.post(url_edit_location, data=location_dict)
 
-        self.assertFormError(response, 'form', 'country', 'Select a valid choice. XXX is not one of the available choices.')
+        self.assertFormError(
+            response, 'form', 'country',
+            'Select a valid choice. XXX is not one of the available choices.'
+        )
 
     def test_edit_location_not_in_the_atlantic(self):
         '''
@@ -803,7 +822,7 @@ class EditViewTest(TestCase):
         new_longitude = -35
         new_latitude = 44
         new_location_description = 'Brisbane'
-        new_country = 13 # id of Australia
+        new_country = 13  # id of Australia
 
         location_dict = {'longitude': new_longitude,
                          'latitude': new_latitude,

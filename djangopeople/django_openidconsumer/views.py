@@ -37,10 +37,12 @@ def is_valid_next_url(next):
     # path, not a complete URL.
     return bool(NEXT_URL_RE.match(next))
 
+
 def render(request, template, context_dict=None):
     return render_to_response(
         template, context_dict or {}, context_instance=RequestContext(request)
     )
+
 
 def begin(request, sreg=None, extension_args=None,
           redirect_to=None, on_failure=None):

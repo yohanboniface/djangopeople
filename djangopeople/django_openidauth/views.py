@@ -1,4 +1,3 @@
-import datetime
 import hashlib
 import time
 
@@ -19,10 +18,12 @@ def _make_hash(hash_type, user, openid):
         hash_type, user.id, str(openid), settings.SECRET_KEY
     )).hexdigest()
 
+
 def render(request, template, context_dict=None):
     return render_to_response(
         template, context_dict or {}, context_instance=RequestContext(request)
     )
+
 
 @login_required
 def associations(request, template_name='openid_associations.html'):
@@ -37,7 +38,7 @@ def associations(request, template_name='openid_associations.html'):
     messages = []
     associated_openids = [
         rec.openid
-        for rec in UserOpenID.objects.filter(user__id = request.user.id)
+        for rec in UserOpenID.objects.filter(user__id=request.user.id)
     ]
 
     # OpenIDs are associated and de-associated based on their key - which is a
@@ -68,9 +69,10 @@ def associations(request, template_name='openid_associations.html'):
         new_openid = str(request.openids[-1])
         if associate_openid(request.user, new_openid):
             associated_openids.append(new_openid)
-            messages.append('%s has been associated with your account' % escape(
-                new_openid
-            ))
+            messages.append(
+                '%s has been associated with your account' %
+                escape(new_openid)
+            )
         else:
             messages.append(('%s could not be associated with your account, ' +
                 'as it is already associated with a different account') % \
@@ -84,7 +86,8 @@ def associations(request, template_name='openid_associations.html'):
             if openid not in associated_openids:
                 if associate_openid(request.user, openid):
                     associated_openids.append(openid)
-                    messages.append('%s has been associated with your account' %
+                    messages.append(
+                        '%s has been associated with your account' %
                         escape(openid)
                     )
                 else:
@@ -99,10 +102,10 @@ def associations(request, template_name='openid_associations.html'):
                 # if user has no password and this is last one, don't allow
                 if (not request.user.has_usable_password()) \
                     and len(associated_openids) < 2:
-                    messages.append(
-                        'You need to set a password if you want to remove all' +
-                        ' of your OpenIDs'
-                    )
+                    messages.append((
+                        'You need to set a password if you want to remove all '
+                        'of your OpenIDs'
+                    ))
                 else:
                     unassociate_openid(request.user, openid)
                     associated_openids.remove(openid)
@@ -135,20 +138,22 @@ def associations(request, template_name='openid_associations.html'):
         'messages': messages,
         'action': request.path,
         'add_buttons': add_buttons,
-        'del_buttons': del_buttons, # This is also used to generate the list of
-                                    # of associated OpenIDs
+        'del_buttons': del_buttons,  # This is also used to generate the list
+                                     # of associated OpenIDs
     })
 
+
 def complete(request, on_login_ok=None, on_login_failed=None,
-        on_login_ok_url=None, on_login_failed_url=None,
-    ):
+             on_login_ok_url=None, on_login_failed_url=None):
     """
     This view function takes optional arguments to configure how a successful
     or unsuccessful login will be dealt with. Default behaviour is to redirect
-    to the homepage, appending a query string of loggedin=True or loggedin=False
+    to the homepage, appending a query string of loggedin=True or
+    loggedin=False.
 
     You can use the on_login_ok_url and on_login_failed_url arguments to
-    indicate different URLs for redirection after an OK or failed login attempt.
+    indicate different URLs for redirection after an OK or failed login
+    attempt.
 
     Alternatively, you can provide your own view functions for these cases. For
     example:
@@ -185,9 +190,11 @@ def complete(request, on_login_ok=None, on_login_failed=None,
     def custom_on_success(request, identity_url, openid_response):
         # Reuse django_openidconsumer.views.default_on_success to set the
         # relevant session variables:
-        consumer_views.default_on_success(request, identity_url, openid_response)
+        consumer_views.default_on_success(request, identity_url,
+                                          openid_response)
 
-        # Now look up the user's identity_url to see if they exist in the system
+        # Now look up the user's identity_url to see if they exist in
+        # the system
         try:
             user_openid = UserOpenID.objects.get(openid=identity_url)
         except UserOpenID.DoesNotExist:
@@ -196,7 +203,8 @@ def complete(request, on_login_ok=None, on_login_failed=None,
         if user_openid:
             user = user_openid.user
             # Unfortunately we have to annotate the user with the
-            # 'django.contrib.auth.backends.ModelBackend' backend, or stuff breaks
+            # 'django.contrib.auth.backends.ModelBackend' backend,
+            # or stuff breaks
             backend = load_backend('django.contrib.auth.backends.ModelBackend')
             user.backend = '%s.%s' % (
                 backend.__module__, backend.__class__.__name__

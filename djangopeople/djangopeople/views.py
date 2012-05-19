@@ -299,24 +299,76 @@ def derive_username(nickname):
     return nickname
 
 
-class CountryView(generic.DetailView):
-    template_name = 'country.html'
-    context_object_name = 'country'
+class CleverPaginator(object):
+    """
+    A paginator that triggers pagination only if the 2nd page is
+    worth displaying.
+    """
+    paginate_by = 100
 
-    def get_object(self):
-        return get_object_or_404(Country,
-                                 iso_code=self.kwargs['country_code'].upper())
+    def get_count(self):
+        raise NotImplementedError
+
+    def get_paginate_by(self, queryset):
+        count = self.get_count()
+        if count > self.paginate_by * 1.5:
+            return self.paginate_by
+        return count
+
+
+class CountryView(CleverPaginator, generic.ListView):
+    template_name = 'country.html'
+    context_object_name = 'people_list'
+
+    def get_queryset(self):
+        self.country = get_object_or_404(
+            Country,
+            iso_code=self.kwargs['country_code'].upper()
+        )
+        self.all_people = self.country.djangoperson_set.select_related(
+                'country', 'user'
+        ).order_by('user__first_name', 'user__last_name')
+        return self.all_people
+
+    def get_count(self):
+        return self.country.num_people
 
     def get_context_data(self, **kwargs):
         context = super(CountryView, self).get_context_data(**kwargs)
         context.update({
-            'people_list': self.object.djangoperson_set.select_related(
-                'country', 'user'
-            ),
-            'regions': self.object.top_regions(),
+            'regions': self.country.top_regions(),
+            'country': self.country,
+            'people_list': self.all_people,
         })
         return context
 country = CountryView.as_view()
+
+
+class RegionView(CleverPaginator, generic.ListView):
+    template_name = 'country.html'
+
+    def get_queryset(self):
+        self.region = get_object_or_404(
+            Region,
+            country__iso_code=self.kwargs['country_code'].upper(),
+            code=self.kwargs['region_code'].upper(),
+        )
+        self.all_people = self.region.djangoperson_set.select_related(
+            'user', 'country',
+        ).order_by('user__first_name', 'user__last_name')
+        return self.all_people
+
+    def get_count(self):
+        return self.region.num_people
+
+    def get_context_data(self, **kwargs):
+        context = super(RegionView, self).get_context_data(**kwargs)
+        context.update({
+            'country': self.region,
+            'people_list': self.all_people,
+        })
+        return context
+region = RegionView.as_view()
 
 
 class CountrySitesView(generic.ListView):
@@ -340,16 +392,6 @@ class CountrySitesView(generic.ListView):
 country_sites = CountrySitesView.as_view()
 
 
-def region(request, country_code, region_code):
-    region = get_object_or_404(Region,
-        country__iso_code=country_code.upper(),
-        code=region_code.upper()
-    )
-    return render(request, 'country.html', {
-        'country': region,
-        'people_list': region.djangoperson_set.select_related('user',
-                                                              'country'),
-    })
 
 
 class ProfileView(generic.DetailView):

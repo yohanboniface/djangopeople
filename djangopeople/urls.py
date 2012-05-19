@@ -72,13 +72,16 @@ urlpatterns = patterns('',
     url(r'^(?P<country_code>[a-z]{2})/looking-for/(?P<looking_for>freelance|full-time)/$',
         views.country_looking_for, name='country_looking_for'),
 
-    url(r'^([a-z]{2})/(\w+)/$', views.region, name='country_region'),
+    url(r'^(?P<country_code>[a-z]{2})/(?P<region_code>\w+)/$',
+        views.region, name='country_region'),
 
     url(r'^profile/', views.redirect_to_logged_in_user_profile,
         name='redirect_to_logged_in_user_profile'),
+
     url(r'^(?P<username>[a-z0-9]{3,})/$', views.profile, name='user_profile'),
     url(r'^(?P<username>[a-z0-9]{3,})/bio/$', views.edit_bio, name='edit_bio'),
-    url(r'^(?P<username>[a-z0-9]{3,})/skills/$', views.edit_skills, name='edit_skills'),
+    url(r'^(?P<username>[a-z0-9]{3,})/skills/$',
+        views.edit_skills, name='edit_skills'),
 
     url(r'^(?P<username>[a-z0-9]{3,})/password/$',
         views.edit_password, name='edit_password'),

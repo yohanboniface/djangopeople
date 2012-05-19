@@ -29,6 +29,7 @@ Create ``djangopeople/settings.py`` and add::
 
 Then::
 
+    make db
     make run
 
 The development server is now running on http://localhost:8000.

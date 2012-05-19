@@ -18,8 +18,6 @@ LOGIN_URL = reverse_lazy('login')
 # Tagging settings
 FORCE_LOWERCASE_TAGS = True
 
-AUTH_PROFILE_MODULE = 'djangopeople.DjangoPerson'
-
 ADMINS = ()
 MANAGERS = ADMINS
 

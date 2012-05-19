@@ -72,10 +72,14 @@ a:focus {
 a:active {
 	text-decoration: underline;
 }
+a.nobg {
+	text-decoration: none;
+}
 a.nobg:hover,
 a.nobg:active,
 a.nobg:focus {
 	background-color: white;
+	text-decoration: none;
 }
 
 .pages a {

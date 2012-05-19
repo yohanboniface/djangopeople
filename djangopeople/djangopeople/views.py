@@ -1,17 +1,17 @@
 import datetime
 import operator
 import re
-import smtplib
 
 from django.contrib import auth
 from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.db.models import Q, F
 from django.http import Http404, HttpResponseForbidden
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext_lazy as _
 from django.views import generic
 
+from password_reset.views import Recover
 from tagging.models import Tag, TaggedItem
 from tagging.utils import calculate_cloud, get_tag
 
@@ -19,8 +19,7 @@ from . import utils
 from .constants import (MACHINETAGS_FROM_FIELDS,
                                     IMPROVIDERS_DICT, SERVICES_DICT)
 from .forms import (SkillsForm, SignupForm, PortfolioForm, BioForm,
-                    LocationForm, FindingForm, AccountForm, LostPasswordForm,
-                    PasswordForm)
+                    LocationForm, FindingForm, AccountForm, PasswordForm)
 from .models import DjangoPerson, Country, User, Region, PortfolioSite
 
 from ..django_openidauth.models import associate_openid, UserOpenID
@@ -108,46 +107,9 @@ def logout(request):
     return redirect(reverse('index'))
 
 
-class LostPasswordView(generic.FormView):
-    form_class = LostPasswordForm
-    template_name = 'lost_password.html'
-
-    def form_valid(self, form):
-        try:
-            form.save()
-        except smtplib.SMTPException:
-            return self.render_to_response(
-                self.get_context_data(
-                    message=_('Could not email you a recovery link.'),
-            ))
-        return self.render_to_response(
-            self.get_context_data(
-                message=_("An e-mail has been sent with instructions for "
-                          "recovering your account. Don't forget to check "
-                          "your spam folder!"),
-        ))
-lost_password = LostPasswordView.as_view()
-
-
-class LostPasswordRecoverView(generic.TemplateView):
-    template_name = 'lost_password.html'
-
-    def get(self, request, *args, **kwargs):
-        username = kwargs['username']
-        user = get_object_or_404(User, username=username)
-        if utils.hash_is_valid(username, kwargs['days'], kwargs['hash']):
-            user.backend = 'django.contrib.auth.backends.ModelBackend'
-            auth.login(request, user)
-            url = reverse('edit_password', kwargs={'username': username})
-            return redirect(url)
-        return super(LostPasswordRecoverView, self).get(request, *args,
-                                                        **kwargs)
-
-    def get_context_data(self, **kwargs):
-        ctx = super(LostPasswordRecoverView, self).get_context_data(**kwargs)
-        ctx['message'] = _('That was not a valid account recovery link')
-        return ctx
-lost_password_recover = LostPasswordRecoverView.as_view()
+class RecoverView(Recover):
+    search_fields = ['username']
+recover = RecoverView.as_view()
 
 
 class OpenIDWhatNext(generic.RedirectView):

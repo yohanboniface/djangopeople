@@ -4,7 +4,6 @@ from django.conf import settings
 from django.contrib.auth.middleware import AuthenticationMiddleware
 from django.contrib.auth.models import User
 from django.contrib.sessions.middleware import SessionMiddleware
-from django.core import mail
 from django.core.urlresolvers import reverse
 from django.middleware.common import CommonMiddleware
 from django.test import TestCase
@@ -76,37 +75,6 @@ class DjangoPeopleTest(TestCase):
 
         response = self.client.post(url, data, follow=True)
         self.assertRedirects(response, reverse('user_profile', args=['daveb']))
-
-    def test_recover_account(self):
-        url = reverse('recover')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        expected = '<label for="id_username">Username'
-        self.assertTrue(expected in response.content)
-
-        data = {'username': 'foo'}
-        response = self.client.post(url, data)
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue('That was not a valid username' in response.content)
-
-        user = User.objects.create_user('foo', 'test@example.com', 'bar')
-        DjangoPerson.objects.create(user=user,
-                                    country=Country.objects.get(pk=1),
-                                    latitude=0,
-                                    longitude=0,
-                                    location_description='Somewhere')
-        response = self.client.post(url, data)
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue('An e-mail has been sent' in response.content)
-        self.assertEqual(len(mail.outbox), 1)
-
-        content = mail.outbox[0].body
-        url = content.split('\n\n')[2]
-        url = url.replace('http://djangopeople.net', '')
-        response = self.client.get(url, follow=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.redirect_chain), 1)
-        self.assertTrue('<h1>Change your password</h1>' in response.content)
 
     def test_signup(self):
         url = reverse('signup')

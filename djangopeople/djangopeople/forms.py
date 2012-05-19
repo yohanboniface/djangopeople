@@ -1,15 +1,10 @@
 from django import forms
-from django.conf import settings
-from django.core.mail import send_mail
 from django.forms.forms import BoundField
 from django.forms.widgets import PasswordInput
-from django.template.loader import render_to_string
-from django.utils.translation import ugettext_lazy as _
 
 from tagging.forms import TagField
 from tagging.utils import edit_string_for_tags
 
-from . import utils
 from .constants import SERVICES, IMPROVIDERS, MACHINETAGS_FROM_FIELDS
 from .groupedselect import GroupedChoiceField
 from .models import DjangoPerson, Country, Region, User, RESERVED_USERNAMES
@@ -435,32 +430,6 @@ def make_validator(key, form):
             raise forms.ValidationError, 'You need to provide a URL'
         return form.cleaned_data.get(key)
     return check
-
-
-class LostPasswordForm(forms.Form):
-    username = forms.CharField()
-
-    def clean_username(self):
-        username = self.cleaned_data['username']
-        try:
-            person = DjangoPerson.objects.get(user__username=username)
-        except DjangoPerson.DoesNotExist:
-            raise forms.ValidationError(_('That was not a valid username.'))
-        self.cleaned_data['person'] = person
-        return username
-
-    def save(self):
-        path = utils.lost_url_for_user(self.cleaned_data['username'])
-        person = self.cleaned_data['person']
-        body = render_to_string('recovery_email.txt', {
-            'path': path,
-            'person': person,
-        })
-        send_mail(
-            'Django People account recovery', body,
-            settings.RECOVERY_EMAIL_FROM, [person.user.email],
-            fail_silently=False
-        )
 
 
 class PasswordForm(forms.ModelForm):

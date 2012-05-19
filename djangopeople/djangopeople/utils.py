@@ -1,32 +1,6 @@
 import datetime
-import hashlib
-
-from django.conf import settings
-from django.core.urlresolvers import reverse
-
 
 ORIGIN_DATE = datetime.date(2000, 1, 1)
-
-hex_to_int = lambda s: int(s, 16)
-int_to_hex = lambda i: hex(i).replace('0x', '')
-
-
-def lost_url_for_user(username):
-    days = int_to_hex((datetime.date.today() - ORIGIN_DATE).days)
-    hash = hashlib.md5(settings.SECRET_KEY + days + username).hexdigest()
-    return reverse('do_recover', args=[username, days, hash])
-
-
-def hash_is_valid(username, days, hash):
-    if hashlib.md5(settings.SECRET_KEY + days + username).hexdigest() != hash:
-        return False  # Hash failed
-    # Ensure days is within a week of today
-    days_now = (datetime.date.today() - ORIGIN_DATE).days
-    days_old = days_now - hex_to_int(days)
-    if days_old < 7:
-        return True
-    else:
-        return False
 
 
 def simple_decorator(decorator):

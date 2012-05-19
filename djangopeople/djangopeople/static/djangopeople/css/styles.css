@@ -96,6 +96,10 @@ a.nobg:focus {
 .paginator .pages {
 	text-align: right;
 }
+
+p.message {
+	color: red;
+}
 /* @end */
 
 /* @group Forms */

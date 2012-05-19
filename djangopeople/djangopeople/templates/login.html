@@ -53,8 +53,8 @@ input.openid {
 			<div class="fieldWrapper">
 				{{ field.label_tag }}
 				{{ field }}
-				{% if field.name == 'password' %}
-				<p><a href="{% url 'recover' %}">Lost your password?</a></p>
+				{% if field.name == "password" %}
+				<p><a href="{% url "password_reset_recover" %}">Lost your password?</a></p>
 				{% endif %}
 			</div>{% endfor %}
             <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{% url 'redirect_to_logged_in_user_profile' %}{% endif %}">
@@ -72,7 +72,7 @@ input.openid {
             <label for="id_openid">OpenID</label>
             <input id="id_openid" class="openid" type="text" name="openid_url">
         </div>
-        <p><a href="{% url 'recover' %}">OpenID not working?</a></p>
+        <p><a href="{% url "password_reset_recover" %}">OpenID not working?</a></p>
     </fieldset>
     <div class="buttonContainer">
         <input type="submit" value="Log in with OpenID">

@@ -21,9 +21,9 @@ urlpatterns = patterns('',
     url(r'^logout/$', views.logout, name='logout'),
     url(r'^about/$', views.about, name='about'),
     url(r'^recent/$', views.recent, name='recent'),
-    url(r'^recover/$', views.lost_password, name='recover'),
-    url(r'^recover/(?P<username>[a-z0-9]{3,})/(?P<days>[a-f0-9]+)/(?P<hash>[a-f0-9]{32})/$',
-        views.lost_password_recover, name='do_recover'),
+
+    url(r'^recover/$', views.recover, name='password_reset_recover'),
+    url(r'^', include('password_reset.urls')),
     url(r'^signup/$', views.signup, name='signup'),
 
     #openid stuff

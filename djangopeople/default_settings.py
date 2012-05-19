@@ -19,7 +19,6 @@ LOGIN_URL = reverse_lazy('login')
 FORCE_LOWERCASE_TAGS = True
 
 AUTH_PROFILE_MODULE = 'djangopeople.DjangoPerson'
-RECOVERY_EMAIL_FROM = 'example@example.com'
 
 ADMINS = ()
 MANAGERS = ADMINS
@@ -88,13 +87,16 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.humanize',
     'django.contrib.staticfiles',
-    'djangopeople.django_openidconsumer',
-    'djangopeople.django_openidauth',
     'raven.contrib.django',
     'djangosecure',
+    'tagging',
+
+    'djangopeople.django_openidconsumer',
+    'djangopeople.django_openidauth',
     'djangopeople.djangopeople',
     'djangopeople.machinetags',
-    'tagging',
+
+    'password_reset',
 )
 
 LOGGING = {

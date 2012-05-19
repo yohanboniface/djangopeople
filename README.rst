@@ -2,6 +2,11 @@
 
 This is an attempt to bring djangopeople.net back online and up to date.
 
+If you want to add features or make big changes, please `create a new issue`_
+first!
+
+.. _create a new issue: https://github.com/brutasse/djangopeople/issues/new
+
 Hacking
 -------
 

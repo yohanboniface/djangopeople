@@ -1,7 +1,6 @@
-import datetime
-
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 
 
 class UserOpenID(models.Model):
@@ -29,7 +28,7 @@ def associate_openid(user, openid):
     new = UserOpenID(
         user=user,
         openid=openid,
-        created_at=datetime.datetime.now(),
+        created_at=timezone.now(),
     )
     new.save()
     return True

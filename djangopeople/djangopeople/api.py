@@ -1,10 +1,9 @@
-import datetime
-
 from django.conf import settings
 from django.contrib.sites.models import RequestSite
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.shortcuts import redirect
+from django.utils import timezone
 
 from ..machinetags.models import MachineTaggedItem
 
@@ -60,7 +59,7 @@ def irc_spotted(request, irc_nick):
 
     first_time_seen = not person.last_active_on_irc
 
-    person.last_active_on_irc = datetime.datetime.now()
+    person.last_active_on_irc = timezone.now()
     person.save()
 
     if first_time_seen:

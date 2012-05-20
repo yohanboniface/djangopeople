@@ -8,6 +8,7 @@ from django.db import transaction
 from django.db.models import Q, F
 from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.views import generic
 
@@ -678,7 +679,7 @@ class IRCActiveView(generic.ListView):
 
     def get_queryset(self):
         results = DjangoPerson.objects.filter(
-            last_active_on_irc__gt=(datetime.datetime.now() -
+            last_active_on_irc__gt=(timezone.now() -
                                     datetime.timedelta(hours=1))
         ).order_by('-last_active_on_irc')
         # Filter out the people who don't want to be tracked (inefficient)

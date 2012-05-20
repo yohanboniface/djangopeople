@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from django.conf import settings
 from django.contrib.auth.middleware import AuthenticationMiddleware
 from django.contrib.auth.models import User
@@ -8,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.middleware.common import CommonMiddleware
 from django.test import TestCase
 from django.test.client import RequestFactory
-
+from django.utils import timezone
 
 from ...django_openidauth.models import associate_openid
 from ...django_openidconsumer.util import OpenID
@@ -301,7 +299,7 @@ class DjangoPeopleTest(TestCase):
 
         # update dave's irc time
         dave = DjangoPerson.objects.get(pk=1)
-        dave.last_active_on_irc = datetime.now()
+        dave.last_active_on_irc = timezone.now()
         dave.save()
 
         response = self.client.get(url)

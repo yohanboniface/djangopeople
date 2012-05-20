@@ -118,6 +118,8 @@ class DjangoPeopleTest(TestCase):
         response = self.client.post(url, data, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.count(), 4)
+        created = User.objects.get(username='testuser')
+        self.assertTrue(created.check_password('secret'))
         self.assertEqual(len(response.redirect_chain), 1)
 
         # Logged in users go back to the homepage

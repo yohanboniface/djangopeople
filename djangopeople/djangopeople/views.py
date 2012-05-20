@@ -155,9 +155,9 @@ class SignupView(generic.FormView):
             'username': form.cleaned_data['username'],
             'email': form.cleaned_data['email'],
         }
-        if form.cleaned_data.get('password1'):
-            creation_args['password'] = form.cleaned_data['password1']
         user = User.objects.create(**creation_args)
+        if form.cleaned_data.get('password1'):
+            user.set_password(form.cleaned_data['password1'])
         user.first_name = form.cleaned_data['first_name']
         user.last_name = form.cleaned_data['last_name']
         user.save()

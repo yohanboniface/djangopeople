@@ -23,6 +23,8 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL = os.environ['FROM_EMAIL']
 
 SENTRY_DSN = os.environ.get('SENTRY_DSN', '')
 
+API_PASSWORD = os.environ['API_PASSWORD']
+
 if 'CANONICAL_HOSTNAME' in os.environ:
     CANONICAL_HOSTNAME = os.environ['CANONICAL_HOSTNAME']
 

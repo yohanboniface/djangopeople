@@ -1,4 +1,6 @@
 .. image:: https://secure.travis-ci.org/brutasse/djangopeople.png
+   :alt: Build Status
+   :target: https://secure.travis-ci.org/brutasse/djangopeople
 
 This is an attempt to bring djangopeople.net back online and up to date.
 

@@ -357,6 +357,24 @@ p.help {
 	background-repeat: no-repeat;
 	background-position: left center;
 }
+.services .github {
+	padding-left: 25px;
+	background-image: url(../img/services/github.png);
+	background-repeat: no-repeat;
+	background-position: left center;
+}
+.services .bitbucket {
+	padding-left: 25px;
+	background-image: url(../img/services/bitbucket.png);
+	background-repeat: no-repeat;
+	background-position: left center;
+}
+.services .googleplus {
+	padding-left: 25px;
+	background-image: url(../img/services/googleplus.png);
+	background-repeat: no-repeat;
+	background-position: left center;
+}
 
 /* @end */
 

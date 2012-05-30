@@ -12,6 +12,7 @@ SERVICES = (
     ('djangosites', 'DjangoSites.org', 'img/services/django.png'),
     ('bitbucket', 'Bitbucket', 'img/services/bitbucket.png'),
     ('github', 'GitHub', 'img/services/github.png'),
+    ('stackoverflow', 'Stack Overflow', 'img/services/stackoverflow.png'),
 )
 SERVICES_DICT = dict([(r[0], r) for r in SERVICES])
 

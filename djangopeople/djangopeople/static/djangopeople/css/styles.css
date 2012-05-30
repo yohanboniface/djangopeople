@@ -375,6 +375,12 @@ p.help {
 	background-repeat: no-repeat;
 	background-position: left center;
 }
+.services .stackoverflow {
+	padding-left: 25px;
+	background-image: url(../img/services/stackoverflow.png);
+	background-repeat: no-repeat;
+	background-position: left center;
+}
 
 /* @end */
 

@@ -67,7 +67,11 @@ window.onload = function() {
 				{% if page == page_obj.number %}
 					<strong>{{ page }}</strong>
 				{% else %}
-					<a href="{% url "country_detail" country.iso_code|lower %}?page={{ page }}">{{ page }}</a>
+					{% if country.country %}
+						<a href="{% url "country_region" country.country.iso_code|lower country.code|lower %}?page={{ page }}">{{ page }}</a>
+					{% else %}
+						<a href="{% url "country_detail" country.iso_code|lower %}?page={{ page }}">{{ page }}</a>
+					{% endif %}
 				{% endif %}
 			{% endfor %}</div>
 		</div>

@@ -19,7 +19,7 @@
     {% block extrahead %}{% endblock %}
 </head>
 <body{% block bodymeta %}{% endblock %}>
-
+<div class="wrapper">
     <div class="nav">
         <ul>
             <li{% block nav_li_class_home %}{% endblock %}><a href="{% url 'index' %}">home</a></li>
@@ -57,5 +57,11 @@
         {% block content %}{% endblock %}
     </div>
 {% block extra %}{% endblock %}
+<div class="push"></div>
+</div>
+
+<div class="footer">
+	<p>Hosted on <span class="heroku">Heroku</span></p>
+</div>
 </body>
 </html>

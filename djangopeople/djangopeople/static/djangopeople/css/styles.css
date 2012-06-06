@@ -3,6 +3,10 @@
 
 /* @group Overrides and Font. */
 
+html, body {
+	height: 100%;
+}
+
 * {
 	margin: 0;
 	padding: 0;
@@ -208,6 +212,31 @@ form.search {
 /* @end */
 
 /* @end */
+
+.wrapper {
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	margin: 0 auto -40px;
+}
+
+.footer, .push {
+	height: 40px;
+}
+
+.footer p {
+	line-height: 31px;
+	text-align: left;
+	width: 70%;
+	margin: 0 auto;
+}
+.footer .heroku {
+	display: inline-block;
+	width: 88px;
+	height: 31px;
+	background: url('../img/heroku-logo.png') no-repeat;
+	text-indent: -9999px;
+}
 
 /* @group Helper Styles */
 

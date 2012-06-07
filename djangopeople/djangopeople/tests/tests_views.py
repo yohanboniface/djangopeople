@@ -38,6 +38,10 @@ class DjangoPeopleTest(TestCase):
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
 
+    def test_favicon(self):
+        response = self.client.get('/favicon.ico')
+        self.assertEqual(response.status_code, 301)
+
     def test_login(self):
         url = reverse('login')
         response = self.client.get(url)

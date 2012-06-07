@@ -11,6 +11,10 @@ from .djangopeople import views, api
 def perm_redirect(url):
     return lambda req: redirect(url, permanent=True)
 
+favicon = perm_redirect(
+    '%sdjangopeople/img/favicon.ico' % settings.STATIC_URL
+)
+
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -25,6 +29,8 @@ urlpatterns = patterns('',
     url(r'^recover/$', views.recover, name='password_reset_recover'),
     url(r'^', include('password_reset.urls')),
     url(r'^signup/$', views.signup, name='signup'),
+
+    url(r'^favicon.ico$', favicon),
 
     #openid stuff
     url(r'^openid/$', 'djangopeople.django_openidconsumer.views.begin', {

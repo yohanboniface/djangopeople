@@ -74,6 +74,7 @@ MIDDLEWARE_CLASSES = (
     'djangopeople.django_openidconsumer.middleware.OpenIDMiddleware',
     'django.middleware.doc.XViewMiddleware',
     'djangopeople.djangopeople.middleware.NoDoubleSlashes',
+    'raven.contrib.django.middleware.Sentry404CatchMiddleware',
 )
 
 ROOT_URLCONF = 'djangopeople.urls'

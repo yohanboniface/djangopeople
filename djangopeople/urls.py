@@ -3,6 +3,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.http import HttpResponse
 from django.shortcuts import redirect
 
 from .djangopeople import views, api
@@ -14,6 +15,9 @@ def perm_redirect(url):
 favicon = perm_redirect(
     '%sdjangopeople/img/favicon.ico' % settings.STATIC_URL
 )
+
+robots = lambda _: HttpResponse('User-agent: *\nDisallow:\n',
+                                mimetype='text/plain')
 
 admin.autodiscover()
 
@@ -31,6 +35,7 @@ urlpatterns = patterns('',
     url(r'^signup/$', views.signup, name='signup'),
 
     url(r'^favicon.ico$', favicon),
+    url(r'^robots.txt$', robots, name='robots'),
 
     #openid stuff
     url(r'^openid/$', 'djangopeople.django_openidconsumer.views.begin', {

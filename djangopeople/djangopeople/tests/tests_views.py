@@ -32,7 +32,7 @@ class DjangoPeopleTest(TestCase):
 
     def test_simple_pages(self):
         """Simple pages with no action"""
-        names = ['index', 'about', 'recent']
+        names = ['index', 'about', 'recent', 'robots']
         for name in names:
             url = reverse(name)
             response = self.client.get(url)

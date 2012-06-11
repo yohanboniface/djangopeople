@@ -1,6 +1,12 @@
 from django import forms
+from django.conf import settings
+from django.contrib.sites.models import RequestSite
+from django.core import signing
+from django.core.mail import send_mail
+from django.core.urlresolvers import reverse
 from django.forms.forms import BoundField
 from django.forms.widgets import PasswordInput
+from django.template import loader
 
 from tagging.forms import TagField
 from tagging.utils import edit_string_for_tags
@@ -470,3 +476,44 @@ class PasswordForm(forms.ModelForm):
     def save(self):
         self.instance.set_password(self.cleaned_data['password1'])
         self.instance.save()
+
+
+class RequestFormMixin(object):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request')
+        super(RequestFormMixin, self).__init__(*args, **kwargs)
+
+
+class DeletionRequestForm(RequestFormMixin, forms.Form):
+    email_template_name = 'delete_account.txt'
+    email_subject_template_name = 'delete_account_subject.txt'
+
+    def save(self):
+        token = signing.dumps(self.request.user.pk, salt='delete_account')
+        url = reverse('delete_account',
+                      args=[self.request.user.username, token])
+        context = {
+            'user': self.request.user,
+            'url': url,
+            'site': RequestSite(self.request),
+            'scheme': 'https' if self.request.is_secure() else 'http',
+        }
+        body = loader.render_to_string(self.email_template_name,
+                                       context).strip()
+        subject = loader.render_to_string(self.email_subject_template_name,
+                                          context).strip()
+        send_mail(subject, body, settings.DEFAULT_FROM_EMAIL,
+                  [self.request.user.email])
+
+
+class AccountDeletionForm(RequestFormMixin, forms.Form):
+    password = forms.CharField(widget=forms.PasswordInput)
+
+    def clean_password(self):
+        password = self.cleaned_data['password']
+        if not self.request.user.check_password(password):
+            raise forms.ValidationError('Your password was invalid')
+        return password
+
+    def save(self):
+        self.request.user.delete()

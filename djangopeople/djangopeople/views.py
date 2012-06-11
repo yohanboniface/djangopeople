@@ -3,6 +3,7 @@ import operator
 import re
 
 from django.contrib import auth
+from django.core import signing
 from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.db.models import Q, F
@@ -20,7 +21,8 @@ from . import utils
 from .constants import (MACHINETAGS_FROM_FIELDS,
                                     IMPROVIDERS_DICT, SERVICES_DICT)
 from .forms import (SkillsForm, SignupForm, PortfolioForm, BioForm,
-                    LocationForm, FindingForm, AccountForm, PasswordForm)
+                    LocationForm, FindingForm, AccountForm, PasswordForm,
+                    DeletionRequestForm, AccountDeletionForm)
 from .models import DjangoPerson, Country, User, Region, PortfolioSite
 
 from ..django_openidauth.models import associate_openid, UserOpenID
@@ -685,3 +687,64 @@ class IRCActiveView(generic.ListView):
         # Filter out the people who don't want to be tracked (inefficient)
         return [r for r in results if r.irc_tracking_allowed()]
 irc_active = IRCActiveView.as_view()
+
+
+class RequestFormMixin(object):
+    def get_form_kwargs(self):
+        kwargs = super(RequestFormMixin, self).get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
+
+class DeletionRequestView(RequestFormMixin, generic.FormView):
+    form_class = DeletionRequestForm
+    template_name = 'delete_account_request.html'
+
+    def form_valid(self, form):
+        form.save()
+        return redirect(reverse('delete_account_next',
+                                args=[self.request.user.username]))
+delete_account_request = must_be_owner(DeletionRequestView.as_view())
+
+
+class DeletionNext(generic.TemplateView):
+    template_name = 'delete_account_next.html'
+delete_account_next = must_be_owner(DeletionNext.as_view())
+
+
+class AccountDeletionView(RequestFormMixin, generic.FormView):
+    form_class = AccountDeletionForm
+    template_name = 'delete_account.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            self.key = signing.loads(kwargs['key'], max_age=3600,
+                                     salt='delete_account')
+        except signing.SignatureExpired:
+            return redirect(reverse('delete_account_request',
+                                    args=[request.user.username]))
+        except signing.BadSignature:
+            raise Http404
+        return super(AccountDeletionView, self).dispatch(request, *args,
+                                                         **kwargs)
+
+    def form_valid(self, form):
+        form.save()
+        return redirect(reverse('delete_account_done',
+                                args=[self.request.user.username]))
+
+    def get_context_data(self, **kwargs):
+        ctx = super(AccountDeletionView, self).get_context_data(**kwargs)
+        ctx['key'] = self.key
+        return ctx
+delete_account = must_be_owner(AccountDeletionView.as_view())
+
+
+class DeletionDone(generic.TemplateView):
+    template_name = 'delete_account_done.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if User.objects.filter(username=kwargs['username']).exists():
+            raise Http404
+        return super(DeletionDone, self).dispatch(request, *args, **kwargs)
+delete_account_done = DeletionDone.as_view()

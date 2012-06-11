@@ -1,0 +1,7 @@
+Dear {{ user.get_full_name }},
+
+You have expressed the desire to delete your account from {{ site.domain }}. You can delete your account by following the instructions on the link below:
+
+{{ scheme }}://{{ site.domain }}{{ url }}
+
+For security reasons, this link will stay valid for only 5 minutes.

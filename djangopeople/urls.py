@@ -103,6 +103,18 @@ urlpatterns = patterns('',
 
     url(r'^(?P<username>[a-z0-9]{3,})/finding/$',
         views.edit_finding, name='edit_finding'),
+
+    url(r'^(?P<username>[a-z0-9]{3,})/delete/$',
+        views.delete_account_request, name='delete_account_request'),
+
+    url(r'^(?P<username>[a-z0-9]{3,})/delete/next/$',
+        views.delete_account_next, name='delete_account_next'),
+
+    url(r'^(?P<username>[a-z0-9]{3,})/delete/done/$',
+        views.delete_account_done, name='delete_account_done'),
+
+    url(r'^(?P<username>[a-z0-9]{3,})/delete/(?P<key>.+)/$',
+        views.delete_account, name='delete_account'),
 )
 
 urlpatterns += staticfiles_urlpatterns()

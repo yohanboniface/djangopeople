@@ -3,6 +3,7 @@ import shutil
 import hashlib
 
 from django.contrib.auth.models import User
+from django.core import mail
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.conf import settings
@@ -834,3 +835,56 @@ class EditViewTest(TestCase):
         self.assertFormError(response, 'form', 'location_description',
                              ('Drag and zoom the map until the crosshair '
                               'matches your location'))
+
+    def test_delete_account(self):
+        url = reverse('delete_account_request', args=['daveb'])
+        response = self.client.get(url)
+        self.assertContains(response, "Account deletion")
+
+        response = self.client.post(url, {})
+        url = reverse('delete_account_next', args=['daveb'])
+        self.assertRedirects(response, url)
+        self.assertEqual(len(mail.outbox), 1)
+
+        response = self.client.get(url)
+        self.assertContains(response, 'An email was just sent')
+
+        url = mail.outbox[0].body.split('testserver')[2].split('\n')[0]
+        response = self.client.get(url)
+        self.assertContains(response, 'Account deletion')
+
+        data = {'password': 'example'}
+        response = self.client.post(url, data)
+        self.assertContains(response, 'Your password was invalid')
+
+        self.assertEqual(User.objects.count(), 3)
+        response = self.client.post(url, {'password': '123456'})
+        self.assertEqual(User.objects.count(), 2)
+
+        with self.assertRaises(User.DoesNotExist):
+            User.objects.get(username='daveb')
+
+        url = reverse('delete_account_done', args=['daveb'])
+        self.assertRedirects(response, url)
+
+        response = self.client.get(url)
+        self.assertContains(response, 'Account deleted')
+
+    def test_failing_deletion(self):
+        # expired link: redirect to form
+        url = reverse('delete_account',
+                      args=['daveb', 'Mg:1Sd7hl:RoSbkTsuqHVUjChAwoB5HZumgCg'])
+        response = self.client.get(url, follow=True)
+        self.assertEqual(len(response.redirect_chain), 1)
+        self.assertContains(response, 'Account deletion')
+
+        # invalid link: 404
+        url = reverse('delete_account', args=['daveb', 'test_some_data'])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
+        # delete confirmation page only shown if account does not exist
+        url = reverse('delete_account_done',
+                      args=[User.objects.all()[0].username])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)

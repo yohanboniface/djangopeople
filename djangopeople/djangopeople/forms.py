@@ -266,28 +266,35 @@ class LocationForm(PopulateChoices, forms.ModelForm):
 
     def clean_country(self):
         try:
-            country = Country.objects.get(
+            self.cleaned_data['country_instance'] = Country.objects.get(
                 iso_code=self.cleaned_data['country'],
             )
-            return country
+            return self.cleaned_data['country_instance'].iso_code
         except Country.DoesNotExist:
             raise forms.ValidationError(
-                    'The ISO code of the country you selected is invalid.'
-                )
+                'The ISO code of the country you selected is invalid.'
+            )
 
     def clean_region(self):
         # If a region is selected, ensure it matches the selected country
         if self.cleaned_data['region']:
             try:
-                Region.objects.get(
+                self.cleaned_data['region_instance'] = Region.objects.get(
                     code=self.cleaned_data['region'],
                     country__iso_code=self.cleaned_data['country']
                 )
+                return self.cleaned_data['region_instance'].code
             except Region.DoesNotExist:
                 raise forms.ValidationError(
                     'The region you selected does not match the country'
                 )
-            return self.cleaned_data['region']
+
+    def clean(self):
+        if 'country_instance' in self.cleaned_data:
+            self.cleaned_data['country'] = self.cleaned_data['country_instance']
+        if 'region_instance' in self.cleaned_data:
+            self.cleaned_data['region'] = self.cleaned_data['region_instance']
+        return self.cleaned_data
 
     clean_location_description = not_in_the_atlantic
 

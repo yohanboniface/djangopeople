@@ -740,6 +740,19 @@ class EditViewTest(TestCase):
         self.assertEqual(p.location_description, new_location_description)
         self.assertEqual(p.country.iso_code, new_country)
 
+    def test_location_bug_24(self):
+        # https://github.com/brutasse/djangopeople/issues/24
+        url = reverse('edit_location', args=['daveb'])
+        data = {
+            'location_description': 'Rapid City, South Dakota',
+            'country': 'US',
+            'latitude': '44.07883004975277',
+            'longitude': '-103.28332901005193',
+            'region': 'SD',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+
     def test_edit_location_form_error_fields_required(self):
         url_edit_location = reverse('edit_location', args=['daveb'])
 

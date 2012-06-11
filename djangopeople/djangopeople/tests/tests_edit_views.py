@@ -72,13 +72,16 @@ class EditViewTest(TestCase):
 
         new_email = 'foo@bar.com'
         data = {'email': new_email,
+                'first_name': 'Test',
+                'last_name': 'User',
                 'privacy_search': 'public',
                 'privacy_email': 'private',
                 'privacy_im': 'private',
                 'privacy_irctrack': 'public'}
 
         u = User.objects.get(username='daveb')
-        self.assertNotEqual(u.email, new_email)
+        self.assertNotEqual(u.first_name, 'Test')
+        self.assertNotEqual(u.last_name, 'User')
 
         response = self.client.post(url_edit_finding, data, follow=True)
         self.assertRedirects(response, url_profile)
@@ -86,6 +89,8 @@ class EditViewTest(TestCase):
 
         u = User.objects.get(username='daveb')
         self.assertEqual(u.email, new_email)
+        self.assertEqual(u.first_name, 'Test')
+        self.assertEqual(u.last_name, 'User')
 
     def test_edit_finding_looking_for_work(self):
         url_edit_finding = reverse('edit_finding', args=['daveb'])
@@ -95,6 +100,8 @@ class EditViewTest(TestCase):
         looking_for_work = 'freelance'
         data = {'looking_for_work': looking_for_work,
                 'email': new_email,
+                'first_name': 'Hello',
+                'last_name': 'World',
                 'privacy_search': 'public',
                 'privacy_email': 'private',
                 'privacy_im': 'private',
@@ -123,6 +130,8 @@ class EditViewTest(TestCase):
         im_jabber = 'daveb@jabber.org'
         data = {'im_jabber': im_jabber,
                 'email': new_email,
+                'first_name': 'Hello',
+                'last_name': 'World',
                 'privacy_search': 'public',
                 'privacy_email': 'private',
                 'privacy_im': 'private',
@@ -150,6 +159,8 @@ class EditViewTest(TestCase):
         service_twitter = 'https://twitter.com/davebbar'
         data = {'service_twitter': service_twitter,
                 'email': 'foo@bar.com',
+                'first_name': 'Hello',
+                'last_name': 'World',
                 'privacy_search': 'public',
                 'privacy_email': 'private',
                 'privacy_im': 'private',
@@ -200,6 +211,8 @@ class EditViewTest(TestCase):
         url_profile = reverse('user_profile', args=['daveb'])
 
         data = {'email': 'foo@bar.com',
+                'first_name': 'Hello',
+                'last_name': 'World',
                 'privacy_search': 'public',
                 'privacy_email': 'private',
                 'privacy_im': 'private',

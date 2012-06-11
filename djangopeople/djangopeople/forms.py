@@ -335,6 +335,8 @@ class FindingForm(forms.ModelForm):
                 'field': BoundField(self, field, 'im_' + shortname),
             })
 
+    first_name = forms.CharField()
+    last_name = forms.CharField()
     email = forms.EmailField()
     blog = forms.URLField(required=False)
     privacy_search = forms.ChoiceField(
@@ -383,6 +385,8 @@ class FindingForm(forms.ModelForm):
     def save(self):
         user = self.instance.user
         user.email = self.cleaned_data['email']
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
         user.save()
 
         for fieldname, (namespace, predicate) in \

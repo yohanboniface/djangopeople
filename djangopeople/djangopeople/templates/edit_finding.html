@@ -15,6 +15,16 @@
     <h2>Contact details</h2>
     <fieldset>
         <div class="fieldWrapper">
+            {{ form.first_name.errors }}
+						{{ form.first_name.label_tag }}
+            {{ form.first_name }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.last_name.errors }}
+						{{ form.last_name.label_tag }}
+            {{ form.last_name }}
+        </div>
+        <div class="fieldWrapper">
             {{ form.email.errors }}
             <label for="id_email">E-mail *</label>
             {{ form.email }}
@@ -77,8 +87,7 @@
             {{ form.privacy_irctrack }}
         </div>
     </fieldset>
-    
+
     <div class="buttonContainer"><input type="submit" value="Save changes"></div>
     </form>
-
 {% endblock %}

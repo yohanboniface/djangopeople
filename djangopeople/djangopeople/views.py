@@ -449,6 +449,8 @@ class EditFindingView(DjangoPersonEditViewBase):
         mtags = tagdict(self.object.machinetags.all())
         initial = {
             'email': self.object.user.email,
+            'first_name': self.object.user.first_name,
+            'last_name': self.object.user.last_name,
         }
         # Fill in other initial fields from machinetags
         for fieldname, (namespace, predicate) in \

@@ -735,7 +735,7 @@ class AccountDeletionView(RequestFormMixin, generic.FormView):
 
     def get_context_data(self, **kwargs):
         ctx = super(AccountDeletionView, self).get_context_data(**kwargs)
-        ctx['key'] = self.key
+        ctx['key'] = self.kwargs['key']
         return ctx
 delete_account = must_be_owner(AccountDeletionView.as_view())
 

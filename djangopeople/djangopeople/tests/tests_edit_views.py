@@ -853,6 +853,9 @@ class EditViewTest(TestCase):
         response = self.client.get(url)
         self.assertContains(response, 'Account deletion')
 
+        target = response.content.split('action="')[1].split('"', 1)[0]
+        self.assertEqual(target, url)
+
         data = {'password': 'example'}
         response = self.client.post(url, data)
         self.assertContains(response, 'Your password was invalid')

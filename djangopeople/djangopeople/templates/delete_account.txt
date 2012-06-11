@@ -1,6 +1,6 @@
 Dear {{ user.get_full_name }},
 
-You have expressed the desire to delete your account from {{ site.domain }}. You can delete your account by following the instructions on the link below:
+It seems you're willing to delete your account from {{ site.domain }}. You can delete your account by following the instructions on the link below:
 
 {{ scheme }}://{{ site.domain }}{{ url }}
 

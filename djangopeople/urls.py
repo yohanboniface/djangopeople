@@ -3,7 +3,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseGone
 from django.shortcuts import redirect
 
 from .djangopeople import views, api
@@ -18,6 +18,7 @@ favicon = perm_redirect(
 
 robots = lambda _: HttpResponse('User-agent: *\nDisallow:\n',
                                 mimetype='text/plain')
+gone = lambda _: HttpResponseGone()
 
 admin.autodiscover()
 
@@ -36,6 +37,7 @@ urlpatterns = patterns('',
 
     url(r'^favicon.ico$', favicon),
     url(r'^robots.txt$', robots, name='robots'),
+    url(r'^static/profiles/_thumbs/.*', gone, name='gone'),
 
     #openid stuff
     url(r'^openid/$', 'djangopeople.django_openidconsumer.views.begin', {

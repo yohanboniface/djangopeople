@@ -38,6 +38,11 @@ class DjangoPeopleTest(TestCase):
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
 
+    def test_old_profile_pics(self):
+        url = '/static/profiles/_thumbs/foobar.png'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 410)
+
     def test_favicon(self):
         response = self.client.get('/favicon.ico')
         self.assertEqual(response.status_code, 301)
@@ -236,7 +241,7 @@ class DjangoPeopleTest(TestCase):
 
         url = reverse('skill_detail', args=['xxx'])
         response = self.client.get(url)
-        self.assertEquals(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
 
     def test_country_skill_cloud(self):
         url = reverse('country_skill_cloud', args=['at'])
@@ -248,7 +253,7 @@ class DjangoPeopleTest(TestCase):
 
         url = reverse('country_skill_cloud', args=['xy'])
         response = self.client.get(url)
-        self.assertEquals(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
 
     def test_country_skill(self):
         url = reverse('country_skill', args=['at', 'python'])
@@ -275,7 +280,7 @@ class DjangoPeopleTest(TestCase):
 
         url = reverse('country_detail', args=['xy'])
         response = self.client.get(url)
-        self.assertEquals(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
 
     def test_sites(self):
         url = reverse('country_sites', args=['at'])

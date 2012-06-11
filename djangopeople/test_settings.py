@@ -15,3 +15,6 @@ DATABASES = {
         'USER': 'postgres',
     },
 }
+
+LOGGING['loggers']['raven']['handlers'] = []
+LOGGING['loggers']['sentry.errors']['handlers'] = []

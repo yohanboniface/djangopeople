@@ -7,30 +7,29 @@
 
 {% block header %}
 	<form action="{% url 'search' %}" method="GET" class="search">
-        <h1><label for="q">Search{% if q %}: {{ q }}{% endif %}</label></h1>
-        {% if people_list %}<p class="meta">{{ people_list|length }} result{{ people_list|length|pluralize }}</p>{% endif %}
-        {% if has_badwords %}<p class="help"><strong>Terms must be three or more characters</strong></p>{% endif %}
+		<h1><label for="q">Search{% if q %}: {{ q }}{% endif %}</label></h1>
+		{% if people_list %}<p class="meta">{{ people_list|length }} result{{ people_list|length|pluralize }}</p>{% endif %}
+		{% if has_badwords %}<p class="help"><strong>Terms must be three or more characters</strong></p>{% endif %}
 		<p><input type="text" name="q" id="q" value="{{ q }}"> <input type="submit" class="submit" value="Search"></p>
-
-</form>
+		<p>This tool searches by username, first name and last name.</p>
+	</form>
 {% endblock %}
 
 {% block map %}
-{% if people_list %}
-    <div class="mapContainer major">
-        <div id="gmap">&nbsp;</div>
-    </div>
-{% endif %}
+	{% if people_list %}
+		<div class="mapContainer major">
+			<div id="gmap">&nbsp;</div>
+		</div>
+	{% endif %}
 {% endblock %}
 
 {% block content %}
-{% if q and not people_list %}
-<p>No users found. This tool searches by username, first name and last name.</p>
-{% endif %}
-{% if people_list %}
-        <ul class="detailsList split">
-            {% load person_list_items %}{% person_list_items people_list %}
-        </ul>
-{% endif %}
+	{% if q and not people_list %}
+		<p>No users found.</p>
+	{% endif %}
+	{% if people_list %}
+		<ul class="detailsList split">
+			{% load person_list_items %}{% person_list_items people_list %}
+		</ul>
+	{% endif %}
 {% endblock %}
-

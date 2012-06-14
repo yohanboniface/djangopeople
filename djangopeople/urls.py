@@ -38,6 +38,7 @@ urlpatterns = patterns('',
     url(r'^favicon.ico$', favicon),
     url(r'^robots.txt$', robots, name='robots'),
     url(r'^static/profiles/_thumbs/.*', gone, name='gone'),
+    url(r'^static/img/.*', gone),
 
     #openid stuff
     url(r'^openid/$', 'djangopeople.django_openidconsumer.views.begin', {

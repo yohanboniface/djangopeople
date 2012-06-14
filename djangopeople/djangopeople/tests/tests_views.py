@@ -39,9 +39,13 @@ class DjangoPeopleTest(TestCase):
             self.assertEqual(response.status_code, 200)
 
     def test_old_profile_pics(self):
-        url = '/static/profiles/_thumbs/foobar.png'
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 410)
+        for url in [
+            '/static/profiles/_thumbs/foobar.png',
+            '/static/img/green-bubble.png',
+            '/static/img/person_small_blank.png',
+        ]:
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 410)
 
     def test_favicon(self):
         response = self.client.get('/favicon.ico')

@@ -87,6 +87,12 @@ class DjangoPeopleTest(TestCase):
         response = self.client.post(url, data, follow=True)
         self.assertRedirects(response, reverse('user_profile', args=['daveb']))
 
+    def test_anonymous_redirect(self):
+        url = reverse('redirect_to_logged_in_user_profile')
+        response = self.client.get(url)
+        print response['Location']
+        self.assertEqual(response.status_code, 302)
+
     def test_signup(self):
         url = reverse('signup')
         response = self.client.get(url)

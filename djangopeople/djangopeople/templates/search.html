@@ -1,17 +1,16 @@
 {% extends "maps.html" %}
-{% load url from future %}
 
-{% block title %}Search{% if q %}: {{ q }}{% endif %} |{% endblock %}
+{% block title %}{% if q %}{% blocktrans %}Search: {{ q }}{% endblocktrans %}{% else %}{% trans "Search" %}{% endif %} |{% endblock %}
 
 {% block nav_li_class_search %} class="current"{% endblock %}
 
 {% block header %}
-	<form action="{% url 'search' %}" method="GET" class="search">
-		<h1><label for="q">Search{% if q %}: {{ q }}{% endif %}</label></h1>
-		{% if people_list %}<p class="meta">{{ people_list|length }} result{{ people_list|length|pluralize }}</p>{% endif %}
-		{% if has_badwords %}<p class="help"><strong>Terms must be three or more characters</strong></p>{% endif %}
-		<p><input type="text" name="q" id="q" value="{{ q }}"> <input type="submit" class="submit" value="Search"></p>
-		<p>This tool searches by username, first name and last name.</p>
+	<form action="{% url "search" %}" method="GET" class="search">
+		<h1><label for="q">{% if q %}{% blocktrans %}Search: {{ q }}{% endblocktrans %}{% else %}{% trans "Search" %}{% endif %}</label></h1>
+		{% if people_list %}<p class="meta">{% blocktrans count counter=people_list|length %}{{ counter }} result{% plural %}{{ counter }} results{% endblocktrans %}</p>{% endif %}
+		{% if has_badwords %}<p class="help"><strong>{% trans "Terms must be three or more characters" %}</strong></p>{% endif %}
+		<p><input type="text" name="q" id="q" value="{{ q }}"> <input type="submit" class="submit" value="{% trans "Search" %}"></p>
+		<p>{% trans "This tool searches by username, first name and last name." %}</p>
 	</form>
 {% endblock %}
 
@@ -25,7 +24,7 @@
 
 {% block content %}
 	{% if q and not people_list %}
-		<p>No users found.</p>
+		<p>{% trans "No users found." %}</p>
 	{% endif %}
 	{% if people_list %}
 		<ul class="detailsList split">

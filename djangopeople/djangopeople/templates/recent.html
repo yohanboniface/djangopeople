@@ -1,20 +1,19 @@
 {% extends "base.html" %}
 
-{% block title %}Recent people |{% endblock %}e
+{% block title %}{% trans "Recent people" %} |{% endblock %}e
 
 {% block js %}
 {% endblock %}
 
 {% block header %}
-<h1>Recent people</h1>
+	<h1>{% trans "Recent people" %}</h1>
 {% endblock %}
 
 {% block map %}
 {% endblock %}
 
 {% block content %}
-        <ul class="detailsList split">
-            {% load person_list_items %}{% person_list_items people %}
-        </ul>
+	<ul class="detailsList split">
+		{% load person_list_items %}{% person_list_items people %}
+	</ul>
 {% endblock %}
-

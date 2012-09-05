@@ -1,5 +1,4 @@
 {% extends "maps.html" %}
-{% load url from future %}
 {% load staticfiles gravatar %}
 
 {% block extrahead %}{{ block.super }}
@@ -11,44 +10,42 @@
 {% block maps_code %}
 <script type="text/javascript">
 window.onload = function() {
-    var center = new google.maps.LatLng(19.97335, -15.8203);
-    var gmap = new google.maps.Map(document.getElementById('gmap'), {
-       zoom : 2,
-       center: center,
-       mapTypeId: google.maps.MapTypeId.ROADMAP,
-       scrollwheel: false
-    });
-    // Plot the people as markers
-    plotPeopleOnMap(people, gmap);
+	var center = new google.maps.LatLng(19.97335, -15.8203);
+	var gmap = new google.maps.Map(document.getElementById('gmap'), {
+		zoom : 2,
+		center: center,
+		mapTypeId: google.maps.MapTypeId.ROADMAP,
+		scrollwheel: false
+	});
+	// Plot the people as markers
+	plotPeopleOnMap(people, gmap);
 };
 </script>
 {% endblock maps_code %}
 
 {% block map %}
-    <div class="mapContainer major">
-        <div id="gmap">&nbsp;</div>
-    </div>
+	<div class="mapContainer major">
+		<div id="gmap">&nbsp;</div>
+	</div>
 {% endblock %}
 
 {% block content %}
-<p class="mapnote">Showing {{ people_list_limited|length }} recent signups (out of {{ total_people }}){% if user.is_anonymous %} - if you're a Django developer, why not <a href="{% url 'signup' %}">add yourself</a> to the site?{% endif %}</p>
-        <ul class="detailsList split">
-            {% for person in people_list_limited %}
-            <li>
-                <img src="{% gravatar person.user.email 40 %}" alt="{{ person }}" class="main">
-                <h3><a href="{{ person.get_absolute_url }}">{{ person.user.get_full_name }}</a></h3>
-								<p class="meta"><a href="{% url 'country_detail' person.country.iso_code|lower %}" class="nobg"><img src="{% static person.country.flag_url %}" alt="{{ person.country }}" title="{{ person.country }}"></a> {{ person.location_description }}</p>
-
-            </li>
-            {% endfor %}
-        </ul>
-        <ul class="detailsList split">
-            {% for country in countries %}
-            <li>
-                <a href="{% url 'country_detail' country.iso_code|lower %}" class="nobg"><img src="{% static "djangopeople/img/blank.png" %}" class="flag iso-{{ country.iso_code|lower }}" alt="{{ country }}"></a> <a href="{% url 'country_detail' country.iso_code|lower %}"><strong>{{ country }}</strong></a> {{ country.num_people }} {% ifequal country.num_people 1 %}person{% else %}people{% endifequal %}
-            </li>
-            {% endfor %}
-        </ul>
-
-        <p class="jobad">Looking for a Django job? check out <a href="http://djangogigs.com/">Djangogigs.com</a></p>
+	<p class="mapnote">{% blocktrans with counter=people_list_limited|length %}Showing {{ counter }} recent signups (out of {{ total_people }}){% endblocktrans %}{% if user.is_anonymous %} - {% url "signup" as signup_url %}{% blocktrans %}if you're a Django developer, why not <a href="{{ signup_url }}">add yourself</a> to the site?{% endblocktrans %}{% endif %}</p>
+	<ul class="detailsList split">
+		{% for person in people_list_limited %}
+			<li>
+				<img src="{% gravatar person.user.email 40 %}" alt="{{ person }}" class="main">
+				<h3><a href="{{ person.get_absolute_url }}">{{ person.user.get_full_name }}</a></h3>
+				<p class="meta"><a href="{% url "country_detail" person.country.iso_code|lower %}" class="nobg"><img src="{% static person.country.flag_url %}" alt="{{ person.country }}" title="{{ person.country }}"></a> {{ person.location_description }}</p>
+			</li>
+		{% endfor %}
+	</ul>
+	<ul class="detailsList split">
+		{% for country in countries %}
+			<li>
+				<a href="{% url "country_detail" country.iso_code|lower %}" class="nobg"><img src="{% static "djangopeople/img/blank.png" %}" class="flag iso-{{ country.iso_code|lower }}" alt="{{ country }}"></a> <a href="{% url "country_detail" country.iso_code|lower %}"><strong>{{ country }}</strong></a> {% blocktrans count counter=country.num_people %}{{ counter }} person{% plural %}{{ counter }} people{% endblocktrans %}
+			</li>
+		{% endfor %}
+	</ul>
+	<p class="jobad">{% blocktrans %}Looking for a Django job? check out <a href="http://djangogigs.com/">Djangogigs.com</a>{% endblocktrans %}</p>
 {% endblock %}

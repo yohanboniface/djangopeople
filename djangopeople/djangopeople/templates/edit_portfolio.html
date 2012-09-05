@@ -1,29 +1,26 @@
 {% extends "edit_account.html" %}
-{% load url from future %}
 
-{% block title %}Update your portfolio |{% endblock %}
+{% block title %}{% trans "Update your portfolio" %} |{% endblock %}
 
 {% block js %}
 <style type="text/css">
 .fieldWrapper label {
-    width: 5em;
+	width: 5em;
 }
 .fieldWrapper input {
-    width: 20em;
+	width: 20em;
 }
 </style>
 {% endblock %}
 
 {% block header%}
-<h1>Update your portfolio</h1>
+	<h1>{% trans "Update your portfolio" %}</h1>
 {% endblock %}
 
 {% block content %}
-  <p class="help">Show off the sites and projects you've personally built (or contributed to) using Django.</p>
-  <form method="post" action="{% url 'edit_portfolio' user.username %}">
-
-      {% include 'includes/form.html' %}
-
-    <div class="buttonContainer"><input type="submit" value="Update portfolio" /></div>
-  </form>
+	<p class="help">{% trans "Show off the sites and projects you've personally built (or contributed to) using Django." %}</p>
+	<form method="post" action="{% url "edit_portfolio" user.username %}">
+		{% include "includes/form.html" %}
+		<div class="buttonContainer"><input type="submit" value="{% trans "Update portfolio" %}" /></div>
+	</form>
 {% endblock %}

@@ -5,8 +5,12 @@ from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.http import HttpResponse, HttpResponseGone
 from django.shortcuts import redirect
+from django.template.loader import add_to_builtins
 
 from .djangopeople import views, api
+
+add_to_builtins('django.templatetags.i18n')
+add_to_builtins('django.templatetags.future')
 
 
 def perm_redirect(url):

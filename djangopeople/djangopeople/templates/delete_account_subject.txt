@@ -1,2 +1,1 @@
-{% blocktrans with domain=site.domain %}Account deletion on {{ domain }}{%
-endblocktrans %}
+{% blocktrans with domain=site.domain %}Account deletion on {{ domain }}{% endblocktrans %}

@@ -90,7 +90,6 @@ class DjangoPeopleTest(TestCase):
     def test_anonymous_redirect(self):
         url = reverse('redirect_to_logged_in_user_profile')
         response = self.client.get(url)
-        print response['Location']
         self.assertEqual(response.status_code, 302)
 
     def test_signup(self):

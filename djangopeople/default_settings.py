@@ -39,10 +39,6 @@ SITE_ID = 1
 # to load the internationalization machinery.
 USE_I18N = True
 
-# Absolute path to the directory that holds media.
-# Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = os.path.join(OUR_ROOT, 'media')
-
 # Absolute path to the directory where static media will be collected.
 STATIC_ROOT = os.path.join(OUR_ROOT, 'static')
 

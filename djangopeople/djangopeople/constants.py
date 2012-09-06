@@ -1,3 +1,5 @@
+from django.utils.translation import ugettext as _
+
 SERVICES = (
     # shortname, name, icon
     ('flickr', 'Flickr', 'img/services/flickr.png'),
@@ -23,7 +25,7 @@ IMPROVIDERS = (
     ('gtalk', 'GTalk', 'img/improviders/gtalk.png'),
     ('msn', 'MSN', 'img/improviders/msn.png'),
     ('jabber', 'Jabber', 'img/improviders/jabber.png'),
-    ('django', '#django IRC', 'img/services/django.png'),
+    ('django', _('#django IRC'), 'img/services/django.png'),
 )
 IMPROVIDERS_DICT = dict([(r[0], r) for r in IMPROVIDERS])
 

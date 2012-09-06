@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 from django.forms.forms import BoundField
 from django.forms.widgets import PasswordInput
 from django.template import loader
+from django.utils.translation import ugettext_lazy as _
 
 from tagging.forms import TagField
 from tagging.utils import edit_string_for_tags
@@ -44,9 +45,9 @@ def not_in_the_atlantic(self):
         lon = self.cleaned_data['longitude']
 
         if 43 < lat < 45 and -39 < lon < -33:
-            raise forms.ValidationError(
+            raise forms.ValidationError(_(
                 "Drag and zoom the map until the crosshair matches your "
-                "location")
+                "location"))
     return self.cleaned_data['location_description']
 
 
@@ -74,6 +75,11 @@ class SignupForm(PopulateChoices, forms.Form):
             self.openid = False
 
         super(SignupForm, self).__init__(*args, **kwargs)
+
+        if not self.openid:
+            self.fields['password1'].required = True
+            self.fields['password2'].required = True
+
         self.service_fields = []
         for shortname, name, icon in SERVICES:
             field = forms.URLField(
@@ -103,25 +109,30 @@ class SignupForm(PopulateChoices, forms.Form):
             })
 
     # Fields for creating a User object
-    username = forms.RegexField('^[a-zA-Z0-9]+$', min_length=3, max_length=30)
-    first_name = forms.CharField(max_length=30)
-    last_name = forms.CharField(max_length=30)
-    email = forms.EmailField()
-    password1 = forms.CharField(widget=forms.PasswordInput, required=False)
-    password2 = forms.CharField(widget=forms.PasswordInput, required=False)
+    username = forms.RegexField('^[a-zA-Z0-9]+$', label=_('Username'),
+                                min_length=3, max_length=30)
+    first_name = forms.CharField(label=_('First name'), max_length=30)
+    last_name = forms.CharField(label=_('Last name'), max_length=30)
+    email = forms.EmailField(label=_('E-mail'))
+    password1 = forms.CharField(label=_('Password'),
+                                widget=forms.PasswordInput, required=False)
+    password2 = forms.CharField(label=_('Password (again)'),
+                                widget=forms.PasswordInput, required=False)
 
     # Fields for creating a DjangoPerson profile
-    bio = forms.CharField(widget=forms.Textarea, required=False)
-    blog = forms.URLField(required=False)
+    bio = forms.CharField(label=_('Bio'), widget=forms.Textarea,
+                          required=False)
+    blog = forms.URLField(label=_('Blog URL'), required=False)
 
-    country = forms.ChoiceField()
+    country = forms.ChoiceField(label=_('Country'))
     latitude = forms.FloatField(min_value=-90, max_value=90)
     longitude = forms.FloatField(min_value=-180, max_value=180)
-    location_description = forms.CharField(max_length=50)
+    location_description = forms.CharField(label=_('Location'), max_length=50)
 
-    region = GroupedChoiceField(required=False)
+    region = GroupedChoiceField(label=_('Region'), required=False)
 
     privacy_search = forms.ChoiceField(
+        label=_('Search visibility'),
         choices=(
             ('public',
              'Allow search engines to index my profile page (recommended)'),
@@ -129,6 +140,7 @@ class SignupForm(PopulateChoices, forms.Form):
         ), widget=forms.RadioSelect, initial='public'
     )
     privacy_email = forms.ChoiceField(
+        label=_('E-mail privacy'),
         choices=(
             ('public', 'Anyone can see my e-mail address'),
             ('private', 'Only logged-in users can see my e-mail address'),
@@ -136,12 +148,14 @@ class SignupForm(PopulateChoices, forms.Form):
         ), widget=forms.RadioSelect, initial='private'
     )
     privacy_im = forms.ChoiceField(
+        label=_('IM privacy'),
         choices=(
             ('public', 'Anyone can see my IM details'),
             ('private', 'Only logged-in users can see my IM details'),
         ), widget=forms.RadioSelect, initial='private'
     )
     privacy_irctrack = forms.ChoiceField(
+        label=_('IRC tracking'),
         choices=(
             ('public', ('Keep track of the last time I was seen on IRC '
                         '(requires your IRC nick)')),
@@ -149,6 +163,7 @@ class SignupForm(PopulateChoices, forms.Form):
         ), widget=forms.RadioSelect, initial='public'
     )
     looking_for_work = forms.ChoiceField(
+        label=_('Looking for work?'),
         choices=(
             ('', 'Not looking for work at the moment'),
             ('freelance', 'Looking for freelance work'),
@@ -156,11 +171,7 @@ class SignupForm(PopulateChoices, forms.Form):
         ), required=False
     )
 
-    skilltags = TagField(required=False)
-
-    # Upload a photo is a separate page, because if validation fails we
-    # don't want to tell them to upload it all over again
-    #   photo = forms.ImageField(required=False)
+    skilltags = TagField(label=_('Your skills'), required=False)
 
     # Fields used to create machinetags
 

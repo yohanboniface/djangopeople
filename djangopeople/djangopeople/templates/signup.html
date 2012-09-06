@@ -9,11 +9,6 @@
 <script type="text/javascript" src="{% static "djangopeople/js/jquery.color.js" %}"></script>
 <script type="text/javascript" src="{% static "djangopeople/js/signup.js" %}"></script>
 <link rel="stylesheet" href="{% static "djangopeople/css/flags.css" %}" type="text/css">
-<style type="text/css">
-#id_location_description {
-	width: 24em;
-}
-</style>
 {% endblock %}
 
 {% block header%}
@@ -31,36 +26,26 @@
 		<h2>{% trans "1. Tell us who you are" %}</h2>
 
 		<fieldset>
-			<div class="fieldWrapper">
-				{{ form.username.errors }}
-				<label for="id_username">{% trans "Username *" %}</label>
-				{{ form.username }}
-			</div>
-			<div class="fieldWrapper">
-				{{ form.first_name.errors }}
-				<label for="id_first_name">{% trans "First name *" %}</label>
-				{{ form.first_name }}
-			</div>
-			<div class="fieldWrapper">
-				{{ form.last_name.errors }}
-				<label for="id_last_name">{% trans "Last name *" %}</label>
-				{{ form.last_name }}
-			</div>
-			<div class="fieldWrapper">
-				{{ form.email.errors }}
-				<label for="id_email">{% trans "E-mail *" %}</label>
-				{{ form.email }}
-			</div>
+			{% with form.username as field %}
+				{% include "includes/field.html" %}
+			{% endwith %}
+			{% with form.first_name as field %}
+				{% include "includes/field.html" %}
+			{% endwith %}
+			{% with form.last_name as field %}
+				{% include "includes/field.html" %}
+			{% endwith %}
+			{% with form.email as field %}
+				{% include "includes/field.html" %}
+			{% endwith %}
 			{% if not openid %}
 				<div class="fieldWrapper">
-					{{ form.password1.errors }}
-					<label for="id_password1">{% trans "Password *" %}</label>
-					{{ form.password1 }}
-				</div>
-				<div class="fieldWrapper">
-					{{ form.password2.errors }}
-					<label for="id_password2">{% trans "Password (again) *" %}</label>
-					{{ form.password2 }}
+					{% with form.password1 as field %}
+						{% include "includes/field.html" %}
+					{% endwith %}
+					{% with form.password2 as field %}
+						{% include "includes/field.html" %}
+					{% endwith %}
 				</div>
 			{% endif %}
 		</fieldset>
@@ -84,47 +69,33 @@
 
 <div class="content">
 	<fieldset>
-		<div class="fieldWrapper" id="location">
-			{{ form.location_description.errors }}
-			<label for="id_location_description">{% trans "Location *" %}</label>
-			{{ form.location_description }}
-		</div>
+		{% with form.location_description as field %}
+			{% include "includes/field.html" %}
+		{% endwith %}
 		<p class="help">{% trans "A short textual description of your location will be displayed on the site. We attempt to derive this from your position on the map, but you can customise it if you like." %}</p>
-		<div class="fieldWrapper country">
-			{{ form.country.errors }}
-			<label for="id_country">{% trans "Country" %}</label>
-			{{ form.country }}
-		</div>
-		<div class="fieldWrapper">
-			{{ form.latitude.errors }}
-			<label for="id_latitude">{% trans "Latitude" %}</label>
-			{{ form.latitude }}
-		</div>
-		<div class="fieldWrapper">
-			{{ form.longitude.errors }}
-			<label for="id_longitude">{% trans "Longitude" %}</label>
-			{{ form.longitude }}
-		</div>
-		<div class="fieldWrapper">
-			{{ form.region.errors }}
-			<label for="id_region">{% trans "Region" %}</label>
-			{{ form.region }}
-		</div>
+		{% with form.country as field %}
+			{% include "includes/field.html" %}
+		{% endwith %}
+		{% with form.latitude as field %}
+			{% include "includes/field.html" %}
+		{% endwith %}
+		{% with form.longitude as field %}
+			{% include "includes/field.html" %}
+		{% endwith %}
+		{% with form.region as field %}
+			{% include "includes/field.html" %}
+		{% endwith %}
 	</fieldset>
 
 	<h2>{% trans "3. And a bit about you …" %}</h2>
 
 	<fieldset>
-		<div class="fieldWrapper">
-			{{ form.bio.errors }}
-			<label for="id_bio">{% trans "Bio" %}</label>
-			{{ form.bio }}
-		</div>
-		<div class="fieldWrapper">
-			{{ form.blog.errors }}
-			<label for="id_blog">{% trans "Blog URL" %}</label>
-			{{ form.blog }}
-		</div>
+		{% with form.bio as field %}
+			{% include "includes/field.html" %}
+		{% endwith %}
+		{% with form.blog as field %}
+			{% include "includes/field.html" %}
+		{% endwith %}
 	</fieldset>
 
 	<fieldset>
@@ -152,41 +123,28 @@
 	<h2>{% trans "4. Your privacy settings" %}</h2>
 	<fieldset>
 		<p class="help">{% trans "You can set your profile page not to show up in external search engine results (such as Google or Yahoo!)" %}</p>
-		<div class="fieldWrapper radioSelect">
-			{{ form.privacy_search.errors }}
-			<label for="id_privacy_search">{% trans "Search visibility" %}</label>
-			{{ form.privacy_search }}
-		</div>
-		<div class="fieldWrapper radioSelect">
-			{{ form.privacy_email.errors }}
-			<label for="id_privacy_email">{% trans "E-mail privacy" %}</label>
-			{{ form.privacy_email }}
-		</div>
-		<div class="fieldWrapper radioSelect">
-			{{ form.privacy_im.errors }}
-			<label for="id_privacy_im">{% trans "IM privacy" %}</label>
-			{{ form.privacy_im }}
-		</div>
-		<div class="fieldWrapper radioSelect">
-			{{ form.privacy_irctrack.errors }}
-			<label for="id_privacy_irctrack">{% trans "IRC tracking" %}</label>
-			{{ form.privacy_irctrack }}
-		</div>
+		{% with klass="radioSelect" %}
+			{% with form.privacy_search as field %}
+				{% include "includes/field.html" %}
+			{% endwith %}
+			{% with form.privacy_email as field %}
+				{% include "includes/field.html" %}
+			{% endwith %}
+			{% with form.privacy_irctrack as field %}
+				{% include "includes/field.html" %}
+			{% endwith %}
+		{% endwith %}
 	</fieldset>
 
 	<h2>{% trans "5. Your skills and interests" %}</h2>
 	<fieldset>
 		<p class="help">{% trans "Tag yourself with your particular skills and interests, e.g. postgresql, nginx, css. Separate them with commas; spaces are allowed." %}</p>
-		<div class="fieldWrapper">
-			{{ form.skilltags.errors }}
-			<label for="id_skilltags">{% trans "Your skills" %}</label>
-			{{ form.skilltags }}
-		</div>
-		<div class="fieldWrapper">
-			{{ form.looking_for_work.errors }}
-			<label for="id_looking_for_work">{% trans "Looking for work?" %}</label>
-			{{ form.looking_for_work }}
-		</div>
+		{% with form.skilltags as field %}
+			{% include "includes/field.html" %}
+		{% endwith %}
+		{% with form.looking_for_work as field %}
+			{% include "includes/field.html" %}
+		{% endwith %}
 	</fieldset>
 
 	<div class="buttonContainer"><input type="submit" value="{% trans "Sign me up" %}"></div>

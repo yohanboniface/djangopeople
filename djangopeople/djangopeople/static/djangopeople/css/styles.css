@@ -127,10 +127,13 @@ ul.errorlist li {
 	font-size: 0.8em;
 }
 
-#location {
+div#id_location_description {
 	padding-top: 0.9em;
 	margin: 0 0 10px -10px;
 	padding-left: 10px;
+}
+input#id_location_description {
+	width: 24em;
 }
 .country {
 	width: 100%;
@@ -151,6 +154,14 @@ ul.errorlist li {
 	float: left;
 	margin-bottom: 0.9em;
 	font-weight: bold
+}
+
+.fieldWrapper.required label:after {
+	content: ' *';
+}
+
+.fieldWrapper.required li > label:after {
+	content: '';
 }
 
 .fieldWrapper input, .fieldWrapper textarea {

@@ -1,32 +1,32 @@
 {% extends "base.html" %}
 
-{% block title %}Sign in with your OpenID |{% endblock %}
+{% block title %}{% trans "Sign in with your OpenID" %} |{% endblock %}
 
-{% block nav_li_class_login %} class="current"{% endblock %}>
+{% block nav_li_class_login %} class="current"{% endblock %}
 
 {% block js %}
 <style type="text/css">
 input.openid {
-  background: url({{ logo }}) no-repeat; 
-  background-position: 0 50%;
-  padding-left: 16px;
+	background: url({{ logo }}) no-repeat;
+	background-position: 0 50%;
+	padding-left: 16px;
 }
 </style>
 
 {% endblock %}
 
 {% block header%}
-<h1>Sign in with your OpenID</h1>
+	<h1>{% trans "Sign in with your OpenID" %}</h1>
 {% endblock %}
 
 {% block content %}
-    <form method="post" action="{{ action }}">{% csrf_token %}
-        <div class="fieldWrapper">
-            <label for="id_openid">OpenID</label>
-            <input id="id_openid" class="openid" type="text" name="openid_url">
-        </div>
-    <div class="buttonContainer">
-        <input type="submit" value="Sign in">
-    </div>
-    </form>
+	<form method="post" action="{{ action }}">{% csrf_token %}
+		<div class="fieldWrapper">
+			<label for="id_openid">{% trans "OpenID" %}</label>
+			<input id="id_openid" class="openid" type="text" name="openid_url">
+		</div>
+		<div class="buttonContainer">
+			<input type="submit" value="{% trans "Sign in" %}">
+		</div>
+	</form>
 {% endblock %}

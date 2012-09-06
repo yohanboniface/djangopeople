@@ -4,9 +4,10 @@ import time
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as log_user_in, load_backend
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.core.urlresolvers import reverse
+from django.shortcuts import render
 from django.utils.html import escape
+from django.utils.translation import ugettext as _
 from django.conf import settings
 
 from ..django_openidconsumer import views as consumer_views
@@ -19,12 +20,6 @@ def _make_hash(hash_type, user, openid):
     )).hexdigest()
 
 
-def render(request, template, context_dict=None):
-    return render_to_response(
-        template, context_dict or {}, context_instance=RequestContext(request)
-    )
-
-
 @login_required
 def associations(request, template_name='openid_associations.html'):
     """
@@ -33,7 +28,8 @@ def associations(request, template_name='openid_associations.html'):
     if 'openid_url' in request.POST:
         # They entered a new OpenID and need to authenticate it - kick off the
         # process and make sure they are redirected back here afterwards
-        return consumer_views.begin(request, redirect_to='/openid/complete/')
+        return consumer_views.begin(request,
+                                    redirect_to=reverse('openid_complete'))
 
     messages = []
     associated_openids = [
@@ -70,13 +66,15 @@ def associations(request, template_name='openid_associations.html'):
         if associate_openid(request.user, new_openid):
             associated_openids.append(new_openid)
             messages.append(
-                '%s has been associated with your account' %
+                _('%s has been associated with your account') %
                 escape(new_openid)
             )
         else:
-            messages.append(('%s could not be associated with your account, ' +
-                'as it is already associated with a different account') % \
-                escape(new_openid)
+            messages.append(
+                _('%s could not be associated with your account, as it is '
+                  'already associated with a different account') % escape(
+                      new_openid
+                  )
             )
 
     # Now cycle through POST.keys() looking for OpenIDs to add or remove
@@ -87,13 +85,14 @@ def associations(request, template_name='openid_associations.html'):
                 if associate_openid(request.user, openid):
                     associated_openids.append(openid)
                     messages.append(
-                        '%s has been associated with your account' %
+                        _('%s has been associated with your account') %
                         escape(openid)
                     )
                 else:
-                    messages.append(('%s could not be associated with your ' +
-                        'account, as it is already associated with a ' +
-                        'different account') % escape(openid)
+                    messages.append(
+                        _('%s could not be associated with your account, as '
+                          'it is already associated with a different '
+                          'account') % escape(openid)
                     )
 
         if key in del_hashes:
@@ -102,15 +101,15 @@ def associations(request, template_name='openid_associations.html'):
                 # if user has no password and this is last one, don't allow
                 if (not request.user.has_usable_password()) \
                     and len(associated_openids) < 2:
-                    messages.append((
+                    messages.append(_(
                         'You need to set a password if you want to remove all '
                         'of your OpenIDs'
                     ))
                 else:
                     unassociate_openid(request.user, openid)
                     associated_openids.remove(openid)
-                    messages.append('%s has been removed from your account' % \
-                        escape(openid)
+                    messages.append(_('%s has been removed from your '
+                                      'account') % escape(openid)
                     )
 
     # At this point associated_openids represents the current set of associated

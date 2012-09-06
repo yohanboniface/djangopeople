@@ -290,10 +290,11 @@ class LocationForm(PopulateChoices, forms.ModelForm):
                 )
 
     def clean(self):
-        if 'country_instance' in self.cleaned_data:
-            self.cleaned_data['country'] = self.cleaned_data['country_instance']
+        data = self.cleaned_data
+        if 'country_instance' in data:
+            self.cleaned_data['country'] = data['country_instance']
         if 'region_instance' in self.cleaned_data:
-            self.cleaned_data['region'] = self.cleaned_data['region_instance']
+            self.cleaned_data['region'] = data['region_instance']
         return self.cleaned_data
 
     clean_location_description = not_in_the_atlantic

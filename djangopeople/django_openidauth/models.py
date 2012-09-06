@@ -1,12 +1,13 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 
 
 class UserOpenID(models.Model):
-    user = models.ForeignKey(User)
-    openid = models.CharField(max_length=255, unique=True)
-    created_at = models.DateTimeField()
+    user = models.ForeignKey(User, verbose_name=_('User'))
+    openid = models.CharField(_('OpenID'), max_length=255, unique=True)
+    created_at = models.DateTimeField(_('Creation date'))
 
     def __unicode__(self):
         return u"<User %s has OpenID %s>" % (self.user, self.openid)

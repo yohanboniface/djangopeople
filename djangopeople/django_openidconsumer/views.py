@@ -8,11 +8,11 @@ from openid.yadis import xri
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect, get_host
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.http import HttpResponse, get_host
+from django.shortcuts import render, redirect
 from django.utils.encoding import smart_unicode
 from django.utils.html import escape
+from django.utils.translation import ugettext as _
 
 from .middleware import OpenIDMiddleware
 from .util import DjangoOpenIDStore, from_openid_response
@@ -36,12 +36,6 @@ def is_valid_next_url(next):
     # For security reasons we want to restrict the next= bit to being a local
     # path, not a complete URL.
     return bool(NEXT_URL_RE.match(next))
-
-
-def render(request, template, context_dict=None):
-    return render_to_response(
-        template, context_dict or {}, context_instance=RequestContext(request)
-    )
 
 
 def begin(request, sreg=None, extension_args=None,
@@ -92,13 +86,13 @@ def begin(request, sreg=None, extension_args=None,
     if xri.identifierScheme(user_url) == 'XRI' and getattr(
         settings, 'OPENID_DISALLOW_INAMES', False
         ):
-        return on_failure(request, 'i-names are not supported')
+        return on_failure(request, _('i-names are not supported'))
 
     consumer = Consumer(request.session, DjangoOpenIDStore())
     try:
         auth_request = consumer.begin(user_url)
     except DiscoveryFailure:
-        return on_failure(request, "The OpenID was invalid")
+        return on_failure(request, _("The OpenID was invalid"))
 
     # Add extension args (for things like simple registration)
     for name, value in extension_args.items():
@@ -106,7 +100,7 @@ def begin(request, sreg=None, extension_args=None,
         auth_request.addExtensionArg(namespace, key, value)
 
     redirect_url = auth_request.redirectURL(trust_root, redirect_to)
-    return HttpResponseRedirect(redirect_url)
+    return redirect(redirect_url)
 
 
 def complete(request, on_success=None, on_failure=None, return_to=None):
@@ -124,11 +118,11 @@ def complete(request, on_success=None, on_failure=None, return_to=None):
         return on_success(request, openid_response.identity_url,
                           openid_response)
     elif openid_response.status == CANCEL:
-        return on_failure(request, 'The request was cancelled')
+        return on_failure(request, _('The request was cancelled'))
     elif openid_response.status == FAILURE:
         return on_failure(request, openid_response.message)
     elif openid_response.status == SETUP_NEEDED:
-        return on_failure(request, 'Setup needed')
+        return on_failure(request, _('Setup needed'))
     else:
         assert False, "Bad openid status: %s" % openid_response.status
 
@@ -150,7 +144,7 @@ def default_on_success(request, identity_url, openid_response):
     if not next or not is_valid_next_url(next):
         next = getattr(settings, 'OPENID_REDIRECT_NEXT', '/')
 
-    return HttpResponseRedirect(next)
+    return redirect(next)
 
 
 def default_on_failure(request, message):
@@ -164,7 +158,7 @@ def signout(request):
     next = request.GET.get('next', '/')
     if not is_valid_next_url(next):
         next = '/'
-    return HttpResponseRedirect(next)
+    return redirect(next)
 
 
 def logo(request):

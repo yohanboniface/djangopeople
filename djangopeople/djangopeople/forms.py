@@ -179,18 +179,18 @@ class SignupForm(PopulateChoices, forms.Form):
     def clean_password1(self):
         "Only required if NO openid set for this form"
         if not self.openid and not self.cleaned_data.get('password1', ''):
-            raise forms.ValidationError('Password is required')
+            raise forms.ValidationError(_('Password is required'))
         return self.cleaned_data['password1']
 
     def clean_password2(self):
         password1 = self.cleaned_data.get('password1', '')
         password2 = self.cleaned_data.get('password2', '')
         if password1.strip() and password1 != password2:
-            raise forms.ValidationError('Passwords must match')
+            raise forms.ValidationError(_('Passwords must match'))
         return self.cleaned_data['password2']
 
     def clean_username(self):
-        already_taken = 'That username is unavailable'
+        already_taken = _('That username is unavailable')
         username = self.cleaned_data['username'].lower()
 
         # No reserved usernames, or anything that looks like a 4 digit year
@@ -214,7 +214,7 @@ class SignupForm(PopulateChoices, forms.Form):
         except User.DoesNotExist:
             pass
         else:
-            raise forms.ValidationError('That e-mail is already in use')
+            raise forms.ValidationError(_('That e-mail is already in use'))
         return email
 
     def clean_region(self):
@@ -227,7 +227,7 @@ class SignupForm(PopulateChoices, forms.Form):
                 )
             except Region.DoesNotExist:
                 raise forms.ValidationError(
-                    'The region you selected does not match the country'
+                    _('The region you selected does not match the country')
                 )
         return self.cleaned_data['region']
 
@@ -235,7 +235,7 @@ class SignupForm(PopulateChoices, forms.Form):
 
 
 class SkillsForm(forms.ModelForm):
-    skills = TagField(label='Change skills', required=False)
+    skills = TagField(label=_('Change skills'), required=False)
 
     class Meta:
         model = DjangoPerson
@@ -264,11 +264,11 @@ class AccountForm(forms.ModelForm):
 
 
 class LocationForm(PopulateChoices, forms.ModelForm):
-    country = forms.ChoiceField()
-    region = GroupedChoiceField(required=False)
+    country = forms.ChoiceField(label=_('Country'))
+    region = GroupedChoiceField(label=_('Region'), required=False)
     latitude = forms.FloatField(min_value=-90, max_value=90)
     longitude = forms.FloatField(min_value=-180, max_value=180)
-    location_description = forms.CharField(max_length=50)
+    location_description = forms.CharField(label=_('Location'), max_length=50)
 
     class Meta:
         model = DjangoPerson
@@ -283,7 +283,7 @@ class LocationForm(PopulateChoices, forms.ModelForm):
             return self.cleaned_data['country_instance'].iso_code
         except Country.DoesNotExist:
             raise forms.ValidationError(
-                'The ISO code of the country you selected is invalid.'
+                _('The ISO code of the country you selected is invalid.')
             )
 
     def clean_region(self):
@@ -297,7 +297,7 @@ class LocationForm(PopulateChoices, forms.ModelForm):
                 return self.cleaned_data['region_instance'].code
             except Region.DoesNotExist:
                 raise forms.ValidationError(
-                    'The region you selected does not match the country'
+                    _('The region you selected does not match the country')
                 )
 
     def clean(self):
@@ -347,11 +347,12 @@ class FindingForm(forms.ModelForm):
                 'field': BoundField(self, field, 'im_' + shortname),
             })
 
-    first_name = forms.CharField()
-    last_name = forms.CharField()
-    email = forms.EmailField()
-    blog = forms.URLField(required=False)
+    first_name = forms.CharField(label=_('First name'))
+    last_name = forms.CharField(label=_('Last name'))
+    email = forms.EmailField(label=_('E-mail'))
+    blog = forms.URLField(label=_('Blog URL'), required=False)
     privacy_search = forms.ChoiceField(
+        label=_('Search visibility'),
         choices=(
             ('public',
              'Allow search engines to index my profile page (recommended)'),
@@ -359,6 +360,7 @@ class FindingForm(forms.ModelForm):
         ), widget=forms.RadioSelect, initial='public'
     )
     privacy_email = forms.ChoiceField(
+        label=_('E-mail privacy'),
         choices=(
             ('public', 'Anyone can see my e-mail address'),
             ('private', 'Only logged-in users can see my e-mail address'),
@@ -366,12 +368,14 @@ class FindingForm(forms.ModelForm):
         ), widget=forms.RadioSelect, initial='private'
     )
     privacy_im = forms.ChoiceField(
+        label=_('IM privacy'),
         choices=(
             ('public', 'Anyone can see my IM details'),
             ('private', 'Only logged-in users can see my IM details'),
         ), widget=forms.RadioSelect, initial='private'
     )
     privacy_irctrack = forms.ChoiceField(
+        label=_('IRC tracking'),
         choices=(
             ('public', ('Keep track of the last time I was seen on IRC '
                         '(requires your IRC nick)')),
@@ -379,6 +383,7 @@ class FindingForm(forms.ModelForm):
         ), widget=forms.RadioSelect, initial='public'
     )
     looking_for_work = forms.ChoiceField(
+        label=_('Looking for work?'),
         choices=(
             ('', 'Not looking for work at the moment'),
             ('freelance', 'Looking for freelance work'),
@@ -391,7 +396,7 @@ class FindingForm(forms.ModelForm):
         if User.objects.filter(
             email=email,
         ).exclude(djangoperson=self.instance).count() > 0:
-            raise forms.ValidationError('That e-mail is already in use')
+            raise forms.ValidationError(_('That e-mail is already in use'))
         return email
 
     def save(self):
@@ -431,10 +436,10 @@ class PortfolioForm(forms.ModelForm):
         # Add fields
         for i in range(1, num + 3):
             url_field = forms.URLField(
-                max_length=255, required=False, label='URL %d' % i
+                max_length=255, required=False, label=_('URL %d') % i
             )
             title_field = forms.CharField(
-                max_length=100, required=False, label='Title %d' % i
+                max_length=100, required=False, label=_('Title %d') % i
             )
             self.fields['title_%d' % i] = title_field
             self.fields['url_%d' % i] = url_field
@@ -464,16 +469,16 @@ def make_validator(key, form):
     def check():
         if form.cleaned_data.get(key.replace('url_', 'title_')) and \
             not form.cleaned_data.get(key):
-            raise forms.ValidationError, 'You need to provide a URL'
+            raise forms.ValidationError(_('You need to provide a URL'))
         return form.cleaned_data.get(key)
     return check
 
 
 class PasswordForm(forms.ModelForm):
-    current_password = forms.CharField(label='Current Password',
+    current_password = forms.CharField(label=_('Current Password'),
                                        widget=PasswordInput)
-    password1 = forms.CharField(label='New Password', widget=PasswordInput)
-    password2 = forms.CharField(label='New Password (again)',
+    password1 = forms.CharField(label=_('New Password'), widget=PasswordInput)
+    password2 = forms.CharField(label=_('New Password (again)'),
                                 widget=PasswordInput)
 
     class Meta:
@@ -484,7 +489,9 @@ class PasswordForm(forms.ModelForm):
         if not self.instance.check_password(
             self.cleaned_data['current_password'],
         ):
-            raise forms.ValidationError('Please submit your current password.')
+            raise forms.ValidationError(
+                _('Please submit your current password.')
+            )
         else:
             return self.cleaned_data['current_password']
 
@@ -494,7 +501,7 @@ class PasswordForm(forms.ModelForm):
         if password1 == password2:
             return self.cleaned_data
         else:
-            raise forms.ValidationError('The passwords did not match.')
+            raise forms.ValidationError(_('The passwords did not match.'))
 
     def save(self):
         self.instance.set_password(self.cleaned_data['password1'])
@@ -530,12 +537,12 @@ class DeletionRequestForm(RequestFormMixin, forms.Form):
 
 
 class AccountDeletionForm(RequestFormMixin, forms.Form):
-    password = forms.CharField(widget=forms.PasswordInput)
+    password = forms.CharField(label=_('Password'), widget=forms.PasswordInput)
 
     def clean_password(self):
         password = self.cleaned_data['password']
         if not self.request.user.check_password(password):
-            raise forms.ValidationError('Your password was invalid')
+            raise forms.ValidationError(_('Your password was invalid'))
         return password
 
     def save(self):

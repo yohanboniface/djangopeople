@@ -127,7 +127,7 @@ ul.errorlist li {
 	font-size: 0.8em;
 }
 
-div#id_location_description {
+#id_location_description_field {
 	padding-top: 0.9em;
 	margin: 0 0 10px -10px;
 	padding-left: 10px;

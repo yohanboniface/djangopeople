@@ -10,11 +10,11 @@ var INITIAL_LAT = 43.834526782236814;
 var INITIAL_LON = -37.265625;
 
 function reverseGeocode() {
-    var lon = $('#id_longitude').val();
-    var lat = $('#id_latitude').val();
+    var lon = $('input#id_longitude').val();
+    var lat = $('input#id_latitude').val();
     // Don't geocode if we're still at the starting point
     if (!lon || !lat || (
-            Math.abs(lat - INITIAL_LAT) < 0.01 && 
+            Math.abs(lat - INITIAL_LAT) < 0.01 &&
             Math.abs(lon - INITIAL_LON) < 0.01)) {
         return;
     }
@@ -51,7 +51,7 @@ function hasRegions(country_name) {
 }
 
 jQuery(function($) {
-    // Set up the select country thing to show flags    
+    // Set up the select country thing to show flags
     $('select#id_country').change(function() {
         $(this).parent().find('span.flag').remove();
         var iso_code = $(this).val().toLowerCase();
@@ -60,7 +60,7 @@ jQuery(function($) {
         }
         $('<span class="flag iso-' + iso_code + '"></span>').insertAfter(this);
     }).change();
-    
+
     // Region select field is shown only if a country with regions is selected
     $('select#id_country').change(function() {
         var selected_text = $(
@@ -73,7 +73,7 @@ jQuery(function($) {
             $('#id_region').val('');
         }
     }).change();
-    
+
     $('select#id_region').parent().hide();
     // Latitude and longitude should be invisible too
     $('input#id_latitude').parent().hide();
@@ -82,10 +82,10 @@ jQuery(function($) {
     var centerPoint;
     var zoom;
     /* If latitude and longitude are populated, center there */
-    if ($('#id_latitude').val() && $('#id_longitude').val()) {
+    if ($('input#id_latitude').val() && $('input#id_longitude').val()) {
         centerPoint = new google.maps.LatLng(
-            $('#id_latitude').val(),
-            $('#id_longitude').val()
+            $('input#id_latitude').val(),
+            $('input#id_longitude').val()
         );
         zoom = 10;
     } else {
@@ -101,26 +101,24 @@ jQuery(function($) {
     });
 
     var lookupTimer = false;
-    
+
     google.maps.event.addListener(gmap, "center_changed", function() {
         window.center = gmap.getCenter();
         if (lookupTimer) {
             clearTimeout(lookupTimer);
         }
         lookupTimer = setTimeout(reverseGeocode, 1500);
-        $('#id_latitude').val(center.lat());
-        $('#id_longitude').val(center.lng());
+        $('input#id_latitude').val(center.lat());
+        $('input#id_longitude').val(center.lng());
     });
     google.maps.event.addDomListener(document.getElementById('crosshair'),
         'dblclick', function() {
             gmap.zoomIn();
         }
     );
-    
+
     /* The first time the map is hovered, scroll the page */
     $('#gmap').one('click', function() {
         $('html,body').animate({scrollTop: $('#gmap').offset().top}, 500);
     });
-    
-
 });

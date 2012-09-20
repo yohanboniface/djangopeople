@@ -1096,7 +1096,7 @@ msgstr "Lidé blízko djangisty %(name)s"
 #: djangopeople/templates/profile.html:130
 #, python-format
 msgid "%(counter)s mile away"
-msgid_plural "%( counter)s miles away"
+msgid_plural "%(counter)s miles away"
 msgstr[0] "%(counter)s míle daleko"
 msgstr[1] "%(counter)s míle daleko"
 msgstr[2] "%(counter)s mil daleko"
@@ -1204,7 +1204,7 @@ msgstr "Registrovat"
 #: djangopeople/templates/skill.html:8
 #, python-format
 msgid "%(counter)s Django Person mention this skill"
-msgid_plural "%( counter)s Django People mention this skill"
+msgid_plural "%(counter)s Django People mention this skill"
 msgstr[0] "Tuto dovednost uvádí %(counter)s djangista"
 msgstr[1] "Tuto dovednost uvádí %(counter)s djangisté"
 msgstr[2] "Tuto dovednost uvádí %(counter)s djangistů"

@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 #   <nikolay@desh.su>, 2012.
 # Алексей Борискин <sun.void@gmail.com>, 2012.
@@ -9,19 +9,29 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Django People\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-10 08:03+0000\n"
+"POT-Creation-Date: 2012-09-20 11:38+0000\n"
 "PO-Revision-Date: 2012-09-13 15:42+0000\n"
 "Last-Translator: Алексей Борискин <sun.void@gmail.com>\n"
-"Language-Team: Russian (http://www.transifex.com/projects/p/django/language/ru/)\n"
+"Language-Team: Russian (http://www.transifex.com/projects/p/django/language/"
+"ru/)\n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ru\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: default_settings.py:40
 msgid "English"
 msgstr "Английский"
+
+#: default_settings.py:41
+msgid "Czech"
+msgstr ""
+
+#: default_settings.py:42
+msgid "Russian"
+msgstr ""
 
 #: django_openidauth/models.py:8 djangopeople/models.py:123
 msgid "User"
@@ -48,7 +58,9 @@ msgstr "%s связан с вашей учётной записью"
 msgid ""
 "%s could not be associated with your account, as it is already associated "
 "with a different account"
-msgstr "%s не может быть привязан к вашей учётной записи, так как уже привязан к другой"
+msgstr ""
+"%s не может быть привязан к вашей учётной записи, так как уже привязан к "
+"другой"
 
 #: django_openidauth/views.py:105
 msgid "You need to set a password if you want to remove all of your OpenIDs"
@@ -66,8 +78,7 @@ msgstr "Привязанные OpenID"
 
 #: django_openidauth/templates/openid_associations.html:32
 msgid "Your account is currently associated with the following OpenID:"
-msgid_plural ""
-"Your account is currently associated with the following OpenIDs:"
+msgid_plural "Your account is currently associated with the following OpenIDs:"
 msgstr[0] "Ваша учётная запись сейчас связана со следующим OpenID:"
 msgstr[1] "Ваша учётная запись сейчас связана со следующими OpenID:"
 msgstr[2] "Ваша учётная запись сейчас связана со следующими OpenID:"
@@ -83,9 +94,15 @@ msgid ""
 msgid_plural ""
 "You are currently logged with the following OpenIDs. Click \"associate\" to "
 "allow an OpenID to be used to sign in to your account."
-msgstr[0] "На данный момент вы вошли с помощью следующего OpenID. Нажмите \"связать\", чтобы разрешить входить с его помощью."
-msgstr[1] "На данный момент вы вошли с помощью следующих OpenID. Нажмите \"связать\", чтобы разрешить входить с его помощью."
-msgstr[2] "На данный момент вы вошли с помощью следующих OpenID. Нажмите \"связать\", чтобы разрешить входить с его помощью."
+msgstr[0] ""
+"На данный момент вы вошли с помощью следующего OpenID. Нажмите \"связать\", "
+"чтобы разрешить входить с его помощью."
+msgstr[1] ""
+"На данный момент вы вошли с помощью следующих OpenID. Нажмите \"связать\", "
+"чтобы разрешить входить с его помощью."
+msgstr[2] ""
+"На данный момент вы вошли с помощью следующих OpenID. Нажмите \"связать\", "
+"чтобы разрешить входить с его помощью."
 
 #: django_openidauth/templates/openid_associations.html:44
 msgid "Associate"
@@ -140,7 +157,9 @@ msgstr "#django IRC"
 
 #: djangopeople/forms.py:49
 msgid "Drag and zoom the map until the crosshair matches your location"
-msgstr "Отмасштабируйте и перетаскивайте карту таким образом, чтобы перекрестье совпало с вашим местоположением"
+msgstr ""
+"Отмасштабируйте и перетаскивайте карту таким образом, чтобы перекрестье "
+"совпало с вашим местоположением"
 
 #: djangopeople/forms.py:112 djangopeople/templates/base.html:41
 msgid "Username"
@@ -178,7 +197,7 @@ msgstr "URL блога"
 
 #: djangopeople/forms.py:127 djangopeople/forms.py:267
 #: djangopeople/models.py:74 djangopeople/models.py:88
-#: djangopeople/models.py:127 djangopeople/models.py:252
+#: djangopeople/models.py:127 djangopeople/models.py:260
 #: djangopeople/templates/edit_location.html:44
 msgid "Country"
 msgstr "Страна"
@@ -290,9 +309,10 @@ msgid "Your password was invalid"
 msgstr "Указанный вами пароль неверен"
 
 #: djangopeople/groupedselect.py:81
-msgid ""
-"Select a valid choice. That choice is not one of the available choices."
-msgstr "Выберите корректный вариант. Выбранного вами варианта нет среди допустимых значений."
+msgid "Select a valid choice. That choice is not one of the available choices."
+msgstr ""
+"Выберите корректный вариант. Выбранного вами варианта нет среди допустимых "
+"значений."
 
 #: djangopeople/models.py:40 djangopeople/models.py:87
 msgid "Name"
@@ -386,43 +406,43 @@ msgstr "OpenID delegate"
 msgid "Last active on IRC"
 msgstr "Дата последнего захода в IRC-канал"
 
-#: djangopeople/models.py:159
+#: djangopeople/models.py:167
 msgid "<none>"
 msgstr "<нет>"
 
-#: djangopeople/models.py:220
+#: djangopeople/models.py:228
 msgid "Django person"
 msgstr "Джангист"
 
-#: djangopeople/models.py:221
+#: djangopeople/models.py:229
 msgid "Django people"
 msgstr "Джангисты"
 
-#: djangopeople/models.py:235 djangopeople/models.py:250
+#: djangopeople/models.py:243 djangopeople/models.py:258
 msgid "Title"
 msgstr "Название"
 
-#: djangopeople/models.py:236 djangopeople/models.py:251
+#: djangopeople/models.py:244 djangopeople/models.py:259
 msgid "URL"
 msgstr "URL"
 
-#: djangopeople/models.py:238
+#: djangopeople/models.py:246
 msgid "Contributor"
 msgstr "Участник"
 
-#: djangopeople/models.py:244
+#: djangopeople/models.py:252
 msgid "Portfolio site"
 msgstr "Сайт портфолио"
 
-#: djangopeople/models.py:245
+#: djangopeople/models.py:253
 msgid "Portfolio sites"
 msgstr "Сайты портфолио"
 
-#: djangopeople/models.py:258
+#: djangopeople/models.py:266
 msgid "Country site"
 msgstr "Сайт страны"
 
-#: djangopeople/models.py:259
+#: djangopeople/models.py:267
 msgid "Country sites"
 msgstr "Сайты страны"
 
@@ -459,21 +479,32 @@ msgstr "О Django People"
 #: djangopeople/templates/about.html:14
 #, python-format
 msgid ""
-"Django People lists %(count)s <a "
-"href=\"https://www.djangoproject.com/\">Django</a> developers from around "
-"the world, in %(countries)s different countries. The aim of the site is to "
-"help Django developers find like-minded souls near them, and hopefully kick-"
-"start some local meet-ups and user groups."
-msgstr "Django People объединяет %(count)s <a href=\"https://www.djangoproject.com/\">Django</a>-разработчиков со всего мира, из %(countries)s стран. Цель этого сайта — помочь Django-разработчикам найти людей со схожими интересами поблизости и, возможно, вдохновить людей организовать встречу, конференцию или клуб."
+"Django People lists %(count)s <a href=\"https://www.djangoproject.com/"
+"\">Django</a> developers from around the world, in %(countries)s different "
+"countries. The aim of the site is to help Django developers find like-minded "
+"souls near them, and hopefully kick-start some local meet-ups and user "
+"groups."
+msgstr ""
+"Django People объединяет %(count)s <a href=\"https://www.djangoproject.com/"
+"\">Django</a>-разработчиков со всего мира, из %(countries)s стран. Цель "
+"этого сайта — помочь Django-разработчикам найти людей со схожими интересами "
+"поблизости и, возможно, вдохновить людей организовать встречу, конференцию "
+"или клуб."
 
 #: djangopeople/templates/about.html:16
 msgid ""
 "The site was originally built and open-sourced by <a href=\"/simon/\">Simon "
-"Willison</a> and <a href=\"/natbat/\">Natalie Downe</a>. The code is <a "
-"href=\"https://github.com/brutasse/djangopeople\">available on github</a>, "
-"you can post feedback and bug reports on the repository's <a "
-"href=\"https://github.com/brutasse/djangopeople/issues\">issues page</a>."
-msgstr "Данный сайт был создан, а его исходный код был открыт <a href=\"/simon/\">Саймоном Виллисоном</a> и <a href=\"/natbat/\">Натали Дауни</a>.  Исходный код <a href=\"https://github.com/brutasse/djangopeople\">доступен на гитхабе</a>, вы можете отправить сообщение или отчёт об ошибке с помощью  <a href=\"https://github.com/brutasse/djangopeople/issues\">раздела issues</a> репозитория."
+"Willison</a> and <a href=\"/natbat/\">Natalie Downe</a>. The code is <a href="
+"\"https://github.com/brutasse/djangopeople\">available on github</a>, you "
+"can post feedback and bug reports on the repository's <a href=\"https://"
+"github.com/brutasse/djangopeople/issues\">issues page</a>."
+msgstr ""
+"Данный сайт был создан, а его исходный код был открыт <a href=\"/simon/"
+"\">Саймоном Виллисоном</a> и <a href=\"/natbat/\">Натали Дауни</a>.  "
+"Исходный код <a href=\"https://github.com/brutasse/djangopeople\">доступен "
+"на гитхабе</a>, вы можете отправить сообщение или отчёт об ошибке с помощью  "
+"<a href=\"https://github.com/brutasse/djangopeople/issues\">раздела issues</"
+"a> репозитория."
 
 #: djangopeople/templates/about.html:18
 msgid "Colophon"
@@ -481,34 +512,50 @@ msgstr "Благодарности и технические подробнос�
 
 #: djangopeople/templates/about.html:20
 msgid ""
-"Country data and location lookups come from <a "
-"href=\"http://www.geonames.org/\">GeoNames</a>, while the maps themselves "
-"are powered by the <a href=\"https://developers.google.com/maps/\">Google "
-"Maps API</a>. Country flags and icons are by <a "
-"href=\"http://famfamfam.com/lab/icons/\">Mark James</a>; US state flags come"
-" <a href=\"http://en.wikipedia.org/wiki/Flags_of_the_U.S._states\" "
-"title=\"Flags of the U.S. states\">from Wikipedia</a>. Profile pictures come"
-" from <a href=\"http://en.gravatar.com/\">Gravatar</a>."
-msgstr "Данные о странах и поиск по местоположению предоставлен <a href=\"http://www.geonames.org/\">GeoNames</a>, а карты работают с помощью <a href=\"https://developers.google.com/maps/\">Google Maps API</a>. Флаги и иконки стран предоставлены <a href=\"http://famfamfam.com/lab/icons/\">Макром Джеймсом</a>; флаги штатов США <a href=\"http://en.wikipedia.org/wiki/Flags_of_the_U.S._states\" title=\"Flags of the U.S. states\">взяты из Википедии</a>. Картинки в профайлах используют <a href=\"http://en.gravatar.com/\">Gravatar</a>."
+"Country data and location lookups come from <a href=\"http://www.geonames."
+"org/\">GeoNames</a>, while the maps themselves are powered by the <a href="
+"\"https://developers.google.com/maps/\">Google Maps API</a>. Country flags "
+"and icons are by <a href=\"http://famfamfam.com/lab/icons/\">Mark James</a>; "
+"US state flags come <a href=\"http://en.wikipedia.org/wiki/Flags_of_the_U.S."
+"_states\" title=\"Flags of the U.S. states\">from Wikipedia</a>. Profile "
+"pictures come from <a href=\"http://en.gravatar.com/\">Gravatar</a>."
+msgstr ""
+"Данные о странах и поиск по местоположению предоставлен <a href=\"http://www."
+"geonames.org/\">GeoNames</a>, а карты работают с помощью <a href=\"https://"
+"developers.google.com/maps/\">Google Maps API</a>. Флаги и иконки стран "
+"предоставлены <a href=\"http://famfamfam.com/lab/icons/\">Макром Джеймсом</"
+"a>; флаги штатов США <a href=\"http://en.wikipedia.org/wiki/Flags_of_the_U.S."
+"_states\" title=\"Flags of the U.S. states\">взяты из Википедии</a>. "
+"Картинки в профайлах используют <a href=\"http://en.gravatar.com/"
+"\">Gravatar</a>."
 
 #: djangopeople/templates/about.html:22
 #, python-format
 msgid ""
 "The site uses <a href=\"http://code.google.com/p/django-tagging/\">django-"
-"tagging</a> by <a href=\"/insin/\">Jonathan Buchanan</a> for the <a "
-"href=\"/skills/\">skills feature</a>. <a "
-"href=\"http://simonwillison.net/2008/Jan/24/upgrade/\" title=\"Django "
-"People: OpenID and microformats\">OpenID support</a> (used by "
-"%(openid_users)s people) depends on <a href=\"http://openidenabled.com"
-"/python-openid/\">python-openid</a> (version 2.2.5)  and <a "
+"tagging</a> by <a href=\"/insin/\">Jonathan Buchanan</a> for the <a href=\"/"
+"skills/\">skills feature</a>. <a href=\"http://simonwillison.net/2008/Jan/24/"
+"upgrade/\" title=\"Django People: OpenID and microformats\">OpenID support</"
+"a> (used by %(openid_users)s people) depends on <a href=\"http://"
+"openidenabled.com/python-openid/\">python-openid</a> (version 2.2.5)  and <a "
 "href=\"http://code.google.com/p/django-openid/\">django-openid</a>."
-msgstr "Этот сайт использует <a href=\"http://code.google.com/p/django-tagging/\">django-tagging</a> <a href=\"/insin/\">Джонатана Бучанана</a> в  <a href=\"/skills/\">разделе навыков</a>. <a href=\"http://simonwillison.net/2008/Jan/24/upgrade/\" title=\"Django People: OpenID and microformats\">Поддержка OpenID</a> (используемого %(openid_users)s ) осуществляется с помощью <a href=\"http://openidenabled.com/python-openid/\">python-openid</a> (версии 2.2.5) и <a href=\"http://code.google.com/p/django-openid/\">django-openid</a>."
+msgstr ""
+"Этот сайт использует <a href=\"http://code.google.com/p/django-tagging/"
+"\">django-tagging</a> <a href=\"/insin/\">Джонатана Бучанана</a> в  <a href="
+"\"/skills/\">разделе навыков</a>. <a href=\"http://simonwillison.net/2008/"
+"Jan/24/upgrade/\" title=\"Django People: OpenID and microformats\">Поддержка "
+"OpenID</a> (используемого %(openid_users)s ) осуществляется с помощью <a "
+"href=\"http://openidenabled.com/python-openid/\">python-openid</a> (версии "
+"2.2.5) и <a href=\"http://code.google.com/p/django-openid/\">django-openid</"
+"a>."
 
 #: djangopeople/templates/about.html:24
 msgid ""
 "Deployment is <a href=\"http://gunicorn.org\">gunicorn</a>, hosted on <a "
 "href=\"http://www.heroku.com/\">Heroku</a>."
-msgstr "Развёрнуто с помощью <a href=\"http://gunicorn.org\">gunicorn</a>, размещено на серверах <a href=\"http://www.heroku.com/\">Heroku</a>."
+msgstr ""
+"Развёрнуто с помощью <a href=\"http://gunicorn.org\">gunicorn</a>, размещено "
+"на серверах <a href=\"http://www.heroku.com/\">Heroku</a>."
 
 #: djangopeople/templates/about.html:26
 msgid "A Django joint."
@@ -565,7 +612,9 @@ msgstr "Джангисты"
 msgid ""
 "Discover users of the <a href=\"https://www.djangoproject.com/\">Django Web "
 "framework</a> near you"
-msgstr "Найдите пользователей <a href=\"https://www.djangoproject.com/\">веб-фрейморка Django</a> рядом с вами"
+msgstr ""
+"Найдите пользователей <a href=\"https://www.djangoproject.com/\">веб-"
+"фрейморка Django</a> рядом с вами"
 
 #: djangopeople/templates/base.html:61
 msgid "Hosted on <span class=\"heroku\">Heroku</span>"
@@ -618,15 +667,22 @@ msgstr "Сайты в стране %(country)s"
 
 #: djangopeople/templates/country_sites.html:19
 #, python-format
-msgid "<a href=\"%(url)s\">%(title)s</a> by <a href=\"%(author_url)s\">%(author)s</a>"
-msgstr "<a href=\"%(url)s\">%(title)s</a>, автор <a href=\"%(author_url)s\">%(author)s</a>"
+msgid ""
+"<a href=\"%(url)s\">%(title)s</a> by <a href=\"%(author_url)s\">%(author)s</"
+"a>"
+msgstr ""
+"<a href=\"%(url)s\">%(title)s</a>, автор <a href=\"%(author_url)s\">"
+"%(author)s</a>"
 
 #: djangopeople/templates/delete_account.html:4
 msgid ""
 "Please enter your password to confirm your ownership of this account. You "
 "account removal will be effective immediately and permanently after you "
 "submit this form."
-msgstr "Пожалуйста, введите свой пароль, чтобы подтвердить права на эту учётную запись. Удаление учётной записи будет произведено сразу же после того, как вы отправите форму. Это действие нельзя будет отменить."
+msgstr ""
+"Пожалуйста, введите свой пароль, чтобы подтвердить права на эту учётную "
+"запись. Удаление учётной записи будет произведено сразу же после того, как "
+"вы отправите форму. Это действие нельзя будет отменить."
 
 #: djangopeople/templates/delete_account.html:7
 msgid "Delete my account"
@@ -642,7 +698,9 @@ msgstr "Дорогой(-ая) %(name)s,"
 msgid ""
 "It seems you're willing to delete your account from %(domain)s. You can "
 "delete your account by following the instructions on the link below:"
-msgstr "Вы получили это письмо потому, что хотите удалить вашу учётную запись на сайте %(domain)s. Вы можете удалить её, следуя инструкции по ссылке ниже:"
+msgstr ""
+"Вы получили это письмо потому, что хотите удалить вашу учётную запись на "
+"сайте %(domain)s. Вы можете удалить её, следуя инструкции по ссылке ниже:"
 
 #: djangopeople/templates/delete_account.txt:7
 msgid "For security reasons, this link will stay valid for only 5 minutes."
@@ -654,13 +712,17 @@ msgstr "Учётная запись удалена"
 
 #: djangopeople/templates/delete_account_done.html:6
 msgid "It's sad to see you go, but your account was successfully deleted."
-msgstr "Печально видеть, что вы покидаете наше сообщество, но ваша учётная запись была успешно удалена. "
+msgstr ""
+"Печально видеть, что вы покидаете наше сообщество, но ваша учётная запись "
+"была успешно удалена. "
 
 #: djangopeople/templates/delete_account_next.html:4
 msgid ""
 "Check your email! An email was just sent to you, follow the link in it to "
 "finalize your account deletion."
-msgstr "Проверьте вашу почту! Мы отправили вам электронное письмо. Пройдите по содержащейся в нём ссылке, чтобы завершить удаление вашей учётной записи."
+msgstr ""
+"Проверьте вашу почту! Мы отправили вам электронное письмо. Пройдите по "
+"содержащейся в нём ссылке, чтобы завершить удаление вашей учётной записи."
 
 #: djangopeople/templates/delete_account_request.html:3
 #: djangopeople/templates/delete_account_request.html:5
@@ -669,21 +731,28 @@ msgstr "Удаление учётной записи"
 
 #: djangopeople/templates/delete_account_request.html:8
 msgid ""
-"You are about to request complete removal of your account and data from this"
-" site. This will be done using the following process:"
-msgstr "Вы собираете запросить удаление вашей учётной записи и связанных с вами данных с этого сайта. Это процесс будет происходить следующим образом:"
+"You are about to request complete removal of your account and data from this "
+"site. This will be done using the following process:"
+msgstr ""
+"Вы собираете запросить удаление вашей учётной записи и связанных с вами "
+"данных с этого сайта. Это процесс будет происходить следующим образом:"
 
 #: djangopeople/templates/delete_account_request.html:10
 msgid ""
-"When you submit the following form, you will receive an email with a private"
-" link."
-msgstr "Когда вы отправите следующую форму, вы получите электронное письмо с уникальной ссылкой."
+"When you submit the following form, you will receive an email with a private "
+"link."
+msgstr ""
+"Когда вы отправите следующую форму, вы получите электронное письмо с "
+"уникальной ссылкой."
 
 #: djangopeople/templates/delete_account_request.html:11
 msgid ""
 "This link (valid for 5 minutes only) will take you to a page where you can "
 "enter your password to actually delete your account."
-msgstr "Эта ссылка (она будет действительной только в течение пяти минут) приведёт вас на страницу, где, введя свой пароль, вы сможете удалить свою учётную запись."
+msgstr ""
+"Эта ссылка (она будет действительной только в течение пяти минут) приведёт "
+"вас на страницу, где, введя свой пароль, вы сможете удалить свою учётную "
+"запись."
 
 #: djangopeople/templates/delete_account_request.html:13
 msgid "If you are ready to proceed, submit the form below."
@@ -730,9 +799,11 @@ msgstr "Изменить пароль"
 #: djangopeople/templates/edit_account.html:20
 #, python-format
 msgid ""
-"You do not have a password set - <a href=\"%(password_url)s\">set one "
-"now?</a>"
-msgstr "У вас не установлен пароль - <a href=\"%(password_url)s\">установить сейчас?</a>"
+"You do not have a password set - <a href=\"%(password_url)s\">set one now?</"
+"a>"
+msgstr ""
+"У вас не установлен пароль - <a href=\"%(password_url)s\">установить сейчас?"
+"</a>"
 
 #: djangopeople/templates/edit_account.html:21
 msgid "Delete your account"
@@ -741,22 +812,32 @@ msgstr "Удалить учётную запись"
 #: djangopeople/templates/edit_account.html:27
 #, python-format
 msgid ""
-"You have %(counter)s OpenID associated with your account. <a "
-"href=\"%(openid_url)s\">Manage your OpenID</a>"
+"You have %(counter)s OpenID associated with your account. <a href="
+"\"%(openid_url)s\">Manage your OpenID</a>"
 msgid_plural ""
-"You have %(counter)s OpenIDs associated with your account. <a "
-"href=\"%(openid_url)s\">Manage your OpenIDs</a>"
-msgstr[0] "С вашей учётной записью связан %(counter)s OpenID. <a href=\"%(openid_url)s\">Добавить/удалить OpenID</a>"
-msgstr[1] "С вашей учётной записью связаны %(counter)s OpenID. <a href=\"%(openid_url)s\">Добавить/удалить OpenID</a>"
-msgstr[2] "С вашей учётной записью связано %(counter)s OpenID. <a href=\"%(openid_url)s\">Добавить/удалить OpenID</a>"
+"You have %(counter)s OpenIDs associated with your account. <a href="
+"\"%(openid_url)s\">Manage your OpenIDs</a>"
+msgstr[0] ""
+"С вашей учётной записью связан %(counter)s OpenID. <a href=\"%(openid_url)s"
+"\">Добавить/удалить OpenID</a>"
+msgstr[1] ""
+"С вашей учётной записью связаны %(counter)s OpenID. <a href=\"%(openid_url)s"
+"\">Добавить/удалить OpenID</a>"
+msgstr[2] ""
+"С вашей учётной записью связано %(counter)s OpenID. <a href=\"%(openid_url)s"
+"\">Добавить/удалить OpenID</a>"
 
 #: djangopeople/templates/edit_account.html:30
 #, python-format
 msgid ""
-"If you have an <a href=\"http://openid.net/\">OpenID</a>, you can <a "
-"href=\"%(openid_url)s\">associate it with your account</a>. This will allow "
-"you to log in using your OpenID instead of your password."
-msgstr "Если у вас есть <a href=\"http://openid.net/\">OpenID</a>,вы можете <a href=\"%(openid_url)s\">привязать его к вашей учётной записи</a>. Это позволит вам входить на сайт с помощью вашего OpenID, вместо того, чтобы вводить пароль."
+"If you have an <a href=\"http://openid.net/\">OpenID</a>, you can <a href="
+"\"%(openid_url)s\">associate it with your account</a>. This will allow you "
+"to log in using your OpenID instead of your password."
+msgstr ""
+"Если у вас есть <a href=\"http://openid.net/\">OpenID</a>,вы можете <a href="
+"\"%(openid_url)s\">привязать его к вашей учётной записи</a>. Это позволит "
+"вам входить на сайт с помощью вашего OpenID, вместо того, чтобы вводить "
+"пароль."
 
 #: djangopeople/templates/edit_account.html:34
 msgid "Advanced: Use your profile page as an OpenID"
@@ -767,13 +848,19 @@ msgid ""
 "If you already have an OpenID, you can configure your Django People profile "
 "page to delegate to it. This means you'll be able to use your profile page "
 "as an OpenID, without having to sign in to Django People first."
-msgstr "Если у вас уже есть OpenID, вы можете настроить ваш профайл на Django People таким образом, чтобы он был посредником при входе через OpenID. Это значит, что вы сможете использовать адрес страницы вашего профайла в качестве OpenID и для этого не нужно будет заходить на Django People. "
+msgstr ""
+"Если у вас уже есть OpenID, вы можете настроить ваш профайл на Django People "
+"таким образом, чтобы он был посредником при входе через OpenID. Это значит, "
+"что вы сможете использовать адрес страницы вашего профайла в качестве OpenID "
+"и для этого не нужно будет заходить на Django People. "
 
 #: djangopeople/templates/edit_account.html:40
 msgid ""
 "Read <a href=\"http://simonwillison.net/2006/Dec/19/openid/\">more about "
 "delegation</a> to learn how to use this form."
-msgstr "Прочитайте <a href=\"http://simonwillison.net/2006/Dec/19/openid/\">статью про делегирование OpenID</a>, чтобы понять, как пользоваться этой формой."
+msgstr ""
+"Прочитайте <a href=\"http://simonwillison.net/2006/Dec/19/openid/\">статью "
+"про делегирование OpenID</a>, чтобы понять, как пользоваться этой формой."
 
 #: djangopeople/templates/edit_account.html:45
 msgid "Update OpenID delegation"
@@ -788,7 +875,9 @@ msgstr "Редактировать биографию"
 msgid ""
 "No HTML allowed, but paragraph tags will be added automatically and URLs "
 "will be turned in to links."
-msgstr "HTML запрещён, но параграфы будут добавлены автоматически, а URL превратятся в ссылки."
+msgstr ""
+"HTML запрещён, но параграфы будут добавлены автоматически, а URL превратятся "
+"в ссылки."
 
 #: djangopeople/templates/edit_bio.html:18
 msgid "Update bio"
@@ -834,7 +923,9 @@ msgstr "Настройки приватности"
 msgid ""
 "You can set your profile page not to show up in external search engine "
 "results (such as Google or Yahoo!)"
-msgstr "Вы можете настроить страницу своего профайла так, чтобы она не отображалась в поисковой выдаче сторонних поисковых машин (таких как Яндекс или Google)."
+msgstr ""
+"Вы можете настроить страницу своего профайла так, чтобы она не отображалась "
+"в поисковой выдаче сторонних поисковых машин (таких как Яндекс или Google)."
 
 #: djangopeople/templates/edit_finding.html:91
 msgid "Save changes"
@@ -843,10 +934,14 @@ msgstr "Сохранить изменения"
 #: djangopeople/templates/edit_location.html:25
 #: djangopeople/templates/signup.html:57
 msgid ""
-"<strong>Zoom and center the map on your location</strong>. Your map location"
-" will be shared in public, so only make it as accurate as makes you "
+"<strong>Zoom and center the map on your location</strong>. Your map location "
+"will be shared in public, so only make it as accurate as makes you "
 "comfortable."
-msgstr "<strong>Масштабируйте и перемещайте карту таким образом, чтобы ваше местоположение оказалось в центре</strong>. Ваше местоположение будет общедоступно, поэтому уточняйте его только до тех пор, пока чувствуете себя уютно."
+msgstr ""
+"<strong>Масштабируйте и перемещайте карту таким образом, чтобы ваше "
+"местоположение оказалось в центре</strong>. Ваше местоположение будет "
+"общедоступно, поэтому уточняйте его только до тех пор, пока чувствуете себя "
+"уютно."
 
 #: djangopeople/templates/edit_location.html:38
 msgid "Location *"
@@ -858,7 +953,10 @@ msgid ""
 "A short textual description of your location will be displayed on the site. "
 "We attempt to derive this from your position on the map, but you can "
 "customise it if you like."
-msgstr "Краткое текстовое описание вашего местоположения будет отображено на сайте. Мы попытаемся извлечь его из координат указанной вами на карте точки, но вы можете изменить его, если пожелаете."
+msgstr ""
+"Краткое текстовое описание вашего местоположения будет отображено на сайте. "
+"Мы попытаемся извлечь его из координат указанной вами на карте точки, но вы "
+"можете изменить его, если пожелаете."
 
 #: djangopeople/templates/edit_location.html:63
 msgid "Change location"
@@ -877,7 +975,9 @@ msgstr "Обновить портфолио"
 msgid ""
 "Show off the sites and projects you've personally built (or contributed to) "
 "using Django."
-msgstr "Похвастайтесь сайтами и проектами на Django, которые вы сделали сами (или в создании которых вы принимали участие)."
+msgstr ""
+"Похвастайтесь сайтами и проектами на Django, которые вы сделали сами (или в "
+"создании которых вы принимали участие)."
 
 #: djangopeople/templates/edit_portfolio.html:24
 msgid "Update portfolio"
@@ -906,13 +1006,17 @@ msgstr "Отображено %(counter)s недавних регистраций
 msgid ""
 "if you're a Django developer, why not <a href=\"%(signup_url)s\">add "
 "yourself</a> to the site?"
-msgstr "Если ты Django-разработчик, почему бы не <a href=\"%(signup_url)s\">добавить себя</a> на сайт?"
+msgstr ""
+"Если ты Django-разработчик, почему бы не <a href=\"%(signup_url)s\">добавить "
+"себя</a> на сайт?"
 
 #: djangopeople/templates/index.html:50
 msgid ""
-"Looking for a Django job? check out <a "
-"href=\"http://djangogigs.com/\">Djangogigs.com</a>"
-msgstr "Ищешь работу, связанную с Django? Посмотри на <a href=\"http://djangogigs.com/\">Djangogigs.com</a>"
+"Looking for a Django job? check out <a href=\"http://djangogigs.com/"
+"\">Djangogigs.com</a>"
+msgstr ""
+"Ищешь работу, связанную с Django? Посмотри на <a href=\"http://djangogigs."
+"com/\">Djangogigs.com</a>"
 
 #: djangopeople/templates/irc_active.html:4
 #: djangopeople/templates/irc_active.html:7
@@ -1069,17 +1173,22 @@ msgstr "Зарегистрироваться как джангист"
 #: djangopeople/templates/signup.html:21
 #, python-format
 msgid ""
-"Got an <strong class=\"openid\">OpenID</strong>? <a "
-"href=\"%(openid_url)s\">Sign up with your OpenID now!</a>"
-msgstr "У вас есть <strong class=\"openid\">OpenID</strong>? <a href=\"%(openid_url)s\">Зарегистрируйтесь с помощью OpenID!</a>"
+"Got an <strong class=\"openid\">OpenID</strong>? <a href=\"%(openid_url)s"
+"\">Sign up with your OpenID now!</a>"
+msgstr ""
+"У вас есть <strong class=\"openid\">OpenID</strong>? <a href=\"%(openid_url)s"
+"\">Зарегистрируйтесь с помощью OpenID!</a>"
 
 #: djangopeople/templates/signup.html:23
 #, python-format
 msgid ""
-"Your new account will be associated with with your OpenID: <strong "
-"class=\"openid\">%(openid)s</strong> (<a "
-"href=\"%(openid_signout)s?next=%(signup_url)s\">don't associate</a>)"
-msgstr "Ваша новая учётная запись будет связана с вашим OpenID: <strong class=\"openid\">%(openid)s</strong> (<a href=\"%(openid_signout)s?next=%(signup_url)s\">не связывать</a>)"
+"Your new account will be associated with with your OpenID: <strong class="
+"\"openid\">%(openid)s</strong> (<a href=\"%(openid_signout)s?next="
+"%(signup_url)s\">don't associate</a>)"
+msgstr ""
+"Ваша новая учётная запись будет связана с вашим OpenID: <strong class="
+"\"openid\">%(openid)s</strong> (<a href=\"%(openid_signout)s?next="
+"%(signup_url)s\">не связывать</a>)"
 
 #: djangopeople/templates/signup.html:26
 msgid "1. Tell us who you are"
@@ -1093,7 +1202,9 @@ msgstr "2. Расскажи, где ты живёшь"
 msgid ""
 "Latitude and longitude are missing. Please use the map to provide your "
 "location."
-msgstr "Широта и долгота не указаны. Пожалуйста, используйте карту, чтобы указать ваше местонахождение."
+msgstr ""
+"Широта и долгота не указаны. Пожалуйста, используйте карту, чтобы указать "
+"ваше местонахождение."
 
 #: djangopeople/templates/signup.html:90
 msgid "3. And a bit about you …"
@@ -1111,7 +1222,9 @@ msgstr "4. Твои навыки и интересы"
 msgid ""
 "Tag yourself with your particular skills and interests, e.g. postgresql, "
 "nginx, css. Separate them with commas; spaces are allowed."
-msgstr "Укажите ваши навыки и интересы, например postgresql, nginx, css. Разделяйте их запятыми; вы можете использовать пробелы."
+msgstr ""
+"Укажите ваши навыки и интересы, например postgresql, nginx, css. Разделяйте "
+"их запятыми; вы можете использовать пробелы."
 
 #: djangopeople/templates/signup.html:150
 msgid "Sign me up"
@@ -1139,7 +1252,9 @@ msgstr "Новый пароль успешно задан"
 msgid ""
 "Your password has successfully been reset. You can use it right now on the "
 "<a href=\"%(login_url)s\">login page</a>."
-msgstr "Ваш пароль успешно восстановлен. Вы можете использовать его прямо сейчас на <a href=\"%(login_url)s\">странице входа</a>."
+msgstr ""
+"Ваш пароль успешно восстановлен. Вы можете использовать его прямо сейчас на "
+"<a href=\"%(login_url)s\">странице входа</a>."
 
 #: djangopeople/templates/password_reset/recovery_form.html:3
 #: djangopeople/templates/password_reset/recovery_form.html:5
@@ -1152,7 +1267,10 @@ msgstr "Восстановить доступ к вашей учётной за�
 msgid ""
 "Enter your username and we'll send an account recovery link to the e-mail "
 "address associated with your account."
-msgstr "Введите ваше имя пользователя и мы вышлем ссылку, с помощью которой вы сможете восстановить доступ к учётной записи, на адрес электронной почты, связанный с учётной записью."
+msgstr ""
+"Введите ваше имя пользователя и мы вышлем ссылку, с помощью которой вы "
+"сможете восстановить доступ к учётной записи, на адрес электронной почты, "
+"связанный с учётной записью."
 
 #: djangopeople/templates/password_reset/recovery_form.html:13
 msgid "Recover account"
@@ -1163,14 +1281,18 @@ msgstr "Восстановление доступа к учётной запис
 msgid ""
 "An email has just been sent to <strong>%(email)s</strong>. Use the link in "
 "it to set a new password."
-msgstr "Электронное письмо было только что отправлено на адрес <strong>%(email)s</strong>. Используйте ссылку в письме, чтобы задать новый пароль."
+msgstr ""
+"Электронное письмо было только что отправлено на адрес <strong>%(email)s</"
+"strong>. Используйте ссылку в письме, чтобы задать новый пароль."
 
 #: djangopeople/templates/password_reset/reset.html:9
 #, python-format
 msgid ""
-"Sorry, this password reset link is invalid. You can still <a "
-"href=\"%(recovery_url)s\">request a new one</a>."
-msgstr "Извините, эта ссылка для восстановления пароля недействительна. Однако вы можете <a href=\"%(recovery_url)s\">запросить новую</a>."
+"Sorry, this password reset link is invalid. You can still <a href="
+"\"%(recovery_url)s\">request a new one</a>."
+msgstr ""
+"Извините, эта ссылка для восстановления пароля недействительна. Однако вы "
+"можете <a href=\"%(recovery_url)s\">запросить новую</a>."
 
 #: djangopeople/templates/password_reset/reset.html:11
 #, python-format

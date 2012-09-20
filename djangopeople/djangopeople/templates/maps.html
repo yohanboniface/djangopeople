@@ -11,7 +11,7 @@
 var people = [
 	// latitude, longitude, name, username, location description
 	{% for person in people_list %}
-		[{{ person.latitude }}, {{ person.longitude }}, "{{ person|escapejs }}", "{{ person.user.username|escapejs }}", "{{ person.location_description|escapejs }}", "{% gravatar person.user.email 40 %}", "{{ person.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
+		[{{ person.latitude_str }}, {{ person.longitude_str }}, "{{ person|escapejs }}", "{{ person.user.username|escapejs }}", "{{ person.location_description|escapejs }}", "{% gravatar person.user.email 40 %}", "{{ person.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
 	{% endfor %}
 ];
 </script>

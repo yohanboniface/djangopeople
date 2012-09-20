@@ -151,6 +151,14 @@ class DjangoPerson(models.Model):
     last_active_on_irc = models.DateTimeField(_('Last active on IRC'),
                                               blank=True, null=True)
 
+    @property
+    def latitude_str(self):
+        return str(self.latitude)
+
+    @property
+    def longitude_str(self):
+        return str(self.longitude)
+
     def irc_nick(self):
         try:
             return self.machinetags.filter(namespace='im',
@@ -174,10 +182,10 @@ class DjangoPerson(models.Model):
 
         # Sort and annotate people by distance
         for person in people:
-            person.distance_in_miles = distance.VincentyDistance(
+            person.distance_in_miles = int(distance.VincentyDistance(
                 (self.latitude, self.longitude),
                 (person.latitude, person.longitude)
-            ).miles
+            ).miles)
 
         # Return the nearest X
         people.sort(key=lambda x: x.distance_in_miles)

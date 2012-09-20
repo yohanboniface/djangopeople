@@ -14,12 +14,12 @@
 var nearby_people = [
 	// latitude, longitude, name, username, location description, flag, isocode
 	{% for p in nearest_people %}
-		[{{ p.latitude }}, {{ p.longitude }}, "{{ p|escapejs }}", "{{ p.user.username|escapejs }}", "{{ p.location_description|escapejs }}", "{% gravatar p.user.email 40 %}", "{{ p.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
+		[{{ p.latitude_str }}, {{ p.longitude_str }}, "{{ p|escapejs }}", "{{ p.user.username|escapejs }}", "{{ p.location_description|escapejs }}", "{% gravatar p.user.email 40 %}", "{{ p.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
 	{% endfor %}
 ];
 
-var person_latitude = {{ person.latitude }};
-var person_longitude = {{ person.longitude }};
+var person_latitude = {{ person.latitude_str }};
+var person_longitude = {{ person.longitude_str }};
 </script>
 <script type="text/javascript" src="{% static "djangopeople/js/profile.js" %}"></script>
 <style type="text/css">
@@ -127,7 +127,7 @@ div.bio a.edit {
 					<li>
 						<img src="{% gravatar person.user.email 40 %}" alt="{{ person }}" class="main">
 						<h3><a href="{{ person.get_absolute_url }}">{{ person }}</a></h3>
-						<p class="meta"><a href="{% url "country_detail" person.country.iso_code|lower %}" class="nobg"><img src="{% static person.country.flag_url %}" alt="{{ person.country }}" title="{{ person.country }}"></a> {{ person.location_description }}<br>{% blocktrans count counter=person.distance_in_miles|floatformat:0 %}{{ counter }} mile away{% plural %}{{ counter }} miles away{% endblocktrans %}</p>
+						<p class="meta"><a href="{% url "country_detail" person.country.iso_code|lower %}" class="nobg"><img src="{% static person.country.flag_url %}" alt="{{ person.country }}" title="{{ person.country }}"></a> {{ person.location_description }}<br>{% blocktrans count counter=person.distance_in_miles %}{{ counter }} mile away{% plural %}{{ counter }} miles away{% endblocktrans %}</p>
 					</li>
 				{% endfor %}
 			</ul>

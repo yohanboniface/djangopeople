@@ -39,6 +39,7 @@ gettext = lambda s: s
 LANGUAGES = (
     ('en', gettext('English')),
     ('cs', gettext('Czech')),
+    ('ru', gettext('Russian')),
 )
 
 LOCALE_PATHS = (

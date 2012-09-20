@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-10 08:03+0000\n"
+"POT-Creation-Date: 2012-09-20 11:38+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,6 +19,14 @@ msgstr ""
 
 #: default_settings.py:40
 msgid "English"
+msgstr ""
+
+#: default_settings.py:41
+msgid "Czech"
+msgstr ""
+
+#: default_settings.py:42
+msgid "Russian"
 msgstr ""
 
 #: django_openidauth/models.py:8 djangopeople/models.py:123
@@ -173,7 +181,7 @@ msgstr ""
 
 #: djangopeople/forms.py:127 djangopeople/forms.py:267
 #: djangopeople/models.py:74 djangopeople/models.py:88
-#: djangopeople/models.py:127 djangopeople/models.py:252
+#: djangopeople/models.py:127 djangopeople/models.py:260
 #: djangopeople/templates/edit_location.html:44
 msgid "Country"
 msgstr ""
@@ -380,43 +388,43 @@ msgstr ""
 msgid "Last active on IRC"
 msgstr ""
 
-#: djangopeople/models.py:159
+#: djangopeople/models.py:167
 msgid "<none>"
 msgstr ""
 
-#: djangopeople/models.py:220
+#: djangopeople/models.py:228
 msgid "Django person"
 msgstr ""
 
-#: djangopeople/models.py:221
+#: djangopeople/models.py:229
 msgid "Django people"
 msgstr ""
 
-#: djangopeople/models.py:235 djangopeople/models.py:250
+#: djangopeople/models.py:243 djangopeople/models.py:258
 msgid "Title"
 msgstr ""
 
-#: djangopeople/models.py:236 djangopeople/models.py:251
+#: djangopeople/models.py:244 djangopeople/models.py:259
 msgid "URL"
 msgstr ""
 
-#: djangopeople/models.py:238
+#: djangopeople/models.py:246
 msgid "Contributor"
 msgstr ""
 
-#: djangopeople/models.py:244
+#: djangopeople/models.py:252
 msgid "Portfolio site"
 msgstr ""
 
-#: djangopeople/models.py:245
+#: djangopeople/models.py:253
 msgid "Portfolio sites"
 msgstr ""
 
-#: djangopeople/models.py:258
+#: djangopeople/models.py:266
 msgid "Country site"
 msgstr ""
 
-#: djangopeople/models.py:259
+#: djangopeople/models.py:267
 msgid "Country sites"
 msgstr ""
 

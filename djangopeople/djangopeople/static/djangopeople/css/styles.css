@@ -532,6 +532,10 @@ ul.split li {
 	cursor: pointer;
 }
 
+div.leaflet-popup-content a {
+	color: #ab5603;
+}
+
 /* @end */
 
 .highlight {

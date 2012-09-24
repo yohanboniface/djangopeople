@@ -37,23 +37,6 @@ function plotPeopleOnMap(people, map) {
     return bounds;
 }
 
-
-function hidePeopleOnMap(peopleArray) {
-    if (peopleArray) {
-        for (i in peopleArray) {
-            peopleArray[i].setMap(null);
-        }
-    }
-}
-
-function showPeopleOnMap(peopleArray, map) {
-    if (peopleArray) {
-        for (i in peopleArray) {
-            peopleArray[i].addTo(map);
-        }
-    }
-}
-
 // Creates a Marker object for a person
 function getPersonMarker(person) {
     var lat = person[0];
@@ -67,19 +50,6 @@ function getPersonMarker(person) {
     marker.bindPopup(info)
 
     return marker;
-}
-
-/* Creates an array of person Markers for easier toggling
- * of their visibility on the map. 
- */
-function getPeopleArray(peopleList) {
-    var peopleArray = [];
-    $.each(peopleList, function(index, person) {
-        var marker = getPersonMarker(person);
-        peopleArray.push(marker);
-    });
-
-    return peopleArray;
 }
 
 function greenIconImage() {

@@ -44,7 +44,6 @@ function shrinkMap (map, latlng) {
             opacity: 1.0
         }, 500, 'swing', function() {
             map._onResize()
-            // showPeopleOnMap(peopleArray, map);
 
             // Unbind event so user can actually interact with map
             $('#map').unbind('click', onMapClicked);
@@ -58,10 +57,6 @@ function shrinkMap (map, latlng) {
     var marker = new L.Marker(latlng, {
         icon: greenIconImage(),
     }).addTo(map);
-
-    //gets an array of person map markers, used for hiding and showing them on
-    //the map
-    // var peopleArray = getPeopleArray(nearby_people);
 
 };
 

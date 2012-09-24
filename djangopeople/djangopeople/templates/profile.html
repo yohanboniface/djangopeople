@@ -113,11 +113,11 @@ div.bio a.edit {
 	</div>
 
 	<div class="secondary">
-		{% if nearest_people %}
+		{% if people_list %}
 			<h2>{% blocktrans with name=person.user.first_name %}People near {{ name }}{% endblocktrans %}</h2>
 
 			<ul class="detailsList">
-				{% for person in nearest_people %}
+				{% for person in people_list %}
 					<li>
 						<img src="{% gravatar person.user.email 40 %}" alt="{{ person }}" class="main">
 						<h3><a href="{{ person.get_absolute_url }}">{{ person }}</a></h3>

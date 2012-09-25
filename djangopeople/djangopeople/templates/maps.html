@@ -3,12 +3,14 @@
 
 {% block maps_api %}
 <link rel="stylesheet" href="{% static "djangopeople/leaflet/leaflet.css" %}" />
+<link rel="stylesheet" href="{% static "djangopeople/leaflet.markercluster/markercluster.css" %}" />
 <!--[if lte IE 8]>
     <link rel="stylesheet" href="{% static "djangopeople/leaflet/leaflet.ie.css" %}" />
 <![endif]-->
 
 {% if debug %}
 	<script src="{% static "djangopeople/leaflet/leaflet-src.js" %}"></script>
+	<script src="{% static "djangopeople/leaflet.markercluster/markercluster.js" %}"></script>
 	{% else %}
 	<script src="{% static "djangopeople/leaflet/leaflet.js" %}"></script>
 {% endif %}

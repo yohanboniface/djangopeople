@@ -536,6 +536,45 @@ div.leaflet-popup-content a {
 	color: #ab5603;
 }
 
+.marker-cluster-small {
+	background-color: #A2C474;
+}
+.marker-cluster-small div {
+	background-color: #A6CC74;
+}
+
+.marker-cluster-medium {
+	background-color: #A6CC74;
+}
+.marker-cluster-medium div {
+	background-color: #92cc47;
+}
+
+.marker-cluster-large {
+	background-color: #68BA70;
+}
+.marker-cluster-large div {
+	background-color: #35913E;
+}
+
+.marker-cluster {
+	background-clip: padding-box;
+	border-radius: 20px;
+}
+.marker-cluster div {
+	width: 30px;
+	height: 30px;
+	margin-left: 5px;
+	margin-top: 5px;
+
+	text-align: center;
+	border-radius: 15px;
+	font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+.marker-cluster span {
+	line-height: 30px;
+}
+
 /* @end */
 
 .highlight {

@@ -52,7 +52,7 @@ class IndexView(generic.TemplateView):
 
     def get_context_data(self, **kwargs):
         people = DjangoPerson.objects.all().select_related()
-        people = people.order_by('-id')[:100]
+        people = people.order_by('-id')[:1000]
         ctx = super(IndexView, self).get_context_data(**kwargs)
         ctx.update({
             'people_list': people,

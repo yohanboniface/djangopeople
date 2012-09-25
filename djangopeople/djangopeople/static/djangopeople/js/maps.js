@@ -28,12 +28,21 @@ function zoomOn(lat, lon) {
  */
 function plotPeopleOnMap(people, map) {
     var bounds = new L.LatLngBounds();
+    var polygonOptions = {
+        fillColor: "#ab5603",
+        color: "#ab5603",
+    }
+    var markers = new L.MarkerClusterGroup({
+        "polygonOptions": polygonOptions
+    });
     $.each(people, function(index, person) {
         var marker = getPersonMarker(person);
         bounds.extend(marker.getLatLng());
-        marker.addTo(map);
+        // marker.addTo(map);
+        markers.addLayer(marker);
     });
-    map.fitBounds(bounds);
+    // map.fitBounds(bounds);
+    map.addLayer(markers);
     return bounds;
 }
 

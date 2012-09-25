@@ -2,15 +2,15 @@
 {% load staticfiles gravatar %}
 
 {% block maps_api %}
-<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.css" />
+<link rel="stylesheet" href="{% static "djangopeople/leaflet/leaflet.css" %}" />
 <!--[if lte IE 8]>
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.ie.css" />
+    <link rel="stylesheet" href="{% static "djangopeople/leaflet/leaflet.ie.css" %}" />
 <![endif]-->
 
 {% if debug %}
-	<script src="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet-src.js"></script>
+	<script src="{% static "djangopeople/leaflet/leaflet-src.js" %}"></script>
 	{% else %}
-	<script src="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.js"></script>
+	<script src="{% static "djangopeople/leaflet/leaflet.js" %}"></script>
 {% endif %}
 <script type="text/javascript" src="{% static "djangopeople/js/maps.js" %}"></script>
 {% endblock maps_api %}

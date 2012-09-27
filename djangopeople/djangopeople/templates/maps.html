@@ -18,14 +18,6 @@
 {% endblock maps_api %}
 
 {% block js %}
-<script type="text/javascript">
-var people = [
-	// latitude, longitude, name, username, location description
-	{% for person in people_list %}
-		[{{ person.latitude_str }}, {{ person.longitude_str }}, "{{ person|escapejs }}", "{{ person.user.username|escapejs }}", "{{ person.location_description|escapejs }}", "{% gravatar person.user.email 40 %}", "{{ person.country.iso_code|lower }}"]{% if not forloop.last %},{% endif %}
-	{% endfor %}
-];
-</script>
 
 {% block map_options %}
 <script type="text/javascript">
@@ -44,15 +36,13 @@ var people = [
 <script type="text/javascript">
 window.onload = function() {
 	var MAP = new L.Map('map', MAP_OPTIONS);
-	L.tileLayer('http://{s}.tile2.opencyclemap.org/transport/{z}/{x}/{y}.png', {
+	var geolayer = new L.TileLayer.ClusteredGeoJSONTile('http://{s}.tile2.opencyclemap.org/transport/{z}/{x}/{y}.png', {
 	    attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, Imagery © <a href="http://www.thunderforest.com/">Thunderforest</a>',
-	    maxZoom: 18
-	}).addTo(MAP);
-
-	// Plot the people as markers
-	if (typeof people != 'undefined' && people.length > 0) {
-		plotPeopleOnMap(people, MAP);
-	}
+	    maxZoom: 18,
+	    dataUrl: '{{ TILESTACHE_DOMAIN }}/people/{z}/{x}/{y}.json',
+	});
+	geolayer.initClusterMarker(MAP);
+	geolayer.addTo(MAP);
 	{% block post_map_init %}
 	{% endblock post_map_init %}
 };

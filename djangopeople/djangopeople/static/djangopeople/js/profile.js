@@ -1,6 +1,6 @@
 function shrinkMap (map, latlng) {
     // Center map
-    map.panTo(latlng);
+    map.setView(latlng, 12);
 
     var ShrinkMapControl = L.Control.extend({
         options: {
@@ -51,12 +51,6 @@ function shrinkMap (map, latlng) {
         });
     }
     $('#map').click(onMapClicked);
-
-
-    // Marker for the current profile, not clickable
-    var marker = new L.Marker(latlng, {
-        icon: greenIconImage(),
-    }).addTo(map);
 
 };
 

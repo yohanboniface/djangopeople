@@ -7,13 +7,9 @@
 
 {% block nav_li_class_home %} class="current"{% endblock %}
 
-{% block map_extra_options %}
-<script type="text/javascript">
-	var center = new L.LatLng(19.97335, -15.8203);
-	MAP_OPTIONS['center'] = center;
-	MAP_OPTIONS['zoom'] = 2;
-</script>
-{% endblock map_extra_options %}
+{% block post_map_init %}
+    MAP.locate({setView: true});
+{% endblock %}
 
 {% block map %}
 	<div class="mapContainer major">

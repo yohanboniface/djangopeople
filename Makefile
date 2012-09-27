@@ -11,6 +11,9 @@ db:
 shell:
 	django-admin.py shell $(settings)
 
+dbshell:
+	django-admin.py dbshell $(settings)
+
 makemessages:
 	cd $(proj) && django-admin.py makemessages -a $(settings)
 
@@ -22,3 +25,6 @@ txpush:
 
 txpull:
 	tx pull -a
+
+tilestache:
+	gunicorn "TileStache:WSGITileServer('tilestache.cfg')" -b 0.0.0.0:8889

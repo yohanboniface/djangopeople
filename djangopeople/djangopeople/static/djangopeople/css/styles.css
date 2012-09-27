@@ -536,44 +536,13 @@ div.leaflet-popup-content a {
 	color: #ab5603;
 }
 
-.marker-cluster-small {
-	background-color: #A2C474;
-}
-.marker-cluster-small div {
-	background-color: #A6CC74;
-}
-
-.marker-cluster-medium {
-	background-color: #A6CC74;
-}
-.marker-cluster-medium div {
-	background-color: #92cc47;
-}
-
-.marker-cluster-large {
-	background-color: #68BA70;
-}
-.marker-cluster-large div {
-	background-color: #35913E;
-}
-
-.marker-cluster {
-	background-clip: padding-box;
-	border-radius: 20px;
-}
-.marker-cluster div {
-	width: 30px;
-	height: 30px;
-	margin-left: 5px;
-	margin-top: 5px;
-
-	text-align: center;
-	border-radius: 15px;
-	font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
-}
-.marker-cluster span {
-	line-height: 30px;
-}
+.marker-cluster div { background-color: #92cc47; color: #fff; width: 34px; height: 34px; margin-left: 3px; margin-top: 3px; text-align: center; border: 3px solid #fff; border-radius: 20px; font: bold 11px "Helvetica Neue", Arial, Helvetica, sans-serif; }
+.marker-cluster span { line-height: 34px }
+.marker-cluster-dot div { width: 12px; height: 12px; margin-left: 10px; margin-top: 10px; border-radius: 12px; }
+.marker-cluster-small div { width: 20px; height: 20px; margin-left: 8px; margin-top: 8px; border-radius: 13px; }
+.marker-cluster-small span { line-height: 20px }
+.marker-cluster-large div { width: 40px; height: 40px; margin-left: 0; margin-top: 0; border-radius: 27px; }
+.marker-cluster-large span { line-height: 40px }
 
 /* @end */
 

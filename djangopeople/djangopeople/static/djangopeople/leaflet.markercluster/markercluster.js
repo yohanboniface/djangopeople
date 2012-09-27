@@ -494,7 +494,7 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
 
                 return;
             }
-            
+
             //Didn't manage to cluster in at this zoom, record us as a marker here and continue upwards
             gridUnclustered[zoom].addObject(layer, markerPoint);
         }

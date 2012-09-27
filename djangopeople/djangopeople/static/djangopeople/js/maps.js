@@ -1,11 +1,11 @@
 function getPersonPopupContent(person) {
-    var lat = person[0];
-    var lon = person[1];
-    var name = person[2];
-    var username = person[3];
-    var location_description = person[4];
-    var photo = person[5];
-    var iso_code = person[6];
+    var lat = person.geometry.coordinates[0];
+    var lon = person.geometry.coordinates[1];
+    var name = person.properties.name;
+    var username = person.properties.username;
+    var location_description = person.properties.location_description;
+    var photo = person.properties.photo;
+    var iso_code = person.properties.iso_code;
     var html =  '<ul class="detailsList">' + 
         '<li>' + 
         '<img src="' + photo + '" alt="' + name + '" class="main">' + 
@@ -23,44 +23,6 @@ function zoomOn(lat, lon) {
     MAP.setZoom(12);
 }
 
-/* Plots people on the maps and adds an info window to it
- * which becomes visible when you click the marker
- */
-function plotPeopleOnMap(people, map) {
-    var bounds = new L.LatLngBounds();
-    var polygonOptions = {
-        fillColor: "#ab5603",
-        color: "#ab5603",
-    }
-    var markers = new L.MarkerClusterGroup({
-        "polygonOptions": polygonOptions
-    });
-    $.each(people, function(index, person) {
-        var marker = getPersonMarker(person);
-        bounds.extend(marker.getLatLng());
-        // marker.addTo(map);
-        markers.addLayer(marker);
-    });
-    // map.fitBounds(bounds);
-    map.addLayer(markers);
-    return bounds;
-}
-
-// Creates a Marker object for a person
-function getPersonMarker(person) {
-    var lat = person[0];
-    var lon = person[1];
-    var point = new L.LatLng(lat, lon);
-    // custom marker options removed for now
-    var marker = new L.Marker(point, {
-        icon: greenIconImage(),
-    });
-    var info = getPersonPopupContent(person);
-    marker.bindPopup(info)
-
-    return marker;
-}
-
 function greenIconImage() {
     var greenIcon = L.icon({
         iconUrl: STATIC_URL + 'djangopeople/img/green-bubble.png',
@@ -73,3 +35,79 @@ function greenIconImage() {
     });
     return greenIcon;
 }
+
+L.TileLayer.ClusteredGeoJSONTile = L.TileLayer.extend({
+
+    initClusterMarker: function (map) {
+        var polygonOptions = {
+            fillColor: "#ab5603",
+            color: "#ab5603",
+        }
+        if (this.clusterMarker) {
+            map.removeLayer(this.clusterMarker);
+        }
+        this.clusterMarker = new L.MarkerClusterGroup({
+            "polygonOptions": polygonOptions
+        });
+    },
+
+    initTmpLayer: function (e) {
+        // Goal: add markers to cluster in one shot
+        this.tmpLayer = new L.GeoJSON(null, {
+            pointToLayer: function (feature, latlng) {
+                var marker = new L.Marker(latlng, {
+                    icon: greenIconImage(),
+                });
+                var info = getPersonPopupContent(feature);
+                marker.bindPopup(info)
+                return marker;
+            }
+        });
+    },
+
+    commitTmpLayer: function (e) {
+        this.clusterMarker.addLayer(this.tmpLayer);
+        if(!this._map.hasLayer(this.clusterMarker)) {
+            // Add cluster layer to map after computing clusters, if needed
+            // Cluster computing is always slower when ClusterLayer is
+            // already displayed on map
+            this._map.addLayer(this.clusterMarker)
+        }
+    },
+
+    onAdd: function (map) {
+        this._map = map;
+        var self = this;
+        map.on('zoomstart', function (e) {
+            // Delete the cluster to prevent from having several times
+            // the same people
+            self.initClusterMarker(map);
+        });
+        this.on({
+            'loading': this.initTmpLayer,
+            'load': this.commitTmpLayer
+        });
+        L.TileLayer.prototype.onAdd.call(this, map);
+    },
+
+    _addTile: function (tilePoint, container) {
+        L.TileLayer.prototype._addTile.call(this, tilePoint, container)
+
+        var z = this._getZoomForUrl(),
+            x = tilePoint.x,
+            y = tilePoint.y;
+
+        var dataUrl = L.Util.template(this.options.dataUrl, {
+            s: this._getSubdomain(tilePoint),
+            z: z,
+            x: x,
+            y: y
+        });
+        var self = this;
+        $.getJSON(dataUrl, function (data) {
+            DATA = data;
+            self.tmpLayer.addData(data);
+        });
+    }
+
+});

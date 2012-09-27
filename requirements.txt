@@ -18,3 +18,6 @@ pytz==2012d
 raven==2.0.5
 redis==2.6.2
 simplejson==2.6.1
+ModestMaps==1.4.1
+Shapely==1.2.16
+TileStache==1.42.0

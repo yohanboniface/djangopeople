@@ -39,6 +39,7 @@ function greenIconImage() {
 L.TileLayer.ClusteredGeoJSONTile = L.TileLayer.extend({
 
     initClusterMarker: function (map) {
+        this._geojsonTilesToLoad = 0;
         var polygonOptions = {
             fillColor: "#ab5603",
             color: "#ab5603",
@@ -84,8 +85,8 @@ L.TileLayer.ClusteredGeoJSONTile = L.TileLayer.extend({
             self.initClusterMarker(map);
         });
         this.on({
-            'loading': this.initTmpLayer,
-            'load': this.commitTmpLayer
+            'geojsonloadinit': this.initTmpLayer,
+            'geojsonloadend': this.commitTmpLayer
         });
         L.TileLayer.prototype.onAdd.call(this, map);
     },
@@ -104,9 +105,20 @@ L.TileLayer.ClusteredGeoJSONTile = L.TileLayer.extend({
             y: y
         });
         var self = this;
+        if(!this._geojsonTilesToLoad) {
+            this.fire("geojsonloadinit")
+        }
+        // Register that this tile is not yet loaded
+        this._geojsonTilesToLoad++;
         $.getJSON(dataUrl, function (data) {
             DATA = data;
             self.tmpLayer.addData(data);
+            // Tile loaded
+            self._geojsonTilesToLoad--;
+            if(!self._geojsonTilesToLoad) {
+                // No more tiles to load
+                self.fire("geojsonloadend")
+            }
         });
     }
 

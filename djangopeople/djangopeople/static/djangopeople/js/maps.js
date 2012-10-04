@@ -29,7 +29,7 @@ L.PeopleMarker = L.Marker.extend({
 
     _onClick: function() {
         (function(self){
-            $.ajax(self.person_id + "/popup/").done(function (html) {
+            $.ajax("/" + self.person_id + "/popup/").done(function (html) {
                 self.bindPopup(html);
                 self.openPopup();
             });

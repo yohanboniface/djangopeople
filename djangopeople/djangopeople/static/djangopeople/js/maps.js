@@ -1,23 +1,3 @@
-function getPersonPopupContent(person) {
-    var lat = person.geometry.coordinates[0];
-    var lon = person.geometry.coordinates[1];
-    var name = person.properties.name;
-    var username = person.properties.username;
-    var location_description = person.properties.location_description;
-    var photo = person.properties.photo;
-    var iso_code = person.properties.iso_code;
-    var html =  '<ul class="detailsList">' + 
-        '<li>' + 
-        '<img src="' + photo + '" alt="' + name + '" class="main">' + 
-        '<h3><a href="/' + username + '/">' + name + '</a></h3>' + 
-        '<p class="meta"><a href="/' + iso_code + '/" class="nobg">' + 
-        '<img src="' + STATIC_URL + 'djangopeople/img/flags/' + iso_code + '.gif"></a> ' + 
-        location_description + '</p>' + 
-        '<p class="meta"><a href="#" onclick="zoomOn(' + lat + ', ' + lon + '); return false;">Zoom to point</a></p>' +
-        '</li>';
-    return html;
-}
-
 function zoomOn(lat, lon) {
     MAP.setCenter(new L.LatLng(lat, lon));
     MAP.setZoom(12);
@@ -35,6 +15,28 @@ function greenIconImage() {
     });
     return greenIcon;
 }
+
+L.PeopleMarker = L.Marker.extend({
+
+    initialize: function(person_id, latlng, options) {
+        this.person_id = person_id;
+
+        L.Marker.prototype.initialize.call(this, latlng, options);
+
+        // Events
+        this.on("click", this._onClick);
+    },
+
+    _onClick: function() {
+        (function(self){
+            $.ajax(self.person_id + "/popup/").done(function (html) {
+                self.bindPopup(html);
+                self.openPopup();
+            });
+        })(this)
+    }
+
+});
 
 L.TileLayer.ClusteredGeoJSONTile = L.TileLayer.extend({
 
@@ -56,11 +58,11 @@ L.TileLayer.ClusteredGeoJSONTile = L.TileLayer.extend({
         // Goal: add markers to cluster in one shot
         this.tmpLayer = new L.GeoJSON(null, {
             pointToLayer: function (feature, latlng) {
-                var marker = new L.Marker(latlng, {
-                    icon: greenIconImage(),
+                var marker = new L.PeopleMarker(feature.id, latlng, {
+                    icon: greenIconImage()
                 });
-                var info = getPersonPopupContent(feature);
-                marker.bindPopup(info)
+                // var info = getPersonPopupContent(feature);
+                // marker.bindPopup(" " + feature.id)
                 return marker;
             }
         });

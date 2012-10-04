@@ -428,6 +428,15 @@ class ProfileView(generic.DetailView):
 profile = ProfileView.as_view()
 
 
+class ProfilePopupView(generic.DetailView):
+    context_object_name = 'person'
+    template_name = 'profile_popup.html'
+    model = DjangoPerson
+    slug_url_kwarg = 'username'
+    slug_field = 'user__username'
+profile_popup = ProfilePopupView.as_view()
+
+
 class DjangoPersonEditViewBase(generic.UpdateView):
     def get_object(self):
         return get_object_or_404(DjangoPerson,

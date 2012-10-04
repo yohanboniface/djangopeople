@@ -127,6 +127,9 @@ urlpatterns = patterns('',
 
     url(r'^(?P<username>[a-z0-9]{3,})/delete/(?P<key>.+)/$',
         views.delete_account, name='delete_account'),
+
+    url(r'^(?P<username>[a-z0-9]{3,})/popup/$',
+        views.profile_popup, name='profile_popup'),
 )
 
 urlpatterns += staticfiles_urlpatterns()

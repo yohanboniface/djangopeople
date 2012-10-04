@@ -15,28 +15,21 @@ class Provider(BaseProvider):
     def __init__(self, layer):
         self.layer = layer
         self.mercator = getProjectionByName('spherical mercator')
-        self.indent = 2
+        self.indent = 0
         self.precision = 6
         self.id_field = "people_id"
 
     def row2feature(self, row):
         """ Convert a database row dict to a feature dict."""
-        feature = {'type': 'Feature', 'properties': _copy(row)}
+        feature = {'type': 'Feature', 'properties': {}}
 
-        lat = feature['properties'].pop("latitude")
-        lng = feature['properties'].pop("longitude")
+        lat = row.get("latitude")
+        lng = row.get("longitude")
         feature['geometry'] = {
             "type": "Point",
             "coordinates": [lng, lat]
         }
-        feature['id'] = feature['properties'].pop("people_id")
-        first_name = feature['properties'].pop("first_name").decode('utf-8')
-        last_name = feature['properties'].pop("last_name").decode('utf-8')
-        feature['properties']['name'] = u"%s %s" % (first_name, last_name)
-        feature['properties'].update({
-            "photo": "https://secure.gravatar.com/avatar/e9bd94b49ff9cf2ab370b5b3b346e8fc?s=40&d=mm",
-            "iso_code": "fr"
-            })
+        feature['id'] = row.get("username")
 
         return feature
 

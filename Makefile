@@ -26,5 +26,5 @@ txpush:
 txpull:
 	tx pull -a
 
-tilestache:
+tiles:
 	gunicorn "TileStache:WSGITileServer('tilestache.cfg')" -b 0.0.0.0:8889

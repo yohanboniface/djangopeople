@@ -1,0 +1,11 @@
+{% load gravatar %}
+
+<ul class="detailsList">
+    <li>
+        <img src="{% gravatar person.user.email 40 %}" alt="{{ person.user }}" class="main">
+        <h3><a href="{{ person.get_absolute_url }}">{{ person.user }}</a></h3>
+        <p class="meta"><a href="/{{ person.country.iso_code|lower }}/" class="nobg">
+        <img src="{{ STATIC_URL }}djangopeople/img/flags/{{ person.country.iso_code|lower }}.gif"></a> {{ person.location_description_html }}</p> 
+        <p class="meta"><a href="#" onclick="zoomOn(' + lat + ', ' + lon + '); return false;">Zoom to point</a></p>
+    </li>
+</ul>

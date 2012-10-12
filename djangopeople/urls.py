@@ -65,6 +65,8 @@ urlpatterns = patterns('',
 
     url(r'^search/$', views.search, name='search'),
 
+    url(r'^clusters/(?P<zoom_level>\d{1})$', views.geoclusters, name='geoclusters'),
+
     url(r'^skills/(?P<tag>.*)/$', views.skill, name='skill_detail'),
     url(r'^skills/$', views.skill_cloud, name='skill_cloud'),
 

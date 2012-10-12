@@ -8,7 +8,7 @@
 {% block nav_li_class_home %} class="current"{% endblock %}
 
 {% block post_map_init %}
-    MAP.locate({setView: true});
+    MAP.locate({setView: true, maxZoom: 6});
 {% endblock %}
 
 {% block map %}

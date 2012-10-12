@@ -38,6 +38,21 @@ L.PeopleMarker = L.Marker.extend({
 
 });
 
+L.ClusterMarker = L.Marker.extend({
+
+    onAdd: function(map) {
+        L.Marker.prototype.onAdd.call(this, map);
+
+        this.on("click", this._onClick);
+    },
+
+    _onClick: function() {
+        var current_zoom = this._map.getZoom();
+        this._map.setView(this.getLatLng(), current_zoom + 1)
+    }
+
+});
+
 L.TileLayer.ClusteredGeoJSONTile = L.TileLayer.extend({
 
     initClusterMarker: function (map) {
@@ -51,6 +66,44 @@ L.TileLayer.ClusteredGeoJSONTile = L.TileLayer.extend({
         }
         this.clusterMarker = new L.MarkerClusterGroup({
             "polygonOptions": polygonOptions
+        });
+    },
+
+    initServerClustersLayer: function (map) {
+        if (this.serverClusterLayer) {
+            map.removeLayer(this.serverClusterLayer);
+        }
+        this.serverClusterLayer = new L.GeoJSON(null, {
+            pointToLayer: function (feature, latlng) {
+                var childCount = feature.properties.len
+                var c = ' marker-cluster-';
+                if (childCount < 10) {
+                    c += 'small';
+                } else if (childCount < 100) {
+                    c += 'medium';
+                } else {
+                    c += 'large';
+                }
+                var marker = new L.ClusterMarker(latlng, {
+                    icon: new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) })
+                });
+                return marker;
+            }
+        });
+    },
+
+    detachServerClusterLayer: function () {
+        if (typeof this._map !== "undefined" && this._map.hasLayer(this.serverClusterLayer)) {
+            this._map.removeLayer(this.serverClusterLayer)
+        }
+    },
+
+    loadServerClusters: function () {
+        this._map.addLayer(this.serverClusterLayer)
+        var self = this;
+        $.getJSON("/clusters/" + this._getZoomForUrl(), function (data) {
+            DATA = data;
+            self.serverClusterLayer.addData(data);
         });
     },
 
@@ -81,10 +134,18 @@ L.TileLayer.ClusteredGeoJSONTile = L.TileLayer.extend({
     onAdd: function (map) {
         this._map = map;
         var self = this;
+        this.zoomSwitchAt = 5
         map.on('zoomstart', function (e) {
-            // Delete the cluster to prevent from having several times
+            // Delete the clusters to prevent from having several times
             // the same people
             self.initClusterMarker(map);
+            self.initServerClustersLayer(map);
+
+        });
+        map.on('zoomend', function (e) {
+            if (self._getZoomForUrl() <= self.zoomSwitchAt) {
+                self.loadServerClusters();
+            }
         });
         this.on({
             'geojsonloadinit': this.initTmpLayer,
@@ -93,9 +154,7 @@ L.TileLayer.ClusteredGeoJSONTile = L.TileLayer.extend({
         L.TileLayer.prototype.onAdd.call(this, map);
     },
 
-    _addTile: function (tilePoint, container) {
-        L.TileLayer.prototype._addTile.call(this, tilePoint, container)
-
+    _addJSONTile: function (tilePoint, container) {
         var z = this._getZoomForUrl(),
             x = tilePoint.x,
             y = tilePoint.y;
@@ -122,6 +181,13 @@ L.TileLayer.ClusteredGeoJSONTile = L.TileLayer.extend({
                 self.fire("geojsonloadend")
             }
         });
+    },
+
+    _addTile: function (tilePoint, container) {
+        L.TileLayer.prototype._addTile.call(this, tilePoint, container)
+        if (this._getZoomForUrl() > this.zoomSwitchAt) {
+            this._addJSONTile(tilePoint, container);
+        }
     }
 
 });

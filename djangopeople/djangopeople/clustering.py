@@ -1,106 +1,97 @@
-import math
-import json
+from django.core.cache import cache
 
-from django.db.models import Q
-from django.http import HttpResponse
-
-from .models import DjangoPerson, ClusteredPoint
-from ..clusterlizard.clusterer import Clusterer
+from .models import DjangoPerson
 
 
-def latlong_to_mercator(lat, long):
-    x = long * 20037508.34 / 180
-    y = math.log(math.tan((90 + lat) * math.pi / 360)) / (math.pi / 180)
-    y = y * 20037508.34 / 180
-    return x, y
+class Cluster(object):
 
+    # Must contain a %d fo the zoom level
+    CACHE_KEY = "clusters_for_%d"
 
-def mercator_to_latlong(x, y):
-    lon = (x / 20037508.34) * 180
-    lat = (y / 20037508.34) * 180
-    lat = 180 / math.pi * (2 * math.atan(
-        math.exp(lat * math.pi / 180)
-    ) - math.pi / 2)
-    return lat, lon
+    ZOOM_LEVELS = {
+        0: {
+            "step": 70,  # Grid step
+            "min": 20  # Min markers in a cluster to display it
+        },
+        1: {
+            "step": 50,
+            "min": 10
+        },
+        2: {
+            "step": 45,
+            "min": 5
+        },
+        3: {
+            "step": 30,
+            "min": 3
+        },
+        4: {
+            "step": 15,
+            "min": 2
+        },
+        5: {
+            "step": 5,
+            "min": 2
+        },
+    }
 
+    def get_points(self):
+        return DjangoPerson.objects.values('id', 'latitude', 'longitude')
 
-def input_generator():
-    """
-    The input to ClusterLizard should be a generator that yields
-    (mx,my,id) tuples. This function reads them from the DjangoPeople models.
-    """
-    for person in DjangoPerson.objects.all():
-        mx, my = latlong_to_mercator(person.latitude, person.longitude)
-        yield (mx, my, person.id)
+    def mass_populate_cache(self):
+        """Runs server-side clustering for each zoom level."""
+        points = self.get_points()
+        for zoom_level in self.ZOOM_LEVELS.iterkeys():
+            self.populate_cache(points, zoom_level)
 
+    def populate_cache(self, points, zoom_level):
+        """
+        Runs the server-side clustering and cache it for front usage.
+        Poor man algorithm:
+        - divide the world in a grids, sized according to zoom level
+        - for each point, calculate the closest grid node
+        - take a "random" point in the cluster to set the center
+        (For better rendering, these clusters could be reclustered,
+        as they are now not numerous. But it's not done right now.)
+        """
+        simple_cluster = {}
+        for point in points:
+            lat = point['latitude']
+            lng = point['longitude']
+            grid_point = (
+                lat - lat % self.ZOOM_LEVELS[zoom_level]['step'],
+                lng - lng % self.ZOOM_LEVELS[zoom_level]['step'],
+            )
+            if not grid_point in simple_cluster:
+                simple_cluster[grid_point] = {}
+                simple_cluster[grid_point]['points'] = []
+            simple_cluster[grid_point]['points'].append(point)
+            # Ungrid the cluster center artificially
+            simple_cluster[grid_point]['lat'] = lat
+            simple_cluster[grid_point]['lng'] = lng
+        geojson = {'type': 'FeatureCollection', 'features': []}
+        for cluster in simple_cluster.itervalues():
+            if len(cluster['points']) < self.ZOOM_LEVELS[zoom_level]['min']:
+                continue
+            feature = self.make_feature(cluster)
+            geojson['features'].append(feature)
+        cache.set(self.CACHE_KEY % zoom_level, geojson)
+        return geojson
 
-def save_clusters(clusters, zoom):
-    """
-    The output function provided to ClusterLizard should be a
-    function that takes 'clusters', a set of clusters, and 'zoom',
-    the integer Google zoom level.
-    """
-    for cluster in clusters:
-        lat, long = mercator_to_latlong(*cluster.mean)
-        ClusteredPoint.objects.create(
-            latitude=lat,
-            longitude=long,
-            number=len(cluster),
-            zoom=zoom,
-            djangoperson_id=(len(cluster) == 1 and
-                             list(cluster.points)[0][2] or None),
-        )
+    def make_feature(self, cluster):
+        lat = cluster['lat']
+        lng = cluster['lng']
+        feature = {'type': 'Feature', 'properties': {}}
+        feature['geometry'] = {
+            "type": "Point",
+            "coordinates": [lng, lat]
+        }
+        feature['properties']['len'] = len(cluster['points'])
+        return feature
 
-
-def progress(done, left, took, zoom, eta):
-    """
-    You can also pass in an optional progress callback.
-    """
-    print "Iter %s (%s clusters) [%.3f secs] [zoom: %s] [ETA %s]" % (
-        done, left, took, zoom, eta,
-    )
-
-
-def as_json(request, x2, y1, x1, y2, z):
-    """
-    View that returns clusters for the given zoom level as JSON.
-    """
-    x1, y1, x2, y2 = map(float, (x1, y1, x2, y2))
-    if y1 > y2:
-        y1, y2 = y2, y1
-
-    if x1 < x2:  # View not crossing the date line
-        query = ClusteredPoint.objects.filter(latitude__gt=y1,
-                                              latitude__lt=y2,
-                                              longitude__gt=x1,
-                                              longitude__lt=x2, zoom=z)
-    else:  # View crossing the date line
-        query = ClusteredPoint.objects.filter(
-            Q(longitude__lt=x1) | Q(longitude__gt=x2,
-                                    latitude__gt=y1,
-                                    latitude__lt=y2),
-            zoom=z)
-
-    points = []
-    for cluster in query:
-        if cluster.djangoperson:
-            points.append((cluster.longitude, cluster.latitude,
-                           cluster.number,
-                           cluster.djangoperson.get_absolute_url()))
-        else:
-            points.append((cluster.longitude, cluster.latitude,
-                           cluster.number, None))
-    return HttpResponse(json.dumps(points))
-
-
-def run():
-    """
-    Runs the clustering, clearing the DB first.
-    """
-    ClusteredPoint.objects.all().delete()
-    clusterer = Clusterer(
-        input_generator(),
-        save_clusters,
-        progress,
-    )
-    clusterer.run()
+    def get_for_zoom(self, zoom_level):
+        clusters = cache.get(self.CACHE_KEY % int(zoom_level))
+        if not clusters:
+            points = self.get_points()
+            clusters = self.populate_cache(points, zoom_level)
+        return clusters

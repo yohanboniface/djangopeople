@@ -1,10 +1,11 @@
 from django.core.management.base import NoArgsCommand
 
-from ... import clustering
+from ...clustering import Cluster
 
 
 class Command(NoArgsCommand):
     help = "Re-runs the server-side clustering"
 
     def handle_noargs(self, **options):
-        clustering.run()
+        cluster = Cluster()
+        cluster.mass_populate_cache()

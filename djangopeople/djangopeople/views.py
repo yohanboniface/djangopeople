@@ -1,6 +1,7 @@
+import re
+import json
 import datetime
 import operator
-import re
 
 from django.contrib import auth
 from django.core import signing
@@ -12,6 +13,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.views import generic
+from django.http import HttpResponse
 
 from password_reset.views import Recover
 from tagging.models import Tag, TaggedItem
@@ -24,6 +26,7 @@ from .forms import (SkillsForm, SignupForm, PortfolioForm, BioForm,
                     LocationForm, FindingForm, AccountForm, PasswordForm,
                     DeletionRequestForm, AccountDeletionForm)
 from .models import DjangoPerson, Country, User, Region, PortfolioSite
+from .clustering import Cluster
 
 from ..django_openidauth.models import associate_openid, UserOpenID
 from ..machinetags.utils import tagdict
@@ -435,6 +438,19 @@ class ProfilePopupView(generic.DetailView):
     slug_url_kwarg = 'username'
     slug_field = 'user__username'
 profile_popup = ProfilePopupView.as_view()
+
+
+class GeoClustersView(generic.TemplateView):
+
+    response_class = HttpResponse
+
+    def render_to_response(self, context, **response_kwargs):
+        response_kwargs['content_type'] = 'application/json'
+        zoom_level = context['params']['zoom_level']
+        cluster = Cluster()
+        data = cluster.get_for_zoom(zoom_level)
+        return self.response_class(json.dumps(data), **response_kwargs)
+geoclusters = GeoClustersView.as_view()
 
 
 class DjangoPersonEditViewBase(generic.UpdateView):
